@@ -1,0 +1,335 @@
+/*
+Theme Name: IT Services Management
+Theme URI: https://www.titanthemes.net/products/free-it-company-wordpress-theme
+Author: Titan Themes
+Author URI: https://www.titanthemes.net/
+Description: The IT Services Management WordPress Theme is designed for IT companies and technology solutions providers looking to showcase their IT services and expertise online. Perfect for businesses offering services such as IT consulting, network management, cloud computing, and cybersecurity services, this theme enables companies to create a professional and functional website. The theme allows IT service providers to display their portfolio, list their services, and share their expertise in areas like IT disaster recovery, cloud migration, and business automation. The IT Services Management WordPress Theme’s visual elements are clean, modern, and highly customizable, giving businesses the flexibility to build a professional online presence. It includes sections for IT company solutions, business IT consulting, and IT outsourcing services, making it easier to market services to clients in industries like healthcare, finance, and education. With integrated IT system management tools, businesses can effectively communicate their capabilities in data analytics, network security, digital security, and IT project management. Whether you provide IT consulting for small businesses or enterprise IT solutions, the IT Services Management WordPress Theme ensures your website looks great and functions seamlessly, helping you to attract clients looking for reliable IT services, such as remote IT support, cloud hosting services, and business technology solutions.
+Requires at least: 6.1
+Tested up to: 6.8
+Requires PHP: 7.2
+Version: 1.6
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+Text Domain: it-services-management
+Tags: one-column, custom-background, custom-colors, custom-menu, custom-logo, editor-style, featured-images, full-site-editing, block-patterns, rtl-language-support, translation-ready, sticky-post, threaded-comments, wide-blocks, block-styles, blog, portfolio, e-commerce
+*/
+
+.homepage-header {
+  padding: 0 !important;
+}
+
+.homepage-header {
+  position: relative;
+  width: 100%;
+}
+
+.home .homepage-header {
+  padding: 0 !important;
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  right: 0px;
+  z-index: 999;
+  margin: 0 auto;
+  background-color: transparent !important;
+  border-radius: 0;
+}
+
+.homepage-header .wp-block-search__inside-wrapper {
+  justify-content: end;
+}
+
+.homepage-header button.wp-block-search__button.has-text-color.has-base-color.has-background.has-icon.wp-element-button {
+  padding: 0px;
+}
+
+.wp-site-blocks{
+	padding: 0 !important;
+}
+
+.slider-banner {
+  gap: 40px;
+}
+
+.slider-banner h2 span {
+  background: var(--wp--preset--color--primary);
+  padding: 0px 12px;
+  margin-right: 10px;
+}
+
+.header-top p span {
+  font-size: 22px;
+  margin-right: 10px;
+}
+
+.project-box img {
+  width: 100%;
+}
+
+.project-box .service-overlay {
+  background-color: #00B7D7;
+}
+
+.project-box {
+  box-shadow: 0 0px 8px #00000029;
+}
+
+.project-box:hover .service-overlay img {
+  opacity: 0.3 !important;
+}
+
+.project-box:hover .project-content h4,
+.project-box:hover .project-content p {
+  color: #fff !important;
+}
+
+.project-box:hover .project-content {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0px;
+  right: 0px;
+}
+
+.project-box:hover .service-btn {
+  display: block !important;
+  text-align: center;
+}
+
+.project-box {
+  position: relative;
+}
+
+.project-box img {
+  height: 400px;
+  width: 100%;
+}
+
+.project-box:hover img {
+  height: 513px;
+  object-fit: cover;
+}
+
+.service-btn {
+  display: none !important;
+}
+
+footer.wp-block-template-part {
+  margin-top: 0;
+}
+@media screen and (max-width: 375px) {
+  .main-header .wp-block-columns.is-layout-flex.wp-container-core-columns-is-layout-1.wp-block-columns-is-layout-flex{
+    max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 599px) {
+  .right-box ul li a{
+    color: #ffffff !important;
+  }
+
+  span.wp-block-navigation-item__label {
+    color: #ffffff;
+  }
+
+  .right-box ul li a:hover:after {
+    display: none;
+  }
+
+  .banner-content{
+    text-align: center;
+  }
+
+  .banner-btn {
+    justify-content: center;
+  }
+}
+@media screen and (min-width: 801px) {
+  .menu-box {
+    padding-left: 45px;
+  }
+}
+@media screen and (min-width: 320px) and (max-width: 800px) {
+	 .header-top p {
+    justify-content: center;
+  }
+
+  .wp-header-search-social {
+    justify-content: center;
+  }
+
+  .right-box ul {
+    justify-content: center;
+  }
+
+  .home .homepage-header {
+    position: relative;
+    background: #000000 !important;
+  }
+  .header-top p{
+    text-align: center;
+  }
+
+  .logo-box h1 {
+    text-align: center;
+  }
+  .homepage-header .wp-block-search__inside-wrapper{
+    justify-content: center;
+  }
+  .banner-content h2 {
+    font-size: 17px !important;
+  }
+  .right-box {
+    padding-right: 0px !important;
+    border: 0px !important
+  }
+
+  .project-box:hover .project-content {
+    left: 20px;
+    right: 20px;
+  }
+
+  .right-box nav,
+  .wp-block-search__inside-wrapper {
+    justify-content: center;
+  }
+
+  .project-box img {
+    height: 250px;
+    width: 100%;
+  }
+
+  .project-box:hover img {
+    height: 379px;
+    object-fit: cover;
+  }
+
+  .banner-cover {
+    min-height: 400px !important;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 781px) {
+  .service-box {
+    display: grid !important;
+    justify-content: center;
+    grid-template-columns: auto auto !important;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .project-box img {
+    height: 250px;
+    width: 100%;
+  }
+
+  .project-box:hover img {
+    height: 379px;
+    object-fit: cover;
+  }
+
+  .project-content h4 {
+    font-size: 16px !important;
+  }
+
+  .home .homepage-header {
+    position: relative;
+    background: #000000 !important;
+  }
+
+  .header-top-box {
+    max-width: 95% !important;
+  }
+
+  .header-top-box p {
+    font-size: 12px !important;
+  }
+
+  .main-box-service {
+    max-width: 90%;
+  }
+}
+@media screen and (min-width: 992px) and (max-width: 1024px) {
+  .slider-banner {
+    max-width: 80% !important;
+  }
+
+  .topheader {
+    gap: 0px !important;
+  }
+
+  .right-box nav ul {
+    gap: 25px !important;
+  }
+
+  .logo-box {
+    flex-basis: 20% !important;
+  }
+
+  .right-box {
+    flex-basis: 80% !important;
+  }
+
+  .topheader p {
+    font-size: 12px !important;
+  }
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1500px) {
+  .main-box-service {
+    max-width: 80%;
+  }
+
+  .right-box nav ul {
+    gap: 19px !important;
+  }
+
+  .slider-banner {
+    max-width: 80% !important;
+  }
+
+  .header-top p {
+    font-size: 14px !important;
+  }
+
+}
+
+@media screen and (min-width: 320px) and (max-width: 800px) {
+
+  .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-content .wp-block-navigation__container,
+  ul.wp-block-navigation__submenu-container.wp-block-navigation-submenu {
+    justify-content: center !important;
+    gap: 30px !important;
+  }
+}
+
+/*back to top*/
+.wp-block-button.scroll-to-top .wp-block-button__link.wp-element-button {
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  display: inline-block;
+  z-index: 1;
+  text-indent: -5000px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.089);
+  display: none;
+  padding: 0;
+  margin-top: 0;
+}
+
+.wp-block-button.scroll-to-top .wp-block-button__link.wp-element-button:after {
+  content: "";
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  -webkit-mask-image: url(assets/images/up-arrow.svg);
+  mask-image: url(assets/images/up-arrow.svg);
+  mask-repeat: no-repeat;
+  mask-position: center center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center center;
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: 0;
+}

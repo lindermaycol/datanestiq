@@ -1,0 +1,27 @@
+# Archivos del núcleo de WordPress
+wp-admin/
+wp-includes/
+*.php
+!wp-config.php
+!wp-config-sample.php
+
+# Ignorar todo wp-content pero incluir temas y plugins específicos si es necesario
+wp-content/*
+!wp-content/themes/
+!wp-content/plugins/
+!wp-content/mu-plugins/
+
+# Ignorar uploads (imágenes, media) ya que suelen ser pesados y se sincronizan vía backup
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backup-db/
+
+# Archivos de entorno y volcados locales
+.env
+*.sql
+*.tar.gz
+*.zip
+remote_extract.py
+local_setup.ps1
+srdb/
