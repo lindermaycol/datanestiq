@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datanestiq | Inteligencia aplicada para decisiones claras</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for prototype) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind config for custom colors & fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: '#0A0A0B',
+                        darker: '#050505',
+                        brand: '#2563EB', // Azul Acero
+                        brandHover: '#1D4ED8',
+                        brandCyan: '#0891B2',
+                        accent: '#F3F4F6'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Phosphor Icons (for premium lightweight icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="bg-dark text-white font-sans antialiased overflow-x-hidden selection:bg-brand selection:text-white relative">
+
+    <!-- Background Grid / Glassmorphism effect -->
+    <div class="fixed inset-0 z-[-1] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-20 pointer-events-none z-[-1]" style="background: radial-gradient(circle, rgba(37,99,235,0.8) 0%, rgba(10,10,11,0) 70%);"></div>
+
+    <!-- Header / Navbar -->
+    <header class="fixed w-full top-0 z-40 bg-dark/80 backdrop-blur-md border-b border-white/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-brand to-brandCyan flex items-center justify-center font-bold text-lg">D</div>
+                <span class="font-bold text-xl tracking-tight">datanestiq</span>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#soluciones" class="hover:text-white transition-colors">Soluciones IA & Datos</a>
+                <a href="#industrias" class="hover:text-white transition-colors">Industrias</a>
+                <a href="#metodologia" class="hover:text-white transition-colors">Metodología</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleChatbot()" class="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition-all">
+                    <i class="ph ph-robot text-brandCyan text-lg"></i>
+                    Diagnóstico IA
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-40 pb-20 px-6 min-h-[90vh] flex items-center justify-center border-b border-white/5">
+        <div class="max-w-5xl mx-auto text-center z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brandCyan text-xs font-semibold tracking-wide uppercase mb-8">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brandCyan opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-brandCyan"></span>
+                </span>
+                Multi-Industry AI & Data Consulting
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
+                Inteligencia aplicada para <br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">decisiones claras</span> y resultados medibles.
+            </h1>
+            
+            <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Convertimos arquitecturas de datos complejas en sistemas de analítica e IA que optimizan procesos, reducen costos operativos y aceleran la toma de decisiones en organizaciones públicas y privadas de LATAM.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="toggleChatbot()" class="px-8 py-4 rounded-full bg-brand hover:bg-brandHover text-white font-medium transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.5)] flex items-center gap-2">
+                    Iniciar Diagnóstico de IA
+                    <i class="ph ph-arrow-right"></i>
+                </button>
+                <a href="#soluciones" class="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-all flex items-center gap-2">
+                    Explorar Soluciones
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-12 border-b border-white/5 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-sm text-gray-500 font-medium mb-8">Experiencia probada en entornos de alta exigencia regulatoria y corporativa</p>
+            <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-50 grayscale">
+                <i class="ph ph-bank text-4xl"></i>
+                <i class="ph ph-shopping-cart text-4xl"></i>
+                <i class="ph ph-buildings text-4xl"></i>
+                <i class="ph ph-heartbeat text-4xl"></i>
+                <i class="ph ph-chart-line-up text-4xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Proposition (Services) -->
+    <section id="soluciones" class="py-24 px-6 border-b border-white/5 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">Capacidades tecnológicas para organizaciones impulsadas por datos.</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Bloque 1 -->
+                <div class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-brand/30 transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-brand/10 text-brandCyan flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-brain"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Inteligencia Artificial Aplicada</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">Desplegamos agentes autónomos y copilotos para equipos clínicos, analistas de riesgo y analistas del Estado que potencian el rendimiento humano.</p>
+                </div>
+                <!-- Bloque 2 -->
+                <div class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-brand/30 transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-brand/10 text-brandCyan flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-lightning"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Automatización Inteligente</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">Reducimos la fricción operativa automatizando la revisión de órdenes de compra, expedientes, formularios clínicos y solicitudes de crédito.</p>
+                </div>
+                <!-- Bloque 3 -->
+                <div class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-brand/30 transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-brand/10 text-brandCyan flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-database"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Ingeniería de Datos</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">Construimos fundaciones de datos robustas y centralizadas, preparando a tu organización para escalar sin límites técnicos.</p>
+                </div>
+                <!-- Bloque 4 -->
+                <div class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-brand/30 transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-brand/10 text-brandCyan flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform"><i class="ph ph-chart-pie-slice"></i></div>
+                    <h3 class="text-xl font-bold mb-3">BI & Visualización</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm">Diseñamos tableros de control ejecutivos que traducen millones de registros en claridad absoluta en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enfoque Sectorial -->
+    <section id="industrias" class="py-24 px-6 border-b border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">Especialización profunda en entornos complejos y regulados.</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Columna 1 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="ph ph-bank text-brandCyan"></i> Sector Público</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed border-l border-white/10 pl-4 py-1">Automatización de expedientes, contrataciones y portales de transparencia, cumpliendo con los máximos estándares (ej. OECE).</p>
+                </div>
+                <!-- Columna 2 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="ph ph-heartbeat text-brandCyan"></i> Salud</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed border-l border-white/10 pl-4 py-1">Optimización de historias clínicas, listas de espera, derivaciones y alertas tempranas para elevar la calidad de atención.</p>
+                </div>
+                <!-- Columna 3 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="ph ph-chart-line-up text-brandCyan"></i> Finanzas y Banca</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed border-l border-white/10 pl-4 py-1">Inteligencia predictiva para modelos de scoring, detección de fraude, gestión de riesgo y cumplimiento normativo.</p>
+                </div>
+                <!-- Columna 4 -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="ph ph-storefront text-brandCyan"></i> Retail y B2B</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed border-l border-white/10 pl-4 py-1">Modelos de forecasting para optimización de inventarios, prevención de churn y aceleración del ciclo comercial.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metodología / Final CTA -->
+    <section id="metodologia" class="py-24 px-6 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center z-10 relative">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">¿Listo para evolucionar la operación de tu organización?</h2>
+            <p class="text-lg text-gray-400 mb-10">Del caos de los datos a la eficiencia operativa en semanas, no meses. Nuestra metodología ágil garantiza una integración técnica sin disrupciones en cualquier sector regulado.</p>
+            <button onclick="toggleChatbot()" class="px-8 py-4 rounded-full bg-white text-dark font-semibold transition-all hover:bg-gray-200 flex items-center justify-center gap-2 mx-auto">
+                Evaluar mi infraestructura de datos
+                <i class="ph ph-arrow-right"></i>
+            </button>
+        </div>
+        
+        <!-- Subtle background glow -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-20 pointer-events-none z-0" style="background: radial-gradient(circle, rgba(37,99,235,0.8) 0%, rgba(10,10,11,0) 70%);"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 text-center text-sm text-gray-500">
+        <p>&copy; 2026 Datanestiq. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Chatbot Floating UI (Datanestiq AI Concierge) -->
+    <div id="ai-concierge" class="fixed bottom-6 right-6 w-full max-w-sm bg-darker border border-white/10 rounded-2xl shadow-2xl z-50 flex flex-col hidden opacity-0 translate-y-4 scale-95 transition-all duration-300">
+        <!-- Chat Header -->
+        <div class="px-5 py-4 border-b border-white/10 flex justify-between items-center bg-white/5 rounded-t-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center text-brandCyan"><i class="ph ph-robot"></i></div>
+                <div>
+                    <h4 class="font-semibold text-sm">Datanestiq AI</h4>
+                    <p class="text-xs text-brandCyan">En línea</p>
+                </div>
+            </div>
+            <button onclick="toggleChatbot()" class="text-gray-400 hover:text-white transition-colors"><i class="ph ph-x"></i></button>
+        </div>
+        
+        <!-- Chat Content -->
+        <div id="chat-content" class="p-5 h-[350px] overflow-y-auto flex flex-col gap-4 text-sm scroll-smooth">
+            <!-- Initial Step -->
+            <div class="flex gap-3">
+                <div class="w-8 h-8 rounded bg-brand/20 flex-shrink-0 flex items-center justify-center text-brandCyan"><i class="ph ph-robot"></i></div>
+                <div class="bg-white/5 p-3 rounded-2xl rounded-tl-sm border border-white/10">
+                    Hola. Soy el asistente estratégico de Datanestiq.<br><br>Para guiarte mejor, ¿qué tipo de organización representas?
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-2 mt-2">
+                <button onclick="selectSector('Gobierno')" class="text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">Sector Público y Gobierno</button>
+                <button onclick="selectSector('Salud')" class="text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">Salud</button>
+                <button onclick="selectSector('Finanzas')" class="text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">Servicios Financieros y Banca</button>
+                <button onclick="selectSector('Retail')" class="text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">Retail y Servicios B2B</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
