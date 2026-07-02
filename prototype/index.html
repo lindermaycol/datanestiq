@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datanestiq | Inteligencia aplicada para decisiones claras</title>
+    <meta name="color-scheme" content="dark">
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,9 +81,8 @@
                 Multi-Industry AI & Data Consulting
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
-                Inteligencia aplicada para <br class="hidden md:block" />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">decisiones claras</span> y resultados medibles.
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight max-w-4xl mx-auto">
+                Inteligencia aplicada para <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">decisiones claras</span> y resultados medibles.
             </h1>
             
             <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto leading-relaxed">
@@ -105,12 +105,12 @@
     <section class="py-12 border-b border-white/5 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <p class="text-sm text-gray-500 font-medium mb-8">Experiencia probada en entornos de alta exigencia regulatoria y corporativa</p>
-            <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-50 grayscale">
-                <i class="ph ph-bank text-4xl"></i>
-                <i class="ph ph-shopping-cart text-4xl"></i>
-                <i class="ph ph-buildings text-4xl"></i>
-                <i class="ph ph-heartbeat text-4xl"></i>
-                <i class="ph ph-chart-line-up text-4xl"></i>
+            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+                <span class="text-xs font-semibold text-gray-500 tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full">Sector Público</span>
+                <span class="text-xs font-semibold text-gray-500 tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full">Salud</span>
+                <span class="text-xs font-semibold text-gray-500 tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full">Finanzas y Banca</span>
+                <span class="text-xs font-semibold text-gray-500 tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full">Retail y B2B</span>
+                <span class="text-xs font-semibold text-gray-500 tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full">LATAM</span>
             </div>
         </div>
     </section>
@@ -187,9 +187,28 @@
     <section id="metodologia" class="py-24 px-6 relative overflow-hidden">
         <div class="max-w-4xl mx-auto text-center z-10 relative">
             <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">¿Listo para evolucionar la operación de tu organización?</h2>
-            <p class="text-lg text-gray-400 mb-10">Del caos de los datos a la eficiencia operativa en semanas, no meses. Nuestra metodología ágil garantiza una integración técnica sin disrupciones en cualquier sector regulado.</p>
+            <p class="text-lg text-gray-400 mb-10">Implementamos en semanas porque no partimos de cero: nuestro método está calibrado para entornos regulados y complejos.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 text-left">
+                <div class="text-center">
+                    <div class="w-12 h-12 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center text-brandCyan font-bold text-lg mx-auto mb-4">01</div>
+                    <h4 class="font-semibold mb-2">Diagnóstico</h4>
+                    <p class="text-sm text-gray-400">Evaluamos tu infraestructura, procesos y madurez de datos en una sesión técnica sin costo.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-12 h-12 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center text-brandCyan font-bold text-lg mx-auto mb-4">02</div>
+                    <h4 class="font-semibold mb-2">Diseño de solución</h4>
+                    <p class="text-sm text-gray-400">Proponemos una hoja de ruta técnica con arquitectura, herramientas y KPIs de impacto medible.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-12 h-12 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center text-brandCyan font-bold text-lg mx-auto mb-4">03</div>
+                    <h4 class="font-semibold mb-2">Implementación ágil</h4>
+                    <p class="text-sm text-gray-400">Ejecutamos en sprints cortos con entregas visibles desde la primera semana. Sin disrupciones.</p>
+                </div>
+            </div>
+
             <button onclick="toggleChatbot()" class="px-8 py-4 rounded-full bg-white text-dark font-semibold transition-all hover:bg-gray-200 flex items-center justify-center gap-2 mx-auto">
-                Evaluar mi infraestructura de datos
+                Iniciar mi diagnóstico gratuito
                 <i class="ph ph-arrow-right"></i>
             </button>
         </div>
@@ -235,6 +254,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Botón flotante del chatbot (visible siempre, especialmente en mobile) -->
+    <button 
+      onclick="toggleChatbot()" 
+      id="chatbot-fab"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-brand hover:bg-brandHover shadow-[0_0_30px_-5px_rgba(37,99,235,0.6)] flex items-center justify-center transition-all"
+      aria-label="Abrir asistente de diagnóstico"
+    >
+      <i class="ph ph-robot text-white text-2xl"></i>
+    </button>
 
     <!-- Scripts -->
     <script src="app.js"></script>
