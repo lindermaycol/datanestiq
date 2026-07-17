@@ -1,0 +1,44 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  url?: string;
+  image?: string;
+  serviceData?: {
+    name: string;
+  };
+}
+
+const { title, description, url = "https://datanestiq.com", image = "https://datanestiq.com/og-image.svg", serviceData } = Astro.props;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={url} />
+
+<!-- OpenGraph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={image} />
+
+{serviceData && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": serviceData.name,
+    "provider": {
+      "@type": "Organization",
+      "name": "Datanestiq"
+    },
+    "description": description
+  })} />
+)}

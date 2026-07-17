@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/ui/Navbar.astro';
+import Footer from '../components/ui/Footer.astro';
+import Hero from '../components/ui/Hero.astro';
+import TrustLayer from '../components/ui/TrustLayer.astro';
+import Services from '../components/ui/Services.astro';
+import Methodology from '../components/ui/Methodology.astro';
+import Faq from '../components/ui/Faq.astro';
+import DiagnosticWizard from '../components/islands/DiagnosticWizard.jsx';
+import CopilotDemo from '../components/islands/CopilotDemo.jsx';
+import SemanticSearch from '../components/islands/SemanticSearch.jsx';
+import MultiStepWizard from '../components/islands/MultiStepWizard.jsx';
+import SolutionsByRoleAndIndustry from '../components/islands/SolutionsByRoleAndIndustry.jsx';
+import { getEntry } from 'astro:content';
+
+const homeEntry = await getEntry('pages', 'home');
+const homeData = homeEntry?.data;
+---
+
+<BaseLayout title="Inicio">
+  <Navbar />
+  
+  <main>
+    <Hero 
+      headline={homeData?.hero?.headline}
+      subheadline={homeData?.hero?.subheadline}
+      cta={homeData?.hero?.cta}
+    />
+    <TrustLayer 
+      heading={homeData?.sections?.find((s: any) => s.type === 'logos')?.heading}
+      logos={homeData?.sections?.find((s: any) => s.type === 'logos')?.logos}
+      testimonialQuote={homeData?.sections?.find((s: any) => s.type === 'testimonials')?.quote}
+      testimonialAuthor={homeData?.sections?.find((s: any) => s.type === 'testimonials')?.author}
+      testimonialRole={homeData?.sections?.find((s: any) => s.type === 'testimonials')?.role}
+    />
+    
+    <section class="border-b border-white/10" data-animate="fade-up" style="opacity: 0">
+      <SemanticSearch client:visible />
+    </section>
+
+    <Services 
+      heading={homeData?.sections?.find((s: any) => s.type === 'features')?.heading}
+      subheading={homeData?.sections?.find((s: any) => s.type === 'features')?.body}
+    />
+    
+    <section class="border-b border-white/10 bg-surface/30" data-animate="fade-up" style="opacity: 0">
+      <SolutionsByRoleAndIndustry client:visible />
+    </section>
+    
+    <section class="border-b border-white/10" data-animate="fade-up" style="opacity: 0">
+      <CopilotDemo client:visible />
+    </section>
+    
+    <section class="py-24 max-w-7xl mx-auto px-4 border-b border-white/10" data-animate="fade-up" style="opacity: 0">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold">Inicia tu Diagnóstico</h2>
+        <p class="text-gray-400 mt-2">Nuestra IA configurará el perfil adecuado para ti.</p>
+      </div>
+      <!-- Astro Island: Solo carga JS cuando es visible -->
+      <DiagnosticWizard client:visible />
+    </section>
+
+    <section class="py-12 max-w-7xl mx-auto px-4 border-b border-white/10" data-animate="fade-up" style="opacity: 0">
+      <MultiStepWizard client:visible />
+    </section>
+
+    <Methodology />
+
+    <Faq />
+  </main>
+
+  <Footer />
+</BaseLayout>

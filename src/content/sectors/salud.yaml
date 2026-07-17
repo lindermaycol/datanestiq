@@ -1,0 +1,71 @@
+id: sector-salud
+title: Salud
+description: >-
+  Optimización de historias clínicas, listas de espera, derivaciones y alertas
+  tempranas para elevar la calidad de atención.
+icon: ph-heartbeat
+ciiu: '86'
+keywords:
+  - salud
+  - clínicas
+  - hospitales
+  - historias clínicas
+  - pacientes
+  - listas de espera
+  - camas
+  - triage predictivo
+  - interoperabilidad HL7
+  - reducción de tiempos de atención
+seo:
+  title: IA y Analítica Avanzada en Salud | Datanestiq
+  description: >-
+    Desplegamos modelos predictivos e interoperabilidad de datos para optimizar
+    recursos hospitalarios y elevar la calidad de atención al paciente.
+hero:
+  headline: IA al Servicio de la Vida y la Eficiencia Operativa
+  subheadline: >-
+    Optimización matemática de recursos críticos y consolidación de historias
+    clínicas para instituciones de salud de alto desempeño.
+contrast:
+  problem: >-
+    Saturación hospitalaria, sistemas fragmentados (HIS/EMR) y gestión
+    ineficiente de quirófanos y listas de espera.
+  solution: >-
+    Modelos de predicción de demanda y lagos de datos clínicos unificados que
+    anticipan cuellos de botella y priorizan urgencias.
+problems:
+  - code: listas
+    label: Gestión de listas de espera
+    solution: >-
+      Desarrollamos modelos predictivos que optimizan la asignación de camas y
+      listas de espera, mejorando tiempos de atención y reduciendo riesgo
+      operativo.
+  - code: clinicas
+    label: Historias clínicas dispersas
+    solution: >-
+      Centralizamos historias clínicas dispersas en una plataforma unificada con
+      generación automática de reportes clínicos y alertas tempranas.
+slug: salud
+subSectors:
+  - Hospitales y Clínicas
+  - Redes de Salud Integradas
+  - Seguros de Salud
+kpis:
+  - metric: Reducción de readmisiones
+    expectedRoi: '[EST] 15% de reducción'
+  - metric: Optimización de camas hospitalarias
+    expectedRoi: '[EST] 20% más disponibilidad'
+regulations:
+  - HIPAA
+  - HL7-FHIR
+  - Ley de Protección de Datos Personales
+relevantPersonas:
+  - coo
+  - cio
+  - cdo
+contentAngles:
+  - id: interoperabilidad-salud-fhir
+    title: Interoperabilidad Clínica con HL7-FHIR
+    brief: >-
+      Guía técnica para el CIO sobre cómo unificar historias clínicas dispersas
+      en un Data Lake seguro cumpliendo con normativas HIPAA y protocolos FHIR.

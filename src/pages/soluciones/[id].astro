@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import SolutionHero from '../../components/ui/SolutionHero.astro';
+import SolutionContrast from '../../components/ui/SolutionContrast.astro';
+import corpus from '../../data/taxonomyCorpus.json';
+import personas from '../../data/personas.json';
+import extendedIndustries from '../../data/extendedIndustries.json';
+
+export async function getStaticPaths() {
+  return corpus.map((service) => ({
+    params: { id: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+
+// Obtener roles interesados
+const relatedRoles = personas.roles.filter(r => r.pillarsOfInterest.includes(service.slug));
+
+// Obtener industrias relacionadas
+const relatedIndustries = extendedIndustries.filter(i => i.relatedPillars.includes(service.slug)).slice(0, 4);
+---
+
+<BaseLayout 
+  title={service.seo.title} 
+  description={service.seo.description}
+  serviceData={service}
+>
+  <Navbar />
+  
+  <main>
+    <SolutionHero 
+      headline={service.hero.headline}
+      subheadline={service.hero.subheadline}
+      serviceId={service.id}
+    />
+    
+    <SolutionContrast 
+      problem={service.contrast.problem}
+      solution={service.contrast.solution}
+    />
+    
+    <section class="py-6 bg-darker border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 text-center md:text-left">
+        {service.maturityStage && (
+          <div class="text-sm">
+            <span class="inline-block bg-brandCyan/20 text-brandCyan px-3 py-1 rounded-full font-medium border border-brandCyan/30">
+              Madurez Analítica: {service.maturityStage}
+            </span>
+          </div>
+        )}
+        {service.standards && service.standards.length > 0 && (
+          <div class="text-sm text-gray-400">
+            <span class="font-bold text-brandCyan">Marcos de Trabajo:</span> {service.standards.join(' • ')}
+          </div>
+        )}
+      </div>
+    </section>
+
+    {service.techStack && service.techStack.length > 0 && (
+      <section class="py-6 bg-surface border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p class="text-sm text-gray-400 mb-4">Stack Tecnológico Recomendado:</p>
+          <div class="flex flex-wrap justify-center gap-3">
+            {service.techStack.map(tech => (
+              <span class="px-3 py-1 bg-white/5 border border-brandCyan/30 rounded-lg text-brandCyan text-xs font-mono">{tech}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {service.proofPoints && service.proofPoints.length > 0 && (
+      <section class="py-12 bg-darker border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-2xl font-bold mb-8 text-center">Casos de Éxito y Puntos de Prueba</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {service.proofPoints.map(proof => (
+              <div class="glass-card p-6 border-l-4 border-brandCyan relative">
+                <i class="ph ph-quotes absolute top-4 right-4 text-3xl text-brandCyan/20"></i>
+                <h4 class="text-lg font-bold text-white mb-2">{proof.client}</h4>
+                <p class="text-brandCyan font-semibold mb-2">{proof.result}</p>
+                <p class="text-sm text-gray-400">{proof.timeframe}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {service.competitivePositioning && (
+      <section class="py-10 bg-brand/10 border-t border-b border-brandCyan/20">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+          <h3 class="text-xl font-bold text-white mb-4">Nuestra Diferencia Competitiva</h3>
+          <p class="text-lg text-gray-300 italic">"{service.competitivePositioning}"</p>
+        </div>
+      </section>
+    )}
+
+    {relatedRoles.length > 0 && (
+      <section class="py-12 bg-surface/50 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h3 class="text-xl font-bold mb-6 text-center">Diseñado para C-Level</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {relatedRoles.map(role => (
+              <div class="glass-card p-5">
+                <h4 class="text-brandCyan font-bold mb-2">{role.title}</h4>
+                <p class="text-sm text-gray-300 mb-1"><strong>Dolor:</strong> {role.pains[0]}</p>
+                <p class="text-sm text-gray-300"><strong>Objetivo:</strong> {role.goals[0]}</p>
+              </div>
+            ))}
+          </div>
+
+          <h3 class="text-2xl font-bold mb-8 text-center">Resolvemos tus dudas</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {relatedRoles.flatMap(role => 
+              role.objectionResponses ? role.objectionResponses.map(obr => ({ role: role.title, ...obr })) : []
+            ).map((item) => (
+              <div class="glass-card p-6 border-l-2 border-brandCyan/50">
+                <div class="text-xs font-bold text-brandCyan mb-2 uppercase tracking-wider">{item.role}</div>
+                <h4 class="font-bold text-white mb-2">"{item.objection}"</h4>
+                <p class="text-sm text-gray-400">{item.response}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {relatedIndustries.length > 0 && (
+      <section class="py-12 bg-darker border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h3 class="text-xl font-bold mb-6 text-center">Aplicaciones por Industria</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {relatedIndustries.map(ind => (
+              <div class="glass-card p-4 text-center">
+                <h4 class="text-white font-semibold text-sm mb-2">{ind.title}</h4>
+                <p class="text-xs text-brandCyan">{ind.keywords[0]} • {ind.keywords[1]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+    
+    <section class="py-20 bg-surface border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold mb-10">Características Principales</h2>
+        <div class="flex flex-wrap justify-center gap-4">
+          {service.features.map(feature => (
+            <span class="glass-card px-6 py-3 font-medium text-gray-200">
+              {feature}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>

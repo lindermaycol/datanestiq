@@ -1,0 +1,77 @@
+id: sector-retail
+title: Retail y B2B
+description: >-
+  Modelos de forecasting para optimización de inventarios, prevención de churn y
+  aceleración del ciclo comercial.
+icon: ph-storefront
+ciiu: '46'
+keywords:
+  - retail
+  - b2b
+  - inventarios
+  - stock
+  - ventas
+  - ecommerce
+  - comercio al por mayor
+  - forecasting de demanda
+  - quiebres de stock
+  - customer 360
+  - ticket promedio
+seo:
+  title: IA Predictiva para Retail y Comercio B2B | Datanestiq
+  description: >-
+    Forecasting de demanda, optimización de inventarios y motores de
+    recomendación para maximizar el margen operativo comercial.
+hero:
+  headline: Predicción de Demanda con Precisión Asimétrica
+  subheadline: >-
+    Anticipe el comportamiento de sus clientes. Implementamos motores de
+    recomendación y forecasting que blindan su cadena de abastecimiento.
+contrast:
+  problem: >-
+    Quiebres de stock continuos, exceso de inventario inmovilizado y campañas de
+    marketing genéricas con bajo ROI.
+  solution: >-
+    Modelos de ML que proyectan la demanda exacta por SKU y Dashboards en tiempo
+    real que exponen oportunidades comerciales ocultas.
+problems:
+  - code: inventarios
+    label: Quiebres de stock e inventarios
+    solution: >-
+      Implementamos modelos de forecasting con IA que optimizan inventarios,
+      reducen quiebres de stock y aumentan el margen operativo.
+  - code: reportes
+    label: Reportes operativos lentos
+    solution: >-
+      Centralizamos tus silos de datos en una sola fuente de verdad con
+      dashboards automáticos y alertas en tiempo real para equipos comerciales.
+  - code: ventaja_competitiva
+    label: Sparring y ventaja competitiva
+    solution: >-
+      Actuamos como su sparring estratégico. Mapeamos cómo la IA puede 
+      convertirse en su ventaja competitiva para proteger su cuota de mercado frente a nativos digitales.
+slug: retail
+subSectors:
+  - E-commerce
+  - Supermercados
+  - Moda y Apparel
+kpis:
+  - metric: Reducción de quiebres de stock
+    expectedRoi: '[EST] -30%'
+  - metric: Aumento del ticket promedio
+    expectedRoi: '[EST] +12%'
+regulations:
+  - Ley del Consumidor
+  - PCI-DSS
+  - Leyes de Privacidad (Cookies)
+relevantPersonas:
+  - coo
+  - ceo
+  - cdo
+contentAngles:
+  - id: forecast-demanda-retail
+    title: Predicción de Demanda con Machine Learning
+    brief: >-
+      Artículo para el COO detallando cómo los algoritmos de predicción de
+      demanda reducen los quiebres de stock y optimizan el capital de trabajo en
+      el retail.

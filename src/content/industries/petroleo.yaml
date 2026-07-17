@@ -1,0 +1,14 @@
+id: industry-petroleo
+title: Petróleo y Gas
+ciiu: '06'
+keywords:
+  - oil & gas
+  - petróleo
+  - gas
+  - refinación
+  - perforación
+  - upstream
+  - downstream
+relatedPillars:
+  - data-engineering
+  - ai-data-science

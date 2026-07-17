@@ -1,0 +1,74 @@
+id: business-intelligence
+name: Análisis de Datos, BI & Dashboards
+slug: business-intelligence
+maturityStage: Descriptivo / Diagnóstico
+standards:
+  - 'DAMA-DMBOK: Data Warehousing & Business Intelligence'
+targetRoles:
+  - CEO
+  - CFO
+  - Director Comercial
+skills:
+  - Visualización de Datos
+  - Minería de Procesos
+seo:
+  title: Business Intelligence y Dashboards Ejecutivos | Datanestiq
+  description: >-
+    Visibilidad ejecutiva sin precedentes. Dashboards de alta densidad y minería
+    de procesos para directorios exigentes.
+hero:
+  headline: Decisiones Críticas Respaldadas por Certeza
+  subheadline: >-
+    Diseñamos centros de comando analíticos (Dashboards) de alto impacto visual
+    que exponen el rendimiento financiero y operativo en milisegundos.
+contrast:
+  problem: >-
+    Ejecutivos dependientes de hojas de cálculo estáticas que tardan semanas en
+    consolidarse, llegando demasiado tarde para corregir el rumbo.
+  solution: >-
+    Inteligencia de negocios en tiempo real: KPIs conectados directamente a las
+    fuentes de verdad corporativas, sin intermediarios.
+features:
+  - Dashboards Ejecutivos de Alta Densidad (Power BI, Tableau, Looker)
+  - Minería de Procesos (Process Mining)
+  - Monitoreo en Tiempo Real de KPIs/OKRs Estratégicos
+keywords:
+  - dashboards
+  - BI
+  - power bi
+  - tableau
+  - reportes
+  - KPIs
+  - analítica
+  - process mining
+  - inteligencia de negocios
+  - visualización
+  - decisiones en tiempo real
+  - visibilidad ejecutiva
+copilotPrompts:
+  - >-
+    Proyectar rendimiento de KPIs operativos del Q3 ante reducción de plantilla
+    del 10%.
+  - >-
+    Generar reporte de Process Mining para auditar fugas de capital en
+    adquisiciones corporativas.
+techStack:
+  - Power BI
+  - Tableau
+  - Looker
+  - dbt
+proofPoints:
+  - client: Cadena de Retail Top 5
+    result: '[EST] 30% ahorro en horas-hombre para reportes'
+  - client: Empresa Logística Internacional
+    result: '[EST] Visibilidad 100% en tiempo real de márgenes operativos'
+competitivePositioning: >-
+  Implementamos Dashboards Self-Service con integración nativa a Lakehouses,
+  liberando a las empresas de licenciamientos cautivos y pesados de BI
+  tradicional (SAP, Oracle).
+contentAngles:
+  - id: fin-de-reportes-estaticos
+    title: El Fin de los Reportes Estáticos
+    brief: >-
+      Manifiesto para el CFO: por qué depender de Excel y reportes mensuales
+      destruye el margen, y cómo el BI en tiempo real cambia las reglas.

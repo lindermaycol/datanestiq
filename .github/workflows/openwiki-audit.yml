@@ -1,0 +1,62 @@
+name: OpenWiki Daily Documentation Audit
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  audit-documentation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Run OpenWiki Sync Motor
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          node scripts/docs-generator.mjs --target=wiki
+
+      - name: Add Human Review Required Flag for Critical Specs
+        id: check
+        run: |
+          echo "Verificando modificaciones en Spec 001 o Spec 003..."
+          if git diff --name-only HEAD~1..HEAD | grep -E "001-elevacion-premium|003-taxonomia-servicios"; then
+            echo "human_review=[HUMAN REVIEW REQUIRED]" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs(openwiki): sincronización automatizada de documentación viva"
+          branch: "bot/openwiki-sync"
+          delete-branch: true
+          title: "🤖 Actualización Automática de Documentación Viva (OpenWiki)"
+          body: |
+            OpenWiki Motor ha detectado divergencias o generado nueva documentación.
+            
+            ${{ steps.check.outputs.human_review }}
+            
+            **Por favor, revisa los cambios sugeridos para mantener la documentación actualizada.**
+            
+            _Esta PR ha sido generada automáticamente por GitHub Actions._
+          labels: "documentation, automated pr"
+          draft: false

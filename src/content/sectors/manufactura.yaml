@@ -1,0 +1,71 @@
+id: sector-manufactura
+title: Manufactura
+description: >-
+  Control de calidad con visión computacional, predicción de fallas en líneas de
+  producción y eficiencia OEE.
+icon: ph-factory
+ciiu: 10-33
+keywords:
+  - manufactura
+  - industria 4.0
+  - OEE
+  - control de calidad
+  - visión computacional
+  - líneas de producción
+  - fábricas
+  - mermas productivas
+  - automatización de planta
+seo:
+  title: IA e Industria 4.0 para Manufactura | Datanestiq
+  description: >-
+    Control de calidad automatizado mediante visión computacional y analítica
+    industrial para maximizar el indicador OEE.
+hero:
+  headline: Transformación hacia la Industria 4.0 Autónoma
+  subheadline: >-
+    Rompa las barreras entre OT e IT. Implementamos Inteligencia Artificial en
+    el edge para lograr una eficiencia productiva impecable.
+contrast:
+  problem: >-
+    Puntos ciegos en la calidad del producto final, mermas de producción ocultas
+    y falta de integración entre las capas de planta y negocio.
+  solution: >-
+    Inspección óptica automatizada (Computer Vision) y convergencia de datos
+    industriales en Data Lakes para monitorear el OEE corporativo en vivo.
+problems:
+  - code: calidad
+    label: Defectos y mermas en producción
+    solution: >-
+      Automatizamos el control de calidad mediante visión computacional,
+      detectando defectos milimétricos en la línea de producción sin
+      intervención humana.
+  - code: oee
+    label: Baja eficiencia operativa (OEE)
+    solution: >-
+      Conectamos silos de datos OT/IT para monitorear y maximizar la Eficiencia
+      General de los Equipos (OEE) corporativos mediante analítica en tiempo
+      real.
+slug: manufactura
+subSectors:
+  - Automotriz
+  - Consumo Masivo
+  - Maquinaria Pesada
+kpis:
+  - metric: Mejora del OEE (Eficiencia General)
+    expectedRoi: '[EST] +20%'
+  - metric: Costos de mantenimiento no planificado
+    expectedRoi: '[EST] -25%'
+regulations:
+  - ISO 9001
+  - OHSAS 18001 / ISO 45001
+  - Normativas Ambientales
+relevantPersonas:
+  - coo
+  - cto
+contentAngles:
+  - id: mantenimiento-predictivo-iot
+    title: Mantenimiento Predictivo con IoT e IA
+    brief: >-
+      Caso de uso dirigido al Director de Operaciones (COO) sobre cómo procesar
+      datos de sensores IoT en tiempo real previene paradas de planta
+      millonarias.

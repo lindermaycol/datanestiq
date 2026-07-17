@@ -1,0 +1,103 @@
+id: sector-publico
+title: Sector Público
+description: >-
+  Automatización de expedientes, contrataciones y portales de transparencia,
+  cumpliendo con los máximos estándares (ej. OECE).
+icon: ph-bank
+ciiu: '84'
+keywords:
+  - gobierno
+  - sector público
+  - estado
+  - transparencia
+  - expedientes
+  - contrataciones
+  - OECE
+  - reducción de burocracia
+  - digitalización ciudadana
+  - interoperabilidad estatal
+seo:
+  title: IA y Datos para el Sector Público | Datanestiq
+  description: >-
+    Modernización del Estado mediante arquitecturas de datos seguras,
+    automatización de expedientes y analítica de transparencia institucional.
+hero:
+  headline: Modernización Tecnológica del Estado
+  subheadline: >-
+    Erradique la burocracia mediante hiperautomatización y gobernanza de datos.
+    Transformamos entidades públicas en instituciones ágiles y transparentes.
+contrast:
+  problem: >-
+    Sistemas aislados, procesamiento manual de miles de expedientes y dificultad
+    para consolidar métricas de transparencia ciudadana.
+  solution: >-
+    Trazabilidad absoluta mediante automatización cognitiva (IDP) y bases de
+    datos centralizadas para un gobierno 100% data-driven.
+problems:
+  - code: expedientes
+    label: Revisión lenta de expedientes
+    solution: >-
+      Podemos automatizar la revisión y trazabilidad de expedientes con IA
+      (IDP), reduciendo tiempos operativos hasta un 60% y garantizando
+      cumplimiento con estándares OECE.
+  - code: transparencia
+    label: Reportes e indicadores manuales
+    solution: >-
+      Implementamos dashboards ejecutivos en tiempo real que generan reportes de
+      indicadores de gestión y transparencia de forma automática.
+  - code: auditoria
+    label: Falta de trazabilidad y auditoría
+    solution: >-
+      Establecemos arquitecturas de datos inmutables y linaje de datos completo,
+      garantizando auditorías transparentes y 100% trazables.
+slug: publico
+subSectors:
+  - Ministerios y Secretarías
+  - Agencias de Recaudación
+  - Poder Judicial
+kpis:
+  - metric: "Tiempos de atención y revisión de expedientes"
+    expectedRoi: "[EST] Reducción del 50% al 60%"
+  - metric: "Reducción de retrabajo y errores documentales"
+    expectedRoi: "[EST] -40% en observaciones de auditoría"
+  - metric: "Trazabilidad documental y alertas tempranas"
+    expectedRoi: "[EST] 100% visibilidad de cuellos de botella"
+  - metric: "Mitigación de riesgo reputacional"
+    expectedRoi: "[EST] Detección de anomalías en contrataciones en tiempo real"
+deploymentModels:
+  - "Nube Privada Segura (VPC)"
+  - "On-Premise (Soberanía de Datos Total)"
+  - "Nube Gubernamental (Híbrida)"
+engagementModels:
+  - "Fase Piloto / Prueba de Concepto (PoC)"
+  - "Diagnóstico Consultivo y Levantamiento de Riesgos"
+  - "Licitación / Implementación por Hitos"
+regulations:
+  - Esquema Nacional de Interoperabilidad (ENI)
+  - Ley de Transparencia
+  - OECE
+relevantPersonas:
+  - cio
+  - cto
+  - cdo
+contentAngles:
+  - id: analitica-contrataciones-estado
+    title: Analítica Predictiva en Contrataciones
+    brief: >-
+      Artículo de 1000 palabras dirigido a líderes del sector público sobre cómo usar
+      analítica de datos para detectar anomalías y optimizar presupuestos en contrataciones estatales.
+  - id: ia-segura-estado
+    title: Inteligencia Artificial Segura en el Estado
+    brief: >-
+      Artículo de 1000 palabras sobre el despliegue de modelos LLM locales (On-Premise)
+      en dependencias gubernamentales asegurando la soberanía del dato.
+  - id: dashboards-ejecutivos-gobierno
+    title: Dashboards Ejecutivos para Gobierno
+    brief: >-
+      Artículo de 1000 palabras sobre la consolidación de métricas de transparencia y
+      gestión ciudadana en tiempo real usando herramientas modernas de BI.
+  - id: calidad-padrones-ia
+    title: Calidad de Padrones y MDM
+    brief: >-
+      Artículo de 1000 palabras sobre la aplicación de IA para la depuración,
+      gobernanza y gestión de datos maestros (MDM) en padrones ciudadanos.

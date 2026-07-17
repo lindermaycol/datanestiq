@@ -1,0 +1,106 @@
+---
+// Navbar.astro
+import ConsultativeCTA from './ConsultativeCTA.jsx';
+---
+<nav class="fixed w-full z-50 bg-background/80 backdrop-blur-md border-b border-white/10 transition-all duration-300" id="main-nav">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      <div class="flex-shrink-0 flex items-center">
+        <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+          DATANESTIQ
+        </a>
+      </div>
+      
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex space-x-8">
+        <a href="/nosotros" class="text-gray-300 hover:text-white transition-colors">Nosotros</a>
+        <a href="/soluciones" class="text-gray-300 hover:text-white transition-colors">Soluciones</a>
+        <a href="/sectores" class="text-gray-300 hover:text-white transition-colors">Sectores</a>
+        <a href="/casos-de-exito" class="text-gray-300 hover:text-white transition-colors">Casos ROI</a>
+        <a href="/blog" class="text-gray-300 hover:text-white transition-colors">Blog</a>
+      </div>
+      <div class="hidden md:flex">
+        <ConsultativeCTA client:load className="btn-primary" />
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden flex items-center">
+        <button id="mobile-menu-btn" aria-label="Abrir menú de navegación" class="text-gray-300 hover:text-white focus:outline-none" aria-expanded="false" aria-controls="mobile-menu">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Off-Canvas Menu -->
+  <div id="mobile-menu" class="fixed inset-y-0 right-0 max-w-xs w-full bg-surface shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 md:hidden" aria-hidden="true">
+    <div class="h-full flex flex-col py-6 px-4">
+      <div class="flex items-center justify-between mb-8">
+        <span class="text-xl font-bold">Menú</span>
+        <button id="close-menu-btn" aria-label="Cerrar menú de navegación" class="text-gray-400 hover:text-white focus:outline-none">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-col space-y-6">
+        <a href="/nosotros" class="mobile-link text-lg text-gray-300 hover:text-white transition-colors">Nosotros</a>
+        <a href="/soluciones" class="mobile-link text-lg text-gray-300 hover:text-white transition-colors">Soluciones</a>
+        <a href="/sectores" class="mobile-link text-lg text-gray-300 hover:text-white transition-colors">Sectores</a>
+        <a href="/casos-de-exito" class="mobile-link text-lg text-gray-300 hover:text-white transition-colors">Casos ROI</a>
+        <a href="/blog" class="mobile-link text-lg text-gray-300 hover:text-white transition-colors">Blog</a>
+        <ConsultativeCTA client:load className="btn-primary w-full mt-4" />
+      </div>
+    </div>
+  </div>
+  
+  <!-- Backdrop -->
+  <div id="mobile-backdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-40 transition-opacity duration-300 opacity-0 md:hidden"></div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const backdrop = document.getElementById('mobile-backdrop');
+    const links = document.querySelectorAll('.mobile-link');
+
+    const openMenu = () => {
+      menu?.classList.remove('translate-x-full');
+      backdrop?.classList.remove('hidden');
+      // trigger reflow
+      void backdrop?.offsetWidth;
+      backdrop?.classList.remove('opacity-0');
+      btn?.setAttribute('aria-expanded', 'true');
+      menu?.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeMenu = () => {
+      menu?.classList.add('translate-x-full');
+      backdrop?.classList.add('opacity-0');
+      setTimeout(() => {
+        backdrop?.classList.add('hidden');
+      }, 300);
+      btn?.setAttribute('aria-expanded', 'false');
+      menu?.setAttribute('aria-hidden', 'true');
+    };
+
+    btn?.addEventListener('click', openMenu);
+    closeBtn?.addEventListener('click', closeMenu);
+    backdrop?.addEventListener('click', closeMenu);
+    
+    links.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Chatbot custom event listener for desktop button
+    document.addEventListener('open-chatbot', () => {
+       // Since the chatbot is a nanostore, we can just click its floating button
+       const chatBtn = document.querySelector('button.fixed.bottom-6.right-6');
+       if(chatBtn) (chatBtn as HTMLButtonElement).click();
+    });
+  });
+</script>

@@ -1,0 +1,94 @@
+id: sector-finanzas
+title: Finanzas y Banca
+description: >-
+  Inteligencia predictiva para modelos de scoring, detección de fraude, gestión
+  de riesgo y cumplimiento normativo.
+icon: ph-chart-line-up
+ciiu: '64'
+keywords:
+  - finanzas
+  - banca
+  - riesgo
+  - scoring
+  - fraude
+  - cumplimiento
+  - créditos
+  - fintech
+  - basilea
+  - evaluación crediticia en tiempo real
+  - reducción de morosidad
+seo:
+  title: Data Engineering & IA para Finanzas y Banca | Datanestiq
+  description: >-
+    Arquitecturas analíticas para mitigación de riesgo, detección de fraude en
+    milisegundos y automatización del ciclo crediticio.
+hero:
+  headline: Mitigación de Riesgo y Velocidad Transaccional
+  subheadline: >-
+    Empoderamos a instituciones financieras con algoritmos de scoring dinámico y
+    motores anti-fraude en tiempo real.
+contrast:
+  problem: >-
+    Pérdidas por fraude, evaluaciones crediticias lentas que frustran al cliente
+    y silos de datos que impiden la visión 360 del riesgo.
+  solution: >-
+    Inferencia de Machine Learning en milisegundos y automatización (RPA) del
+    back-office crediticio para decisiones precisas e instantáneas.
+problems:
+  - code: riesgo
+    label: Prevención de fraude y scoring
+    solution: >-
+      Desplegamos modelos de scoring y detección de fraude en tiempo real que
+      mejoran la precisión de evaluación crediticia y reducen pérdidas
+      operativas.
+  - code: creditos
+    label: Lentitud en evaluación de créditos
+    solution: >-
+      Automatizamos el flujo de evaluación de solicitudes de crédito con RPA e
+      IA, pasando de días a horas en la toma de decisión.
+  - code: ebitda_tco
+    label: Impacto en EBITDA y TCO
+    solution: >-
+      Construimos modelos de negocio cuantificables con retornos ágiles (payback < 12 meses),
+      y arquitecturas modernas que reducen su TCO sin reemplazar su ERP core.
+slug: finanzas
+subSectors:
+  - Banca Minorista
+  - Banca Corporativa y de Inversión
+  - Fintech
+kpis:
+  - metric: "Reducción de falsos positivos en fraude"
+    expectedRoi: "[EST] 30% - 45% de mejora"
+  - metric: "Tiempo de evaluación crediticia"
+    expectedRoi: "[EST] De 3 días a menos de 1 hora"
+  - metric: "Reducción de morosidad (NPL)"
+    expectedRoi: "[EST] 10% - 15% de reducción en cartera vencida"
+  - metric: "Precisión de Scoring Predictivo"
+    expectedRoi: "[EST] +20% en Gini index"
+  - metric: "Eficiencia en Onboarding (KYC)"
+    expectedRoi: "[EST] -60% en tiempo de verificación"
+regulations:
+  - Basilea III / IV
+  - PCI-DSS
+  - AML-KYC
+  - SBS (Perú)
+relevantPersonas:
+  - cfo
+  - ciso
+  - cdo
+roiCases:
+  - title: "Detección Temprana de Fraude Transaccional"
+    description: "Implementación de un pipeline de streaming y ML para calificación de transacciones en tiempo real."
+    context: "Institución financiera procesando >5M tx/día con alta tasa de falsos positivos en el sistema legacy."
+    metrics:
+      - value: "-45%"
+        label: "Pérdidas por fraude"
+      - value: "<50ms"
+        label: "Latencia de inferencia"
+contentAngles:
+  - id: fraude-tiempo-real-banca
+    title: Detección de Fraude en Tiempo Real
+    brief: >-
+      Artículo de 1200 palabras para el CFO sobre cómo la IA predictiva y el
+      streaming de datos reducen las pérdidas por fraude en un 45% cumpliendo
+      con normativas PCI-DSS y AML.

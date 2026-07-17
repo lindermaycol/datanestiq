@@ -1,0 +1,49 @@
+# .specify/extensions.yml
+# Configuración avanzada de Hooks para el flujo de trabajo Spec-Kit en Datanestiq
+
+hooks:
+  # Se ejecuta ANTES de que el agente comience a planificar el código.
+  before_plan:
+    - name: "Taxonomy Sync Check (Spec 003)"
+      description: "Verifica que el plan respete la Taxonomía Oficial de 6 Pilares y 10 Sectores antes de ser generado."
+      command: "node scripts/validate-taxonomy.js"
+      fail_on_error: true
+
+  # ---------------------------------------------------------------------------
+  # Pre-Hooks (before_implement)
+  # ---------------------------------------------------------------------------
+  # Se ejecuta ANTES de que el agente comience a implementar el código.
+  before_implement:
+    - name: "Strict Lint & Security Check"
+      description: "Ejecuta un linter estricto y un chequeo de vulnerabilidades antes de permitir la implementación."
+      command: "npm run lint:strict && npm run security:scan"
+      fail_on_error: true
+    - name: "WordPress Architecture Standards (Spec 006)"
+      description: "Valida los estándares de codificación PHP para la arquitectura modular de WordPress."
+      command: "composer run phpcs"
+      fail_on_error: false
+  
+  # ---------------------------------------------------------------------------
+  # Post-Hooks (after_tasks)
+  # ---------------------------------------------------------------------------
+  # Se ejecuta DESPUÉS de que se ha generado el listado de tareas técnicas (tasks.md).
+  after_tasks:
+    - name: "Sync Jira & Slack Notification"
+      description: "Sincroniza las tareas con Jira y notifica al canal de Slack para aprobación humana."
+      command: "node scripts/sync-jira-slack.js --file tasks.md --channel #datanestiq-approvals"
+      # Si falla la notificación, solo advertimos, pero continuamos el flujo.
+      fail_on_error: false
+  
+  # ---------------------------------------------------------------------------
+  # Post-Hooks (after_implement)
+  # ---------------------------------------------------------------------------
+  # Se ejecuta DESPUÉS de que el agente ha finalizado la implementación de las tareas.
+  after_implement:
+    - name: "OpenWiki Documentation Sync Check (Spec 005)"
+      description: "Invoca la auditoría de OpenWiki para asegurar sincronía entre código y documentación viva."
+      command: "npm run openwiki:audit"
+      fail_on_error: true
+    - name: "Performance & Accessibility Audit (Spec 001)"
+      description: "Ejecuta Lighthouse CI para garantizar 60fps (GSAP) y cumplimiento estricto WCAG 2.2 AA."
+      command: "npm run audit:lighthouse"
+      fail_on_error: true

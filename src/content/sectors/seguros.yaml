@@ -1,0 +1,90 @@
+id: sector-seguros
+title: Seguros
+description: >-
+  Automatización de siniestros, personalización de primas y detección de
+  reclamos fraudulentos en tiempo real.
+icon: ph-shield-check
+ciiu: '65'
+keywords:
+  - seguros
+  - insurtech
+  - siniestros
+  - primas
+  - fraude
+  - reclamos
+  - pólizas
+  - actuarial
+  - liquidación de siniestros rápida
+  - pricing dinámico
+seo:
+  title: Analítica Predictiva para Empresas de Seguros | Datanestiq
+  description: >-
+    Motores de IA para acelerar el triage de siniestros, modelado dinámico de
+    primas y contención algorítmica de reclamos fraudulentos.
+hero:
+  headline: Agilidad Extrema y Precisión de Riesgo
+  subheadline: >-
+    Acelere la tramitación de siniestros sin comprometer el control.
+    Transformamos operaciones de seguros (Insurtech) con IA generativa y
+    predictiva.
+contrast:
+  problem: >-
+    Procesamiento manual y lento de reclamos que erosiona la experiencia del
+    asegurado, junto a vulnerabilidades críticas de fraude.
+  solution: >-
+    Triage automático de siniestros vía NLP y detección de patrones anómalos
+    (Computer Vision) en milisegundos para liquidaciones seguras.
+problems:
+  - code: siniestros
+    label: Resolución lenta de siniestros
+    solution: >-
+      Automatizamos la gestión y triage de siniestros mediante Procesamiento
+      Inteligente de Documentos (IDP) e IA, acelerando el ciclo de liquidación.
+  - code: fraude
+    label: Fuga de capital por reclamos fraudulentos
+    solution: >-
+      Desarrollamos modelos predictivos en tiempo real que identifican patrones
+      anómalos y reclamos fraudulentos antes de que el capital sea desembolsado.
+  - code: ebitda_tco
+    label: Impacto en EBITDA y TCO
+    solution: >-
+      Construimos modelos de negocio cuantificables con retornos ágiles (payback < 12 meses),
+      y arquitecturas modernas que reducen su TCO sin reemplazar su ERP core.
+slug: seguros
+subSectors:
+  - Seguros de Vida
+  - Seguros Generales y Vehiculares
+  - Insurtech
+kpis:
+  - metric: "Tiempo de resolución de siniestros menores"
+    expectedRoi: "[EST] De 15 días a menos de 24 horas"
+  - metric: "Detección temprana de reclamos fraudulentos"
+    expectedRoi: "[EST] +30% a 40% de precisión algorítmica"
+  - metric: "Reducción de siniestralidad técnica"
+    expectedRoi: "[EST] -5% a -10% mediante pricing dinámico"
+  - metric: "Eficiencia en estimación de reservas"
+    expectedRoi: "[EST] +25% de precisión actuarial"
+  - metric: "Automatización de Triage (Fast-track)"
+    expectedRoi: "[EST] 40% de siniestros resueltos sin toque humano"
+regulations:
+  - Solvencia II
+  - Superintendencia de Seguros (SBS)
+relevantPersonas:
+  - cfo
+  - cdo
+  - cio
+roiCases:
+  - title: "Hiperautomatización del Triage de Siniestros Menores"
+    description: "Evaluación algorítmica (Visión Computacional/NLP) para liquidación rápida y segura de pólizas vehiculares."
+    context: "Aseguradora procesando reclamos masivos con embudos manuales que demoraban >15 días."
+    metrics:
+      - value: "<24h"
+        label: "Tiempo de liquidación fast-track"
+      - value: "+40%"
+        label: "Siniestros resueltos sin toque humano"
+contentAngles:
+  - id: procesamiento-siniestros-ia
+    title: Hiperautomatización de Siniestros
+    brief: >-
+      Guía para líderes de Insurtech detallando el procesamiento inteligente de
+      documentos (IDP) para validar siniestros en tiempo récord.

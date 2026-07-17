@@ -1,0 +1,71 @@
+id: sector-educacion
+title: Educación
+description: >-
+  Prevención de deserción escolar, hiper-personalización del aprendizaje y
+  analítica para gestión académica.
+icon: ph-graduation-cap
+ciiu: '85'
+keywords:
+  - educación
+  - universidades
+  - edtech
+  - deserción
+  - estudiantes
+  - aprendizaje
+  - analítica académica
+  - retención estudiantil
+  - aprendizaje adaptativo
+  - admisión predictiva
+seo:
+  title: Analítica Predictiva e IA para Educación | Datanestiq
+  description: >-
+    Modelos predictivos de retención estudiantil y ecosistemas de datos
+    unificados para instituciones de educación superior.
+hero:
+  headline: Inteligencia Académica y Retención Estudiantil
+  subheadline: >-
+    Intervenciones proactivas impulsadas por datos. Asegure el éxito de sus
+    estudiantes y el crecimiento institucional mediante IA educativa.
+contrast:
+  problem: >-
+    Altas tasas de abandono detectadas cuando ya es tarde e incapacidad técnica
+    para personalizar la currícula a escala masiva.
+  solution: >-
+    Modelos que detectan patrones de riesgo de deserción tempranamente y motores
+    de recomendación para adaptar el aprendizaje a cada estudiante.
+problems:
+  - code: desercion
+    label: Altas tasas de abandono (Churn)
+    solution: >-
+      Desplegamos modelos predictivos que detectan patrones de riesgo de
+      deserción estudiantil con meses de anticipación, permitiendo
+      intervenciones tempranas.
+  - code: personalizacion
+    label: Dificultad para personalizar el aprendizaje
+    solution: >-
+      Integramos sistemas cognitivos que analizan el rendimiento individual para
+      generar trayectorias de aprendizaje hiper-personalizadas a escala.
+slug: educacion
+subSectors:
+  - Universidades
+  - EdTech
+  - Institutos Técnicos
+kpis:
+  - metric: Reducción de deserción estudiantil
+    expectedRoi: '[EST] -20%'
+  - metric: Incremento de matrícula
+    expectedRoi: '[EST] +15% de conversión'
+regulations:
+  - FERPA
+  - Ley Universitaria
+  - Privacidad de Menores
+relevantPersonas:
+  - ceo
+  - cio
+  - cdo
+contentAngles:
+  - id: prediccion-desercion-estudiantil
+    title: Evitando la Deserción Estudiantil con Analítica
+    brief: >-
+      Reporte para el equipo directivo sobre el uso de modelos predictivos que
+      identifican estudiantes en riesgo antes de que abandonen la institución.

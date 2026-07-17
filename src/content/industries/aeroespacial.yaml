@@ -1,0 +1,12 @@
+id: industry-aeroespacial
+title: Aeroespacial y Defensa
+ciiu: '30'
+keywords:
+  - aeroespacial
+  - aviación
+  - defensa
+  - vuelos
+  - mantenimiento aeronáutico
+relatedPillars:
+  - ai-data-science
+  - data-engineering

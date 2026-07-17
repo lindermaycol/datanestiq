@@ -2,8 +2,10 @@
 wp-admin/
 wp-includes/
 *.php
-!wp-config.php
 !wp-config-sample.php
+!public/api/chat.php
+!public/api/save_wizard.php
+# wp-config.php ignorado (contiene credenciales de BD; openwiki respeta .gitignore y ya no lo escanea)
 
 # Ignorar todo wp-content pero incluir temas y plugins específicos si es necesario
 wp-content/*
@@ -25,3 +27,26 @@ wp-content/backup-db/
 remote_extract.py
 local_setup.ps1
 srdb/
+
+# PII y logs (NO exponer; además openwiki respeta .gitignore, así los excluye del escaneo)
+secure_leads/
+*.jsonl
+
+# Spec Kit / Antigravity agent credentials (security)
+.agents/*
+!.agents/skills/
+.agents/skills/**/secrets/
+node_modules
+node_modules
+dist/
+.astro/
+
+# Basura y temporales
+.venv/
+appjs_extract.txt
+appjs_lines.txt
+appjs_lines2.txt
+indexhtml_extract.txt
+indexhtml_lines.txt
+openwiki-log.txt
+conversation_history/

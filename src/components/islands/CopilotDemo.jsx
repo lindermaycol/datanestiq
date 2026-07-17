@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import { CHAT_API } from '../../lib/endpoints';
+const TypewriterText = ({ text }) => {
+    const [displayedText, setDisplayedText] = useState('');
+    
+    React.useEffect(() => {
+        let i = 0;
+        let current = '';
+        const interval = setInterval(() => {
+            if (i >= text.length) {
+                clearInterval(interval);
+                return;
+            }
+            current += text[i];
+            setDisplayedText(current);
+            i++;
+        }, 15);
+
+        return () => clearInterval(interval);
+    }, [text]);
+
+    // Parse simple bold tags and lists
+    let html = displayedText.replace(/\*\*(.*?)\*\*/g, '<b class="text-white">$1</b>');
+    html = html.replace(/\n/g, '<br />');
+
+    return (
+        <div 
+            className="text-sm text-gray-300 font-mono"
+            dangerouslySetInnerHTML={{ __html: html }}
+        />
+    );
+};
+
+import taxonomyCorpus from '../../data/taxonomyCorpus.json';
+
+export default function CopilotDemo() {
+    const [selectedPrompt, setSelectedPrompt] = useState(null);
+    const [response, setResponse] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Selección determinista curada: primeros 3 pilares, primer prompt de cada uno
+    const demoItems = taxonomyCorpus.slice(0, 3).map(p => ({
+        prompt: p.copilotPrompts[0],
+        positioning: p.competitivePositioning || '',
+        proofs: p.proofPoints ? p.proofPoints.map(pp => `${pp.client}: ${pp.result}`).join(' | ') : ''
+    }));
+
+    const runDemo = async (item) => {
+        if (isLoading) return;
+        
+        setSelectedPrompt(item.prompt);
+        setResponse('');
+        setIsLoading(true);
+
+        try {
+            // Using session_id 'copilot_demo' to route to heavy model in chat.php (Phase F)
+            const res = await fetch(CHAT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: 'copilot_demo',
+                    messages: [
+                        { role: 'system', content: `Eres el Copiloto Ejecutivo de Datanestiq. Responde de forma muy técnica, analítica y concisa (máximo 4 líneas) como un consultor de IA de alto nivel. Da respuestas basadas en nuestro posicionamiento: "${item.positioning}". Casos de éxito: "${item.proofs}".` },
+                        { role: 'user', content: item.prompt }
+                    ]
+                })
+            });
+
+            if (!res.ok) throw new Error('API Error');
+            const data = await res.json();
+            
+            setResponse(data.choices[0].message.content.trim());
+        } catch (e) {
+            console.error('Copilot Demo Error:', e);
+            setResponse('Error de conexión. El modelo no se encuentra disponible temporalmente.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="max-w-4xl mx-auto py-12 px-4">
+            <div className="text-center mb-8">
+                <div className="inline-block px-3 py-1 bg-brand/20 border border-brand/30 text-brandCyan rounded-full text-xs font-semibold mb-4 tracking-wider">
+                    <i className="ph ph-terminal-window mr-1"></i> DEMO TÉCNICA
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Copiloto Estratégico (C-Level)</h3>
+                <p className="text-gray-400 text-sm">Visualiza cómo nuestro ecosistema asiste en decisiones complejas de negocio en tiempo real.</p>
+            </div>
+
+            <div className="bg-darker border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                {/* Header Terminal */}
+                <div className="bg-black/50 border-b border-white/10 px-4 py-3 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <div className="mx-auto text-xs font-mono text-gray-500">datanestiq_copilot_v2.sh</div>
+                </div>
+
+                {/* Body Terminal */}
+                <div className="p-6 md:p-8 flex flex-col gap-6">
+                    {/* Prompts list */}
+                    <div className="flex flex-col gap-3">
+                        <div className="text-xs text-brandCyan font-mono mb-2">Selecciona un escenario analítico:</div>
+                        {demoItems.map((item, i) => (
+                            <button
+                                key={i}
+                                onClick={() => runDemo(item)}
+                                disabled={isLoading}
+                                className={`text-left px-4 py-3 rounded-lg border text-sm transition-all font-mono ${
+                                    selectedPrompt === item.prompt 
+                                        ? 'bg-brand/20 border-brandCyan text-white'
+                                        : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30 hover:bg-white/10'
+                                }`}
+                            >
+                                <span className="text-brandCyan mr-2">&gt;</span> {item.prompt}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Output area */}
+                    <div className="bg-black/40 rounded-lg p-5 border border-white/5 min-h-[160px] font-mono flex flex-col">
+                        {!selectedPrompt && !isLoading && (
+                            <div className="text-gray-600 text-sm flex items-center justify-center flex-1">
+                                Esperando ejecución...
+                            </div>
+                        )}
+
+                        {isLoading && (
+                            <div className="flex items-center gap-2 text-brandCyan text-sm">
+                                <i className="ph ph-spinner-gap animate-spin"></i>
+                                Procesando inferencia...
+                            </div>
+                        )}
+
+                        {response && !isLoading && (
+                            <div className="animate-in fade-in duration-500">
+                                <div className="text-xs text-gray-500 mb-2">OUTPUT:</div>
+                                <TypewriterText text={response} />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

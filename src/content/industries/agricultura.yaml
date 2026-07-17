@@ -1,0 +1,15 @@
+id: industry-agricultura
+title: Agricultura y Agroindustria
+ciiu: '01'
+keywords:
+  - agro
+  - cultivos
+  - riego
+  - cadena de frío
+  - trazabilidad agrícola
+  - agroindustria
+  - sensores
+relatedPillars:
+  - ai-data-science
+  - data-engineering
+  - hiperautomatizacion
