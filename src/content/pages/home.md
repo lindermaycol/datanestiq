@@ -22,8 +22,4 @@ sections:
         alt: "Python"
       - src: "ph-docker-logo"
         alt: "Kubernetes"
-  - type: "testimonials"
-    quote: "[BORRADOR PARA APROBACIÓN - Opción 2] Nuestro compromiso fundamental es el ROI. No entregamos 'experimentos de IA', entregamos arquitecturas de datos robustas diseñadas matemáticamente para impactar el EBITDA y reducir la fricción operativa."
-    author: "Datanestiq"
-    role: "Firma Consultora B2B"
 ---
