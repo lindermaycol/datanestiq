@@ -222,10 +222,25 @@ export default function Chatbot() {
       setMessages([...messages, { role: 'user', content: 'Prefiero detallar mi caso específicamente.' }]);
   };
 
-  // Format AI text (bold tags, italic tags, markdown links, newlines)
+  // Format AI text (bold tags, italic tags, markdown links, newlines, lists)
   const formatText = (text) => {
-    return text.split('\n').map((line, i) => {
-      let formattedLine = line
+    const safeText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    return safeText.split('\n').map((line, i) => {
+      let formattedLine = line;
+      
+      const numMatch = formattedLine.match(/^(\s*)(\d+)\.\s+(.*)$/);
+      const bulletMatch = formattedLine.match(/^(\s*)([-*])\s+(.*)$/);
+      
+      if (numMatch) {
+          formattedLine = `<div class="ml-4 flex gap-2 mt-1"><span class="text-brandCyan font-bold min-w-[1.2rem]">${numMatch[2]}.</span><span>${numMatch[3]}</span></div>`;
+      } else if (bulletMatch) {
+          formattedLine = `<div class="ml-4 flex gap-2 mt-1"><span class="text-brandCyan font-bold min-w-[1rem]">&bull;</span><span>${bulletMatch[3]}</span></div>`;
+      } else {
+          formattedLine = `<span>${formattedLine}</span>`;
+      }
+      
+      formattedLine = formattedLine
         .replace(/\*\*(.*?)\*\*/g, '<b class="text-white">$1</b>')
         .replace(/\*(.*?)\*/g, '<i>$1</i>')
         .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-brandCyan underline hover:text-white transition-colors">$1</a>');
@@ -233,7 +248,7 @@ export default function Chatbot() {
       return (
         <React.Fragment key={i}>
           <span dangerouslySetInnerHTML={{ __html: formattedLine }} />
-          <br />
+          {(!numMatch && !bulletMatch && i < safeText.split('\n').length - 1) && <br />}
         </React.Fragment>
       );
     });

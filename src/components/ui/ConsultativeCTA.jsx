@@ -15,6 +15,19 @@ export default function ConsultativeCTA({ className = "btn-primary text-lg" }) {
     ctaText = "Evalúa potencial estratégico de IA";
   }
 
+  const isCfoContext = context.rol === 'cfo' || context.sector === 'finanzas' || context.sector === 'seguros';
+
+  if (isCfoContext) {
+    return (
+      <a 
+        href="/business-case"
+        className={className}
+      >
+        {ctaText}
+      </a>
+    );
+  }
+
   return (
     <button 
       className={className} 
