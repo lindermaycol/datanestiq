@@ -50,6 +50,11 @@ problems:
     solution: >-
       Establecemos arquitecturas de datos inmutables y linaje de datos completo,
       garantizando auditorías transparentes y 100% trazables.
+  - code: calidad_padrones
+    label: Calidad de padrones ciudadanos
+    solution: >-
+      Implementamos modelos de Machine Learning y MDM para limpiar, unificar y deduplicar
+      padrones a escala nacional, garantizando una fuente única de verdad para las políticas públicas.
 slug: publico
 subSectors:
   - Ministerios y Secretarías

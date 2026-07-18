@@ -20,7 +20,7 @@ export default function Chatbot() {
   
   // Lead tracking
   const sessionIdRef = useRef('session_' + Date.now());
-  const [leadData, setLeadData] = useState({ email: null, telefono: null, organizacion: null, urgencia: null });
+  const [leadData, setLeadData] = useState({ email: '', telefono: '', organizacion: '', reto: '', stack: '' });
   const [leadConfirmed, setLeadConfirmed] = useState(false);
   const [showLeadCard, setShowLeadCard] = useState(false);
 
@@ -51,7 +51,9 @@ export default function Chatbot() {
                 session_id: sessionIdRef.current,
                 email: leadInfo.email,
                 telefono: leadInfo.telefono,
-                organizacion: leadInfo.organizacion
+                organizacion: leadInfo.organizacion,
+                reto: leadInfo.reto,
+                stack: leadInfo.stack
             })
         });
     } catch (e) {
@@ -280,8 +282,8 @@ export default function Chatbot() {
 
         {/* State Machine: Intro Buttons */}
         {chatState.step === 'intro' && !isTyping && (
-            <div className="flex flex-col gap-2 mt-2 animate-in fade-in">
-                {sectorsCorpus.slice(0, 4).map(s => (
+            <div className="flex flex-col gap-2 mt-2 animate-in fade-in max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                {sectorsCorpus.map(s => (
                     <button key={s.id} onClick={() => selectSector(s.id)} className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition-colors text-gray-300">
                         {s.title}
                     </button>
@@ -320,7 +322,15 @@ export default function Chatbot() {
         {/* Lead Capture Card */}
         {showLeadCard && (
           <div className="bg-brand/10 border border-brand/30 rounded-2xl p-4 mt-2 animate-in fade-in">
-            <p className="text-xs text-gray-300 mb-3">Confirma tus datos para que un arquitecto de datos de Datanestiq te contacte:</p>
+            <p className="text-xs text-gray-300 mb-2">Confirma tus datos para que un arquitecto de datos de Datanestiq te contacte:</p>
+            <p className="text-xs text-brandCyan mb-3 italic">Un arquitecto revisará tu caso y te enviará un diagnóstico inicial en 48 horas. Sin compromiso.</p>
+            <input
+              type="text"
+              defaultValue={leadData.organizacion || ''}
+              onChange={(e) => setLeadData(prev => ({ ...prev, organizacion: e.target.value }))}
+              placeholder="Empresa / Entidad"
+              className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
+            />
             <input
               type="email"
               defaultValue={leadData.email || ''}
@@ -333,6 +343,20 @@ export default function Chatbot() {
               defaultValue={leadData.telefono || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, telefono: e.target.value }))}
               placeholder="Celular o fijo"
+              className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
+            />
+            <input
+              type="text"
+              defaultValue={leadData.reto || ''}
+              onChange={(e) => setLeadData(prev => ({ ...prev, reto: e.target.value }))}
+              placeholder="Reto principal"
+              className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
+            />
+            <input
+              type="text"
+              defaultValue={leadData.stack || ''}
+              onChange={(e) => setLeadData(prev => ({ ...prev, stack: e.target.value }))}
+              placeholder="Sistemas actuales / situación de datos"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-3 focus:outline-none focus:border-brandCyan"
             />
             <button onClick={confirmLead} className="w-full btn-primary text-sm py-2">

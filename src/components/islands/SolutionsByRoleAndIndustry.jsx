@@ -9,13 +9,7 @@ export default function SolutionsByRoleAndIndustry() {
     const [selectedRole, setSelectedRole] = useState(null);
 
     const resetServiceCards = () => {
-        const cards = document.querySelectorAll('.service-card');
-        cards.forEach(card => {
-            card.style.opacity = '1';
-            card.style.transform = 'none';
-            card.style.borderColor = '';
-            card.style.boxShadow = '';
-        });
+        semanticHighlight.set({});
     };
 
     const handleRoleClick = (role) => {
@@ -27,23 +21,12 @@ export default function SolutionsByRoleAndIndustry() {
             servicesSection.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Resaltar por DOM las tarjetas de servicio de interés, atenuar el resto
-        const interest = new Set(role.pillarsOfInterest); // slugs de pilar
-        const cards = document.querySelectorAll('.service-card');
-        cards.forEach(card => {
-            const slug = card.getAttribute('data-service-id');
-            if (interest.has(slug)) {
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1.02)';
-                card.style.borderColor = 'var(--brand-cyan)';
-                card.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.1)';
-            } else {
-                card.style.opacity = '0.3';
-                card.style.transform = 'scale(0.98)';
-                card.style.borderColor = 'rgba(255,255,255,0.1)';
-                card.style.boxShadow = 'none';
-            }
+        // Resaltar a través del store global
+        const highlightMap = {};
+        role.pillarsOfInterest.forEach(pillar => {
+            highlightMap[`service-${pillar}`] = 1.0;
         });
+        semanticHighlight.set(highlightMap);
     };
 
     const handleIndustryClick = (sectorId) => {

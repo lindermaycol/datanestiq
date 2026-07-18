@@ -15,7 +15,9 @@
       ],
       "pillarsOfInterest": [
         "business-intelligence",
-        "estrategia-datos-ia"
+        "estrategia-datos-ia",
+        "hiperautomatizacion",
+        "ai-data-science"
       ],
       "buyerRole": "economic",
       "objections": [
@@ -68,7 +70,8 @@
       ],
       "pillarsOfInterest": [
         "data-engineering",
-        "sistemas-digitales"
+        "sistemas-digitales",
+        "hiperautomatizacion"
       ],
       "buyerRole": "technical",
       "objections": [

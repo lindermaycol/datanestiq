@@ -338,7 +338,8 @@
       "UiPath",
       "Automation Anywhere",
       "Python RPA",
-      "Document AI"
+      "Document AI",
+      "Cloud / Híbrido / On-Premise"
     ],
     "proofPoints": [
       {
@@ -346,7 +347,7 @@
         "result": "[EST] 70% de tareas repetitivas en back-office automatizadas"
       }
     ],
-    "competitivePositioning": "No implementamos scripts frágiles de RPA que se rompen con cada actualización; usamos Inteligencia Artificial (IDP y LLMs) para crear automatización cognitiva que maneja excepciones."
+    "competitivePositioning": "No implementamos scripts frágiles de RPA que se rompen con cada actualización; usamos Inteligencia Artificial (IDP y LLMs) para crear automatización cognitiva que maneja excepciones. Soportamos arquitecturas Cloud, Híbrido y despliegues 100% On-Premise."
   },
   {
     "id": "sistemas-digitales",

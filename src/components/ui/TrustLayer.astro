@@ -1,18 +1,18 @@
 ---
 // TrustLayer.astro
 const { 
-  heading = 'Trusted by Visionary Organizations',
+  heading = 'Tecnologías que dominamos',
   logos = [
-    { src: 'ph-bank', alt: 'FINCORP' },
-    { src: 'ph-heartbeat', alt: 'MEDITECH' },
-    { src: 'ph-storefront', alt: 'GLOBAL RETAIL' },
-    { src: 'ph-factory', alt: 'INDUX', class: 'hidden md:block' },
-    { src: 'ph-shield-check', alt: 'SECURE NET', class: 'hidden lg:block' }
+    { src: 'ph-cloud', alt: 'AWS' },
+    { src: 'ph-database', alt: 'Databricks' },
+    { src: 'ph-snowflake', alt: 'Snowflake' },
+    { src: 'ph-file-code', alt: 'Python', class: 'hidden md:block' },
+    { src: 'ph-docker-logo', alt: 'Kubernetes', class: 'hidden lg:block' }
   ],
-  testimonialQuote = '"Datanestiq no solo ordenó nuestra gobernanza, sus modelos predictivos aumentaron la retención de clientes en un 24% durante el primer trimestre."',
-  testimonialAuthor = 'María Jiménez',
-  testimonialRole = 'Directora de Operaciones, RetailCorp',
-  testimonialLabel = 'MJ'
+  testimonialQuote = '"[BORRADOR PARA APROBACIÓN - Opción 2] Nuestro compromiso fundamental es el ROI. No entregamos \'experimentos de IA\', entregamos arquitecturas de datos robustas diseñadas matemáticamente para impactar el EBITDA y reducir la fricción operativa."',
+  testimonialAuthor = 'Datanestiq',
+  testimonialRole = 'Firma Consultora B2B',
+  testimonialLabel = 'DN'
 } = Astro.props;
 ---
 <section class="py-20 border-y border-white/10 bg-black/30 relative overflow-hidden">
@@ -23,7 +23,7 @@ const {
       </h3>
     </div>
     
-    <!-- Logos (Simulated) -->
+    <!-- Tech Stack Logos -->
     <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60">
       {logos.map(logo => (
         <div class={`text-xl font-bold font-serif ${logo.class || ''}`} data-animate="stagger-up" style="opacity: 0">

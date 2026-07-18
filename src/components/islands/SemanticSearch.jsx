@@ -17,31 +17,7 @@ export default function SemanticSearch() {
     const highlightState = useStore(semanticHighlight);
     const contextState = useStore(userContext);
 
-    // Apply highlight from store
-    useEffect(() => {
-        if (!highlightState || Object.keys(highlightState).length === 0) return;
-        
-        const serviceCards = document.querySelectorAll('.service-card');
-        if (!serviceCards.length) return;
-        
-        const threshold = 0.2;
-        serviceCards.forEach(card => {
-            const sId = card.getAttribute('data-service-id');
-            const score = highlightState[`service-${sId}`] || 0;
-            
-            if (score >= threshold) {
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1.02)';
-                card.style.borderColor = 'var(--brand-cyan)';
-                card.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.1)';
-            } else {
-                card.style.opacity = '0.3';
-                card.style.transform = 'scale(0.98)';
-                card.style.borderColor = 'rgba(255,255,255,0.1)';
-                card.style.boxShadow = 'none';
-            }
-        });
-    }, [highlightState]);
+    // DOM manipulation for semanticHighlight has been moved to HighlightSync.jsx
 
     // Prepare corpus
     useEffect(() => {
@@ -121,24 +97,24 @@ export default function SemanticSearch() {
 
     const handleResults = (results) => {
         const highlightMap = {};
+        const services = [];
         
-        // results is array of { index, score }
-        // The higher the score, the better the match. Typically score > 0.3 is relevant.
         results.forEach(res => {
             const item = corpusRef.current[res.index];
-            highlightMap[item.id] = res.score;
+            if (item.id.startsWith('service-')) {
+                services.push({ id: item.id, score: res.score });
+            } else {
+                highlightMap[item.id] = res.score;
+            }
+        });
+        
+        services.sort((a, b) => b.score - a.score);
+        const topServices = services.filter(s => s.score > 0.35).slice(0, 3);
+        
+        topServices.forEach(s => {
+            highlightMap[s.id] = 1.0;
         });
 
-        // 1. Publish to store for React components (like DiagnosticWizard sectors)
-        semanticHighlight.set(highlightMap);
-
-        // 2. Manipulate DOM for static Astro components (Services)
-        // Find the top 2 matching services to highlight, dim the rest
-        const serviceMatches = results
-            .map(r => ({ id: corpusRef.current[r.index].id, score: r.score }))
-            .filter(r => r.id.startsWith('service-'));
-        
-        // Find if an extended industry is the top match
         const topMatch = results[0];
         if (topMatch) {
             const topItem = corpusRef.current[topMatch.index];
@@ -146,14 +122,11 @@ export default function SemanticSearch() {
                 const industryData = extendedIndustries.find(i => i.id === topItem.id);
                 if (industryData) {
                     setIndustryMatch(industryData);
-                    // Override service matches with industry's related pillars
-                    industryData.relatedPillars.forEach(pillarSlug => {
-                        highlightMap[`service-${pillarSlug}`] = topMatch.score;
-                        const existingMatch = serviceMatches.find(m => m.id === `service-${pillarSlug}`);
-                        if (!existingMatch) {
-                            serviceMatches.push({ id: `service-${pillarSlug}`, score: topMatch.score });
-                        }
+                    industryData.relatedPillars.slice(0, 3).forEach(pillarSlug => {
+                        highlightMap[`service-${pillarSlug}`] = 1.0;
                     });
+                } else {
+                    setIndustryMatch(null);
                 }
             } else {
                 setIndustryMatch(null);
@@ -162,9 +135,7 @@ export default function SemanticSearch() {
             setIndustryMatch(null);
         }
 
-        // Find max score among services
-        const maxScore = Math.max(...serviceMatches.map(s => s.score));
-        const threshold = Math.max(0.2, maxScore * 0.75); // Dynamic threshold
+        semanticHighlight.set(highlightMap);
     };
 
     const handleSearch = () => {
@@ -187,14 +158,6 @@ export default function SemanticSearch() {
         semanticHighlight.set({});
         userChallenge.set('');
         setIndustryMatch(null);
-        
-        const serviceCards = document.querySelectorAll('.service-card');
-        serviceCards.forEach(card => {
-            card.style.opacity = '1';
-            card.style.transform = 'none';
-            card.style.borderColor = '';
-            card.style.boxShadow = '';
-        });
     };
 
     return (

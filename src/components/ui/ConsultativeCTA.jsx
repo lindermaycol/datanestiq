@@ -7,11 +7,11 @@ export default function ConsultativeCTA({ className = "btn-primary text-lg" }) {
 
   let ctaText = "Diagnóstico estratégico gratuito";
   
-  if (context.rol === 'cdo_publico' || context.sector === 'publico') {
+  if (context.rol === 'cdo' || context.sector === 'publico') {
     ctaText = "Solicita diagnóstico de madurez en IA";
-  } else if (context.rol === 'cfo_economico' || context.sector === 'finanzas' || context.sector === 'seguros') {
+  } else if (context.rol === 'cfo' || context.sector === 'finanzas' || context.sector === 'seguros') {
     ctaText = "Auditoría de ROI y pérdidas evitables";
-  } else if (context.rol === 'ceo_estrategico') {
+  } else if (context.rol === 'ceo') {
     ctaText = "Evalúa potencial estratégico de IA";
   }
 

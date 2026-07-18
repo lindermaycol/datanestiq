@@ -12,6 +12,7 @@ import CopilotDemo from '../components/islands/CopilotDemo.jsx';
 import SemanticSearch from '../components/islands/SemanticSearch.jsx';
 import MultiStepWizard from '../components/islands/MultiStepWizard.jsx';
 import SolutionsByRoleAndIndustry from '../components/islands/SolutionsByRoleAndIndustry.jsx';
+import HighlightSync from '../components/islands/HighlightSync.jsx';
 import { getEntry } from 'astro:content';
 
 const homeEntry = await getEntry('pages', 'home');
@@ -22,6 +23,7 @@ const homeData = homeEntry?.data;
   <Navbar />
   
   <main>
+    <HighlightSync client:load />
     <Hero 
       headline={homeData?.hero?.headline}
       subheadline={homeData?.hero?.subheadline}
