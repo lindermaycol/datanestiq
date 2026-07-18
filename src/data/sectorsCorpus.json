@@ -484,7 +484,17 @@
       "cio",
       "cto",
       "cdo"
-    ]
+    ],
+    "institutionalContinuity": {
+      "title": "Continuidad Institucional y Transferencia de Conocimiento",
+      "description": "Diseñamos soluciones preparadas para sobrevivir a los ciclos políticos y cambios de gestión. No generamos dependencia tecnológica: entregamos documentación exhaustiva, gobernanza clara y capacitación técnica a los equipos de planta.",
+      "features": [
+        "Transferencia de conocimiento al equipo interno",
+        "Documentación técnica y operativa entregable",
+        "Capacidad instalada y ownership institucional",
+        "Arquitectura sostenible ante rotación de autoridades"
+      ]
+    }
   },
   {
     "id": "sector-retail",

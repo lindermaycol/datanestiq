@@ -71,6 +71,11 @@ export const sectorSchema = z.object({
       label: z.string(),
     })).optional()
   })).optional(),
+  institutionalContinuity: z.object({
+    title: z.string(),
+    description: z.string(),
+    features: z.array(z.string()),
+  }).optional(),
   contentAngles: z.array(z.object({ id: z.string(), title: z.string(), brief: z.string() })).optional(),
 });
 
