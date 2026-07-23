@@ -3,8 +3,10 @@ wp-admin/
 wp-includes/
 *.php
 !wp-config-sample.php
-!public/api/chat.php
-!public/api/save_wizard.php
+# App PHP propio (NO core WordPress): API, panel CRM interno y scripts. No contienen secretos (leen de .env).
+!public/api/*.php
+!public/admin/*.php
+!scripts/*.php
 # wp-config.php ignorado (contiene credenciales de BD; openwiki respeta .gitignore y ya no lo escanea)
 
 # Ignorar todo wp-content pero incluir temas y plugins específicos si es necesario

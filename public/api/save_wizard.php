@@ -41,11 +41,59 @@ $stack = isset($data['stack']) ? substr(strip_tags($data['stack']), 0, 500) : ''
 $score = isset($data['score']) ? (int)$data['score'] : 0;
 $session_id = isset($data['session_id']) ? substr(strip_tags($data['session_id']), 0, 50) : 'unknown';
 
-// We write to the secure directory, OUTSIDE of public/
-// public/api/save_wizard.php -> ../../secure_leads/leads_wizard.csv
-$csv_file = __DIR__ . '/../../secure_leads/leads_wizard.csv';
+// Recorrido del usuario (journey path) — enviado por Chatbot.jsx en confirmLead
+$journey = isset($data['journey']) ? $data['journey'] : [];
+$source = isset($data['source']) ? substr(strip_tags($data['source']), 0, 50) : 'chatbot';
 
-// If file doesn't exist, create it and write headers
+// --- 1. Persistencia SQLite (primaria, Spec 014) ---
+$sqlite_ok = false;
+$db_path = __DIR__ . '/../../secure_leads/crm.sqlite';
+
+if (file_exists($db_path)) {
+    try {
+        $db = new PDO('sqlite:' . $db_path);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db->exec('PRAGMA journal_mode=WAL');
+        $db->exec('PRAGMA foreign_keys=ON');
+
+        $db->beginTransaction();
+
+        // Upsert lead (INSERT OR UPDATE por session_id)
+        $existing = $db->prepare("SELECT id FROM leads WHERE session_id = ?");
+        $existing->execute([$session_id]);
+        $lead_id = $existing->fetchColumn();
+
+        if ($lead_id) {
+            $upd = $db->prepare("UPDATE leads SET email = ?, telefono = ?, nombre = ?, organizacion = ?, reto = ?, stack = ?, score = ?, updated_at = datetime('now') WHERE id = ?");
+            $upd->execute([$email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $lead_id]);
+        } else {
+            $ins = $db->prepare("INSERT INTO leads (session_id, email, telefono, nombre, organizacion, reto, stack, score, source, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', datetime('now'), datetime('now'))");
+            $ins->execute([$session_id, $email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $source]);
+            $lead_id = (int)$db->lastInsertId();
+        }
+
+        // Guardar interacciones del recorrido
+        if (is_array($journey) && count($journey) > 0) {
+            $int_ins = $db->prepare("INSERT INTO interactions (lead_id, interaction_type, content, created_at) VALUES (?, ?, ?, datetime('now'))");
+            foreach ($journey as $step) {
+                $type = is_array($step) ? ($step['type'] ?? 'flow_step') : 'flow_step';
+                $content = is_array($step) ? json_encode($step) : (string)$step;
+                $int_ins->execute([$lead_id, $type, $content]);
+            }
+        }
+
+        $db->commit();
+        $sqlite_ok = true;
+
+    } catch (PDOException $e) {
+        if (isset($db) && $db->inTransaction()) $db->rollBack();
+        error_log('save_wizard SQLite error: ' . $e->getMessage());
+        // Continúa al CSV como fallback
+    }
+}
+
+// --- 2. CSV fallback (heredado — se retirará cuando SQLite esté validado en prod) ---
+$csv_file = __DIR__ . '/../../secure_leads/leads_wizard.csv';
 $is_new = !file_exists($csv_file);
 $fp = fopen($csv_file, 'a');
 if ($fp) {
@@ -64,8 +112,6 @@ if ($fp) {
         $score
     ]);
     fclose($fp);
-    echo json_encode(['status' => 'success']);
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Internal Server Error', 'details' => 'Could not write lead.']);
 }
+
+echo json_encode(['status' => 'success', 'sqlite' => $sqlite_ok]);

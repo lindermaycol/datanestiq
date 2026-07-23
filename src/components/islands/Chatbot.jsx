@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { lastUserQuery, chatbotOpen } from '../../store/index';
 import { CHAT_API, SAVE_WIZARD_API } from '../../lib/endpoints';
+import AppointmentPicker from './AppointmentPicker.jsx';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import personas from '../../data/personas.json';
 export default function Chatbot() {
@@ -23,6 +24,9 @@ export default function Chatbot() {
   const [leadData, setLeadData] = useState({ email: '', telefono: '', organizacion: '', reto: '', stack: '' });
   const [leadConfirmed, setLeadConfirmed] = useState(false);
   const [showLeadCard, setShowLeadCard] = useState(false);
+
+  // Journey tracking (Spec 014) — acumula pasos sin fetch
+  const journeyRef = useRef([]);
 
   const extractLeadSignals = (text) => {
     const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
@@ -53,7 +57,9 @@ export default function Chatbot() {
                 telefono: leadInfo.telefono,
                 organizacion: leadInfo.organizacion,
                 reto: leadInfo.reto,
-                stack: leadInfo.stack
+                stack: leadInfo.stack,
+                source: 'chatbot',
+                journey: journeyRef.current,
             })
         });
     } catch (e) {
@@ -69,9 +75,12 @@ export default function Chatbot() {
     
     setDisplayMessages(prev => [
         ...prev, 
-        { role: 'assistant', content: '¡Perfecto! Hemos recibido tus datos. Un arquitecto de datos de Datanestiq se pondrá en contacto contigo muy pronto. 🎯' }
+        { role: 'assistant', content: '¡Perfecto! Hemos recibido tus datos. Un arquitecto de datos de Datanestiq se pondrá en contacto contigo muy pronto. 🎯 ¿Te gustaría agendar una cita directamente?' }
     ]);
+    setShowScheduler(true);
   };
+
+  const [showScheduler, setShowScheduler] = useState(false);
 
   // Initialize intro message
   useEffect(() => {
@@ -109,6 +118,9 @@ export default function Chatbot() {
     if (chatState.step !== 'semantic') {
         setChatState(prev => ({ ...prev, step: 'semantic' }));
     }
+
+    // Journey: registrar mensaje de texto libre (sin fetch adicional)
+    journeyRef.current.push({ type: 'chat_message', content: text, step: chatState.step });
 
     extractLeadSignals(text);
 
@@ -156,6 +168,7 @@ export default function Chatbot() {
   const selectSector = (sectorId) => {
       const sectorObj = sectorsCorpus.find(s => s.id === sectorId);
       setChatState(prev => ({ ...prev, sector: sectorId, step: 'role' }));
+      journeyRef.current.push({ type: 'flow_step', step: 'sector', value: sectorId, label: sectorObj.title });
       
       const newDisplay = [
           ...displayMessages,
@@ -170,6 +183,7 @@ export default function Chatbot() {
       const roleObj = personas.roles.find(r => r.id === roleId);
       const sectorObj = sectorsCorpus.find(s => s.id === chatState.sector);
       setChatState(prev => ({ ...prev, role: roleId, step: 'problem' }));
+      journeyRef.current.push({ type: 'flow_step', step: 'role', value: roleId, label: roleObj.title });
       
       const objectionsStr = roleObj.objections ? roleObj.objections[0] : 'implementación riesgosa';
       const kpisStr = sectorObj.kpis ? sectorObj.kpis.map(k => k.metric).join(', ') : 'eficiencia';
@@ -186,6 +200,7 @@ export default function Chatbot() {
 
   const selectProblem = (problemCode, problemLabel) => {
       setChatState(prev => ({ ...prev, problem: problemCode, step: 'solution' }));
+      journeyRef.current.push({ type: 'flow_step', step: 'problem', value: problemCode, label: problemLabel });
       
       const solutionMessage = getSolutionMessage(chatState.sector, problemCode);
       
@@ -378,6 +393,15 @@ export default function Chatbot() {
               Confirmar y agendar diagnóstico
             </button>
           </div>
+        )}
+
+        {/* Appointment Picker — tras captura exitosa del lead */}
+        {showScheduler && leadConfirmed && (
+          <AppointmentPicker
+            sessionId={sessionIdRef.current}
+            email={leadData.email}
+            onBooked={() => setShowScheduler(false)}
+          />
         )}
 
         {isTyping && (
