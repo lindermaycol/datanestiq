@@ -49,9 +49,13 @@ Pipeline en 3 capas (**datos → presentación → conversión**), auditado por 
 
 ## Pendiente / Roadmap
 
-### Acciones del usuario (no de código)
-- 🔴 **Desplegar a IONOS**: subir `dist/` + `public/api/*.php` + `.env` con claves (`GROQ`/`DASHSCOPE`/`GEMINI`). Hoy producción (`datanestiq.com`) puede tener una versión anterior.
-- 🔴 **Rotar la contraseña SSH de IONOS** (quedó en el historial de git; ver Spec 008).
+### Despliegue (ahora AUTOMATIZADO)
+- **Deploy a IONOS automatizado** con paramiko: agente `deploy-ops` + skill `ionos-deploy` + `scripts/deploy/deploy_ionos.py` (dry-run por defecto; `--confirm` para ejecutar). Guía completa: [`DESPLIEGUE-IONOS.md`](DESPLIEGUE-IONOS.md).
+- 🔴 **Acción del usuario (Paso 0):** migrar a **clave SSH** o **rotar la contraseña** de IONOS (comprometida en el historial de git) — el deploy automatizado usa la credencial del `.env`.
+- 🔴 **Acción del usuario:** poblar el `.env` de producción (claves LLM + `ADMIN_PASSWORD_HASH` + `ALLOWED_IPS`) antes del primer deploy con `--with-env --init-crm`.
+
+### Documentación sincronizada (Constitución §11 — activa)
+- Doc-sync obligatorio: `ESTADO-SPECS.md` + `Fases.md` + specs se actualizan en cada cambio; wiki con `npm run docs:sync` (Spec 010) antes de desplegar.
 
 ### Producto / decisiones abiertas
 - **Spec 008 (Headless WordPress):** en pausa. Decidir si el sitio se mantiene como Astro estático (recomendado por simplicidad) o se porta a WordPress headless.

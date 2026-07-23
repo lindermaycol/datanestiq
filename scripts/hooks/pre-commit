@@ -8,7 +8,10 @@ fail=0
 staged=$(git diff --cached --name-only --diff-filter=ACM)
 
 # --- 1) Rutas/archivos prohibidos por nombre (secretos/PII) ---
-blocked_paths=$(printf '%s\n' "$staged" | grep -E '(^|/)\.env($|\.)|(^|/)secure_leads/|\.jsonl$|(^|/)wp-config\.php$|(^|/)\.venv/' || true)
+# Nota: .env.example/.sample/.template son PLANTILLAS (placeholders) y SÍ se permiten.
+blocked_paths=$(printf '%s\n' "$staged" \
+  | grep -E '(^|/)\.env($|\.)|(^|/)secure_leads/|\.jsonl$|(^|/)wp-config\.php$|(^|/)\.venv/' \
+  | grep -vE '(^|/)\.env\.(example|sample|template)$' || true)
 if [ -n "$blocked_paths" ]; then
   echo "🔴 pre-commit: intentas commitear archivos sensibles (prohibido por la Constitución §6):"
   echo "$blocked_paths" | sed 's/^/    /'

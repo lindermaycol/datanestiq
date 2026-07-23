@@ -71,3 +71,11 @@ Estado detallado en `planes/ESTADO-SPECS.md`. Notas de gobernanza:
 - **Spec 005 (OpenWiki):** consolidada en Spec 010 (generador multi-destino).
 - **Spec 013 (Conversión Consultiva por Rol × Sector):** motor reutilizable `(rol × sector)`; roles nuevos entran como **fases**, no como specs nuevas.
 - **Spec 014 (CRM/Ciclo de vida del lead)** y **Spec 015 (Agendador):** en curso; ver §6 y §9.
+
+## 11. 🔴 Documentación sincronizada (obligatoria) + Ops IONOS
+
+- **Doc-sync mandatorio:** toda entrega significativa **actualiza la documentación en el mismo cambio**:
+  - `planes/ESTADO-SPECS.md` (estado por spec) y `planes/Fases.md` (hoja de ruta) — siempre al día.
+  - El `README.md` y las specs afectadas (`specs/NNN/`).
+  - La **documentación viva** (wiki/agentes/skills/blog) se regenera con la **Spec 010** (`scripts/docs-generator.mjs`, target `wiki`) — es la "spec de documentación" **activa**; córrela periódicamente y **antes de desplegar**. Ningún cambio de código queda sin su reflejo documental.
+- **Automatización de servidor (IONOS):** las acciones remotas (deploy, init del CRM, permisos) se hacen con **paramiko** vía la skill **`ionos-deploy`** y el agente **`deploy-ops`** (`scripts/deploy/deploy_ionos.py`). Credenciales solo desde `.env` (§6); **clave SSH preferida** sobre el password (comprometido en git). El **deploy real es acción deliberada** (dry-run por defecto; `--confirm` explícito; nunca autónomo). Guía: `planes/DESPLIEGUE-IONOS.md`.

@@ -30,5 +30,9 @@ Antigravity, este archivo es tu **guía de trabajo** en el repo de Datanestiq. L
 - `public/api/` — `chat.php` (failover Groq→DashScope→Gemini), `save_wizard.php`, `services.json`.
 - **Rama de trabajo:** `007-multi-pagina` (PR #1 hacia `main`). `main` es la foto vieja de Fase 0.
 
+## Despliegue y documentación (Constitución §11)
+- **Deploy a IONOS:** automatizado con **paramiko** vía la skill `ionos-deploy` y el agente `deploy-ops` (`scripts/deploy/deploy_ionos.py`). Credenciales solo desde `.env` (clave SSH preferida). **Dry-run por defecto; deploy real solo con `--confirm` explícito del usuario.** Guía: `planes/DESPLIEGUE-IONOS.md`.
+- **Doc-sync obligatorio:** toda entrega actualiza `planes/ESTADO-SPECS.md` + `planes/Fases.md` + specs afectadas en el mismo cambio; la wiki se regenera con `npm run docs:sync` (Spec 010) antes de desplegar.
+
 ## Forma de responder
 - Estructura clara, evidencia real, y marca las **decisiones que requieren la revisión del usuario** (no las decidas unilateralmente). Si detectas un dato faltante en la taxonomía, **repórtalo**; no lo hardcodees.
