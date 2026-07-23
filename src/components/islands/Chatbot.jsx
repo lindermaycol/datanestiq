@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { lastUserQuery, chatbotOpen } from '../../store/index';
+import { lastUserQuery, chatbotOpen, userContext, userChallenge } from '../../store/index';
 import { CHAT_API, SAVE_WIZARD_API } from '../../lib/endpoints';
 import AppointmentPicker from './AppointmentPicker.jsx';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
@@ -8,6 +8,7 @@ import personas from '../../data/personas.json';
 export default function Chatbot() {
   const query = useStore(lastUserQuery);
   const isOpen = useStore(chatbotOpen);
+  const ctxState = useStore(userContext);
   
   const [messages, setMessages] = useState([]);
   const [displayMessages, setDisplayMessages] = useState([]);
@@ -39,12 +40,20 @@ export default function Chatbot() {
     }));
   };
 
+  const leadPrefilledRef = useRef(false);
   useEffect(() => {
     // Si entramos en modo semántico y obtenemos lead, mostramos la tarjeta
     if ((leadData.email || leadData.telefono) && !leadConfirmed && !showLeadCard && chatState.step === 'semantic') {
       setShowLeadCard(true);
     }
-  }, [leadData, leadConfirmed, showLeadCard, chatState.step]);
+    if (showLeadCard && !leadPrefilledRef.current) {
+      leadPrefilledRef.current = true;
+      const initialReto = userChallenge.get() || (chatState.problem ? `Atender desafío de ${chatState.problem}` : '') || query || '';
+      if (initialReto) {
+        setLeadData(prev => ({ ...prev, reto: prev.reto || initialReto }));
+      }
+    }
+  }, [leadData, leadConfirmed, showLeadCard, chatState.step, chatState.problem, query]);
 
   const saveLead = async (leadInfo) => {
     try {
@@ -82,15 +91,51 @@ export default function Chatbot() {
 
   const [showScheduler, setShowScheduler] = useState(false);
 
-  // Initialize intro message
+  // Mapear slug de sector (ej 'finanzas') a ID de sectorsCorpus (ej 'sector-finanzas') - Precisión 2
+  const mapSectorSlugToId = (sectorSlug) => {
+    if (!sectorSlug) return null;
+    const found = sectorsCorpus.find(s => s.id === sectorSlug || s.id === `sector-${sectorSlug}` || s.id.endsWith(`-${sectorSlug}`));
+    return found ? found.id : null;
+  };
+
+  // Initialize intro message or inherit active context chip upon FIRST opening of chatbot (Refix F-03 - 0-LLM)
   useEffect(() => {
-    if (!initialized.current) {
-        setDisplayMessages([
-            { role: 'assistant', content: '¡Hola! Soy el AI Concierge de Datanestiq. Estoy aquí para entender tus desafíos operativos y sugerirte soluciones de IA o Datos. ¿A qué sector perteneces?' }
-        ]);
+    if (isOpen && !initialized.current) {
         initialized.current = true;
+
+        const matchedSectorId = mapSectorSlugToId(ctxState.sector);
+        const matchedRoleObj = personas.roles.find(r => r.id === ctxState.rol);
+        const matchedSectorObj = matchedSectorId ? sectorsCorpus.find(s => s.id === matchedSectorId) : null;
+
+        if (matchedSectorObj && matchedRoleObj) {
+            setChatState({ step: 'problem', sector: matchedSectorObj.id, role: matchedRoleObj.id, problem: null });
+            journeyRef.current.push({ type: 'context_inherited', sector: matchedSectorObj.id, role: matchedRoleObj.id });
+
+            const kpisStr = matchedSectorObj.kpis ? matchedSectorObj.kpis.map(k => k.metric).join(', ') : 'eficiencia';
+            const regStr = matchedSectorObj.regulations ? matchedSectorObj.regulations.join(', ') : 'normativas vigentes';
+            
+            setDisplayMessages([
+                { role: 'assistant', content: `¡Hola! Veo que estás explorando como ${matchedRoleObj.title} en ${matchedSectorObj.title}. Sabemos que buscas "${matchedRoleObj.decisionCriteria?.[0] || 'ROI'}" y optimizar KPIs como ${kpisStr} cumpliendo con ${regStr}.\n\n¿Qué proceso operativo específico te genera más cuellos de botella hoy?` }
+            ]);
+        } else if (matchedSectorObj) {
+            setChatState({ step: 'role', sector: matchedSectorObj.id, role: null, problem: null });
+            journeyRef.current.push({ type: 'context_inherited', sector: matchedSectorObj.id });
+            setDisplayMessages([
+                { role: 'assistant', content: `¡Hola! Veo que exploras el sector ${matchedSectorObj.title}. Para darte la recomendación adecuada, ¿cuál es tu rol principal en la organización?` }
+            ]);
+        } else if (matchedRoleObj) {
+            setChatState({ step: 'sector', sector: null, role: matchedRoleObj.id, problem: null });
+            journeyRef.current.push({ type: 'context_inherited', role: matchedRoleObj.id });
+            setDisplayMessages([
+                { role: 'assistant', content: `¡Hola! Veo que estás explorando como ${matchedRoleObj.title}. ¿A qué sector pertenece tu organización principalmente?` }
+            ]);
+        } else {
+            setDisplayMessages([
+                { role: 'assistant', content: '¡Hola! Soy el AI Concierge de Datanestiq. Estoy aquí para entender tus desafíos operativos y sugerirte soluciones de IA o Datos. ¿A qué sector perteneces?' }
+            ]);
+        }
     }
-  }, []);
+  }, [isOpen, ctxState]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -356,35 +401,35 @@ export default function Chatbot() {
             <p className="text-xs text-brandCyan mb-3 italic">Un arquitecto revisará tu caso y te enviará un diagnóstico inicial en 48 horas. Sin compromiso.</p>
             <input
               type="text"
-              defaultValue={leadData.organizacion || ''}
+              value={leadData.organizacion || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, organizacion: e.target.value }))}
-              placeholder="Empresa / Entidad"
+              placeholder="Empresa / Entidad (ej: Banco X, Minsur, etc.)"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
             />
             <input
               type="email"
-              defaultValue={leadData.email || ''}
+              value={leadData.email || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, email: e.target.value }))}
               placeholder="Correo institucional"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
             />
             <input
               type="tel"
-              defaultValue={leadData.telefono || ''}
+              value={leadData.telefono || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, telefono: e.target.value }))}
               placeholder="Celular o fijo"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
             />
             <input
               type="text"
-              defaultValue={leadData.reto || ''}
+              value={leadData.reto || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, reto: e.target.value }))}
               placeholder="Reto principal"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-2 focus:outline-none focus:border-brandCyan"
             />
             <input
               type="text"
-              defaultValue={leadData.stack || ''}
+              value={leadData.stack || ''}
               onChange={(e) => setLeadData(prev => ({ ...prev, stack: e.target.value }))}
               placeholder="Sistemas actuales / situación de datos"
               className="w-full bg-darker border border-white/10 rounded-lg p-2 text-sm text-white mb-3 focus:outline-none focus:border-brandCyan"

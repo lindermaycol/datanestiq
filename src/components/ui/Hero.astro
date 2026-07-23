@@ -7,6 +7,7 @@ const {
 } = Astro.props;
 import ContextChips from './ContextChips.jsx';
 import ConsultativeCTA from './ConsultativeCTA.jsx';
+import HeroRoleLine from '../islands/HeroRoleLine.jsx';
 ---
 <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -20,5 +21,7 @@ import ConsultativeCTA from './ConsultativeCTA.jsx';
       <a href="/casos-de-exito" class="glass-card px-8 py-3 font-semibold hover:text-brand transition-colors text-lg flex items-center">Explora Casos de Éxito</a>
     </div>
     <ContextChips client:load />
+    <HeroRoleLine client:load />
   </div>
 </section>
+

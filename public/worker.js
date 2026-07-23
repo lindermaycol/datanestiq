@@ -21,6 +21,34 @@ class PipelineSingleton {
     }
 }
 
+// Module-level cache for corpus embeddings
+let cachedCorpusData = null; // { embeddingsData: Float32Array, textCount: number, dim: number, hash: string }
+
+function computeSignature(texts) {
+    if (!texts || texts.length === 0) return '';
+    return texts.length + ':' + texts[0].slice(0, 30) + ':' + texts[texts.length - 1].slice(0, 30);
+}
+
+async function indexCorpus(extractor, corpusTexts) {
+    if (!corpusTexts || corpusTexts.length === 0) return null;
+    const signature = computeSignature(corpusTexts);
+    if (cachedCorpusData && cachedCorpusData.hash === signature && cachedCorpusData.textCount === corpusTexts.length) {
+        return cachedCorpusData;
+    }
+
+    const corpusOutput = await extractor(corpusTexts, { pooling: 'mean', normalize: true });
+    const dim = corpusOutput.dims ? corpusOutput.dims[1] : (corpusOutput.data.length / corpusTexts.length);
+    
+    cachedCorpusData = {
+        embeddingsData: corpusOutput.data,
+        textCount: corpusTexts.length,
+        dim: dim,
+        hash: signature
+    };
+
+    return cachedCorpusData;
+}
+
 self.addEventListener('message', async (event) => {
     const data = event.data;
 
@@ -36,23 +64,57 @@ self.addEventListener('message', async (event) => {
         return;
     }
 
-    const { query, corpusTexts, id } = data;
+    if (data.type === 'index') {
+        try {
+            const extractor = await PipelineSingleton.getInstance(x => {
+                self.postMessage({ status: x.status, name: x.name, file: x.file, progress: x.progress });
+            });
+            if (data.corpusTexts) {
+                await indexCorpus(extractor, data.corpusTexts);
+            }
+            self.postMessage({ status: 'indexed' });
+        } catch (e) {
+            self.postMessage({ status: 'error', error: e.message });
+        }
+        return;
+    }
 
-    let extractor = await PipelineSingleton.getInstance(x => {
-        self.postMessage({ status: x.status, name: x.name, file: x.file, progress: x.progress });
-    });
+    // Default or { type: 'search' }
+    const { query, corpusTexts, id } = data;
+    if (!query) return;
 
     try {
-        let queryOutput = await extractor(query, { pooling: 'mean', normalize: true });
-        let corpusOutput = await extractor(corpusTexts, { pooling: 'mean', normalize: true });
+        const extractor = await PipelineSingleton.getInstance(x => {
+            self.postMessage({ status: x.status, name: x.name, file: x.file, progress: x.progress });
+        });
 
-        const similarities = [];
-        for (let i = 0; i < corpusTexts.length; ++i) {
+        // Ensure corpus is indexed (Cache-miss fallback per Precisión 1)
+        let corpusData = cachedCorpusData;
+        if ((!corpusData || (corpusTexts && computeSignature(corpusTexts) !== corpusData.hash)) && corpusTexts && corpusTexts.length > 0) {
+            corpusData = await indexCorpus(extractor, corpusTexts);
+        }
+
+        if (!corpusData) {
+            self.postMessage({ status: 'error', error: 'Corpus not indexed yet and no corpusTexts provided.' });
+            return;
+        }
+
+        // 1. Embed ONLY the query (fast: ~15-40ms)
+        const queryOutput = await extractor(query, { pooling: 'mean', normalize: true });
+        const queryData = queryOutput.data;
+        const dim = corpusData.dim;
+        const count = corpusData.textCount;
+        const corpusDataArray = corpusData.embeddingsData;
+
+        // 2. Compute dot product (since vectors are normalized, dot product = cosine similarity)
+        const similarities = new Array(count);
+        for (let i = 0; i < count; ++i) {
             let sum = 0;
-            for (let j = 0; j < queryOutput.data.length; ++j) {
-                sum += queryOutput.data[j] * corpusOutput.data[i * queryOutput.data.length + j];
+            const offset = i * dim;
+            for (let j = 0; j < dim; ++j) {
+                sum += queryData[j] * corpusDataArray[offset + j];
             }
-            similarities.push({ index: i, score: sum });
+            similarities[i] = { index: i, score: sum };
         }
 
         similarities.sort((a, b) => b.score - a.score);

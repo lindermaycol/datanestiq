@@ -37,6 +37,7 @@ const homeData = homeEntry?.data;
       testimonialRole={homeData?.sections?.find((s: any) => s.type === 'testimonials')?.role}
     />
     
+    {/* === ZONA EXPLORA: describe tu problema === */}
     <section class="border-b border-white/10" data-animate="fade-up" style="opacity: 0">
       <SemanticSearch client:visible />
     </section>
@@ -49,20 +50,17 @@ const homeData = homeEntry?.data;
     <section class="border-b border-white/10 bg-surface/30" data-animate="fade-up" style="opacity: 0">
       <SolutionsByRoleAndIndustry client:visible />
     </section>
-    
-    <section class="border-b border-white/10" data-animate="fade-up" style="opacity: 0">
-      <CopilotDemo client:visible />
-    </section>
-    
-    <section class="py-24 max-w-7xl mx-auto px-4 border-b border-white/10" data-animate="fade-up" style="opacity: 0">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold">Inicia tu Diagnóstico</h2>
-        <p class="text-gray-400 mt-2">Nuestra IA configurará el perfil adecuado para ti.</p>
-      </div>
-      <!-- Astro Island: Solo carga JS cuando es visible -->
+
+    <section id="diagnostic-section" class="py-24 max-w-7xl mx-auto px-4 border-b border-white/10" data-animate="fade-up" style="opacity: 0">
       <DiagnosticWizard client:visible />
     </section>
 
+    {/* === ZONA PROFUNDIZA: credibilidad técnica === */}
+    <section id="copilot-section" class="border-b border-white/10" data-animate="fade-up" style="opacity: 0">
+      <CopilotDemo client:visible />
+    </section>
+
+    {/* === ZONA CONVIERTE === */}
     <section class="py-12 max-w-7xl mx-auto px-4 border-b border-white/10" data-animate="fade-up" style="opacity: 0">
       <MultiStepWizard client:visible />
     </section>

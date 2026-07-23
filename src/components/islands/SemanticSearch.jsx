@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '@nanostores/react';
-import { userChallenge, semanticHighlight, userContext } from '../../store/index';
+import { userChallenge, semanticHighlight, userContext, lastUserQuery, chatbotOpen } from '../../store/index';
 import taxonomyCorpus from '../../data/taxonomyCorpus.json';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import extendedIndustries from '../../data/extendedIndustries.json';
@@ -56,10 +56,10 @@ export default function SemanticSearch() {
             const { status: wStatus, progress: wProg, results, error } = e.data;
 
             if (wStatus === 'initiate' || wStatus === 'progress' || wStatus === 'download') {
-                // Solo si no estamos buscando activamente, para no ocultar la UI
-                setStatus(prev => prev === 'searching' ? 'searching' : 'loading_model');
+                // Solo si no estamos buscando o terminados activamente, para no ocultar la UI
+                setStatus(prev => (prev === 'searching' || prev === 'done') ? prev : 'loading_model');
                 if (wProg) setProgress(Math.round(wProg));
-            } else if (wStatus === 'ready') {
+            } else if (wStatus === 'ready' || wStatus === 'indexed') {
                 setStatus('ready');
             } else if (wStatus === 'complete') {
                 setStatus('done');
@@ -91,7 +91,11 @@ export default function SemanticSearch() {
 
         hasWarmedUp.current = true;
         if (workerRef.current) {
-            workerRef.current.postMessage({ type: 'warmup' });
+            // Disparar indexación anticipada al detectar intención (hover/focus), sin forzar en mount (Precisión 2)
+            workerRef.current.postMessage({
+                type: 'index',
+                corpusTexts: corpusRef.current.map(c => c.text)
+            });
         }
     };
 
@@ -145,7 +149,9 @@ export default function SemanticSearch() {
         userChallenge.set(query);
         setStatus('searching');
 
+        // Enviar consulta + corpusTexts como fallback anti-race-condition (Precisión 1)
         workerRef.current.postMessage({
+            type: 'search',
             query: query,
             corpusTexts: corpusRef.current.map(c => c.text),
             id: Date.now()
@@ -204,9 +210,38 @@ export default function SemanticSearch() {
             </div>
 
             {status === 'loading_model' && (
-                <div className="text-center mt-3 text-xs text-gray-400 flex items-center justify-center gap-2">
-                    <i className="ph ph-cpu animate-pulse"></i> 
-                    Cargando modelo de embeddings (Edge AI)... {progress}%
+                <div className="mt-4 p-4 bg-darker/60 border border-brandCyan/20 rounded-xl text-center animate-in fade-in">
+                    <div className="text-xs text-brandCyan font-mono flex items-center justify-center gap-2 mb-3">
+                        <i className="ph ph-cpu animate-pulse text-sm"></i> 
+                        Cargando el modelo de IA (solo la primera vez)... {progress}%
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="p-3 bg-white/5 border border-white/10 rounded-lg animate-pulse">
+                                <div className="h-4 bg-brandCyan/20 rounded w-3/4 mb-2"></div>
+                                <div className="h-3 bg-white/10 rounded w-full mb-1"></div>
+                                <div className="h-3 bg-white/10 rounded w-2/3"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {status === 'searching' && (
+                <div className="mt-4 p-4 bg-darker/60 border border-brandCyan/20 rounded-xl text-center animate-in fade-in">
+                    <div className="text-xs text-brandCyan font-mono flex items-center justify-center gap-2 mb-3">
+                        <i className="ph ph-spinner-gap animate-spin text-sm"></i> 
+                        Analizando vectores semánticos...
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="p-3 bg-white/5 border border-white/10 rounded-lg animate-pulse">
+                                <div className="h-4 bg-brandCyan/20 rounded w-3/4 mb-2"></div>
+                                <div className="h-3 bg-white/10 rounded w-full mb-1"></div>
+                                <div className="h-3 bg-white/10 rounded w-2/3"></div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
 
@@ -227,6 +262,43 @@ export default function SemanticSearch() {
                     ✓ Resultados filtrados semánticamente
                 </div>
             )}
+
+            {status === 'done' && (() => {
+                const serviceCount = Object.keys(highlightState).filter(k => k.startsWith('service-')).length;
+                if (serviceCount === 0) return null;
+                const scrollTo = (id) => { document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' }); };
+                const openConcierge = () => {
+                    lastUserQuery.set(query);
+                    chatbotOpen.set(true);
+                };
+                return (
+                    <div className="mt-4 bg-brand/10 border border-brandCyan/20 rounded-xl p-4 text-center animate-in fade-in">
+                        <p className="text-white text-sm mb-3">
+                            Encontramos <strong className="text-brandCyan">{serviceCount}</strong> soluciones relevantes para tu búsqueda.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-3">
+                            <button
+                                onClick={() => scrollTo('#copilot-section')}
+                                className="text-xs px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-brandCyan/40 transition-all"
+                            >
+                                <i className="ph ph-terminal-window mr-1"></i> Ver cómo razona nuestra IA →
+                            </button>
+                            <button
+                                onClick={() => scrollTo('#diagnostic-section')}
+                                className="text-xs px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-brandCyan/40 transition-all"
+                            >
+                                <i className="ph ph-compass mr-1"></i> Iniciar Diagnóstico con este contexto →
+                            </button>
+                            <button
+                                onClick={openConcierge}
+                                className="text-xs px-4 py-2 rounded-lg bg-brandCyan/10 border border-brandCyan/30 text-brandCyan hover:bg-brandCyan/20 transition-all"
+                            >
+                                <i className="ph ph-robot mr-1"></i> Consultar con el AI Concierge →
+                            </button>
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 }

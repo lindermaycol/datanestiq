@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import { lastUserQuery, chatbotOpen, semanticHighlight } from '../../store/index';
+import { lastUserQuery, chatbotOpen, semanticHighlight, userChallenge } from '../../store/index';
 import { CHAT_API } from '../../lib/endpoints';
 import corpus from '../../data/taxonomyCorpus.json';
 
@@ -14,12 +14,32 @@ export default function DiagnosticWizard() {
   const [loadingIds, setLoadingIds] = useState({});
   
   const highlights = useStore(semanticHighlight);
+  const challenge = useStore(userChallenge);
   
   // Calculate if we have any active highlights to dim non-matching cards
   const hasHighlights = Object.keys(highlights).length > 0;
-  // Get max score to establish a dynamic threshold
-  const maxScore = hasHighlights ? Math.max(...Object.values(highlights)) : 0;
+  // Fix Mejora 1c: solo scores de sectores (excluir service-*) para calcular umbral
+  const sectorScores = Object.entries(highlights)
+      .filter(([k]) => !k.startsWith('service-'))
+      .map(([, v]) => v);
+  const maxScore = sectorScores.length > 0 ? Math.max(...sectorScores) : 0;
   const highlightThreshold = Math.max(0.2, maxScore * 0.75);
+
+  // Precisión 3: pre-llenar inputs con userChallenge UNA vez, luego editable/borrable
+  const challengeApplied = React.useRef(false);
+  useEffect(() => {
+    if (challenge && !challengeApplied.current) {
+      challengeApplied.current = true;
+      const prefilled = {};
+      rawSectorsCorpus.forEach(s => { prefilled[s.id] = challenge; });
+      setInputs(prev => {
+        const merged = { ...prefilled };
+        // Preservar inputs que el usuario ya haya editado
+        Object.keys(prev).forEach(k => { if (prev[k]) merged[k] = prev[k]; });
+        return merged;
+      });
+    }
+  }, [challenge]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

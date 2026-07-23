@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { semanticHighlight, chatbotOpen } from '../../store/index';
 import { CHAT_API } from '../../lib/endpoints';
 const TypewriterText = ({ text }) => {
     const [displayedText, setDisplayedText] = useState('');
@@ -14,20 +16,46 @@ const TypewriterText = ({ text }) => {
             current += text[i];
             setDisplayedText(current);
             i++;
-        }, 15);
+        }, 12);
 
         return () => clearInterval(interval);
     }, [text]);
 
-    // Parse simple bold tags and lists
-    let html = displayedText.replace(/\*\*(.*?)\*\*/g, '<b class="text-white">$1</b>');
-    html = html.replace(/\n/g, '<br />');
+    const formatMarkdown = (rawText) => {
+        const safeText = rawText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const lines = safeText.split('\n');
+        return lines.map((line, i) => {
+            let formattedLine = line;
+            
+            const numMatch = formattedLine.match(/^(\s*)(\d+)\.\s+(.*)$/);
+            const bulletMatch = formattedLine.match(/^(\s*)([-*])\s+(.*)$/);
+            
+            if (numMatch) {
+                formattedLine = `<div class="ml-4 flex gap-2 mt-1"><span class="text-brandCyan font-bold min-w-[1.2rem]">${numMatch[2]}.</span><span>${numMatch[3]}</span></div>`;
+            } else if (bulletMatch) {
+                formattedLine = `<div class="ml-4 flex gap-2 mt-1"><span class="text-brandCyan font-bold min-w-[1rem]">&bull;</span><span>${bulletMatch[3]}</span></div>`;
+            } else {
+                formattedLine = `<span>${formattedLine}</span>`;
+            }
+            
+            formattedLine = formattedLine
+                .replace(/\*\*(.*?)\*\*/g, '<b class="text-white font-semibold">$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-brandCyan underline hover:text-white transition-colors">$1</a>');
+            
+            return (
+                <React.Fragment key={i}>
+                    <span dangerouslySetInnerHTML={{ __html: formattedLine }} />
+                    {(!numMatch && !bulletMatch && i < lines.length - 1) && <br />}
+                </React.Fragment>
+            );
+        });
+    };
 
     return (
-        <div 
-            className="text-sm text-gray-300 font-mono"
-            dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <div className="text-sm text-gray-300 font-mono leading-relaxed">
+            {formatMarkdown(displayedText)}
+        </div>
     );
 };
 
@@ -37,9 +65,21 @@ export default function CopilotDemo() {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
     const [response, setResponse] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const highlights = useStore(semanticHighlight);
 
-    // Selección determinista curada: primeros 3 pilares, primer prompt de cada uno
-    const demoItems = taxonomyCorpus.slice(0, 3).map(p => ({
+    // Filtrar a pilares que tengan copilotPrompts (Precisión 2: nunca reventar)
+    const pillarsWithPrompts = taxonomyCorpus.filter(p => p.copilotPrompts && p.copilotPrompts.length > 0);
+
+    // Mejora 1a: si hay contexto de búsqueda, seleccionar por relevancia
+    const hasSearchContext = Object.keys(highlights).some(k => k.startsWith('service-'));
+    const rankedPillars = hasSearchContext
+        ? [...pillarsWithPrompts]
+            .map(p => ({ ...p, _score: highlights[`service-${p.slug}`] || 0 }))
+            .sort((a, b) => b._score - a._score)
+            .slice(0, 3)
+        : pillarsWithPrompts.slice(0, 3);
+
+    const demoItems = rankedPillars.map(p => ({
         prompt: p.copilotPrompts[0],
         positioning: p.competitivePositioning || '',
         proofs: p.proofPoints ? p.proofPoints.map(pp => `${pp.client}: ${pp.result}`).join(' | ') : ''
@@ -78,6 +118,10 @@ export default function CopilotDemo() {
         }
     };
 
+    const openChatbot = () => {
+        chatbotOpen.set(true);
+    };
+
     return (
         <div className="max-w-4xl mx-auto py-12 px-4">
             <div className="text-center mb-8">
@@ -85,8 +129,14 @@ export default function CopilotDemo() {
                     <i className="ph ph-terminal-window mr-1"></i> DEMO TÉCNICA
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-2">Copiloto Estratégico (C-Level)</h3>
-                <p className="text-gray-400 text-sm">Visualiza cómo nuestro ecosistema asiste en decisiones complejas de negocio en tiempo real.</p>
+                <p className="text-gray-400 text-sm">Una demostración del razonamiento que produce nuestra arquitectura de IA — distinto del AI Concierge, que resuelve tu consulta.</p>
             </div>
+
+            {hasSearchContext && (
+                <div className="text-center mb-6 text-sm text-brandCyan/80 bg-brandCyan/5 border border-brandCyan/20 rounded-lg py-2 px-4">
+                    <i className="ph ph-link mr-1"></i> Basado en tu búsqueda, mira cómo razona nuestra IA sobre estos escenarios.
+                </div>
+            )}
 
             <div className="bg-darker border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
                 {/* Header Terminal */}
@@ -142,8 +192,19 @@ export default function CopilotDemo() {
                             </div>
                         )}
                     </div>
+
+                    {/* Puente al chatbot (Mejora 2) */}
+                    <div className="text-center border-t border-white/5 pt-4">
+                        <button
+                            onClick={openChatbot}
+                            className="text-sm text-gray-400 hover:text-brandCyan transition-colors"
+                        >
+                            ¿Tu caso no está en estos escenarios? <span className="text-brandCyan font-medium">Pregúntale al AI Concierge →</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
+

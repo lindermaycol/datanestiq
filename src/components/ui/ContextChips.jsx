@@ -30,21 +30,26 @@ export default function ContextChips() {
   }
 
   if (context.rol || context.sector) {
-    const roleTitle = personas.roles.find(r => r.id === context.rol)?.title || context.rol;
     return (
       <div className="flex justify-center mt-8 animate-fade-in z-50 relative gap-2 flex-wrap items-center bg-darker/50 p-2 rounded-full border border-white/5">
         <span className="text-gray-400 text-xs mr-1 ml-2 font-medium">Viendo como:</span>
         <button 
-          onClick={() => handleSelect('publico', 'cdo')}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${context.rol === 'cdo' ? 'bg-brand/20 border border-brand/50 text-white' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-brand/10'}`}
+          onClick={() => handleSelect('publico', 'cio')}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${context.rol === 'cio' ? 'bg-brand/20 border border-brand/50 text-white' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-brand/10'}`}
         >
-          <i className="ph ph-bank mr-1.5"></i> Público (CDO)
+          <i className="ph ph-bank mr-1.5"></i> Público (CIO)
         </button>
         <button 
           onClick={() => handleSelect('finanzas', 'cfo')}
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${context.rol === 'cfo' ? 'bg-brand/20 border border-brand/50 text-white' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-brand/10'}`}
         >
           <i className="ph ph-chart-line-up mr-1.5"></i> Finanzas (CFO)
+        </button>
+        <button 
+          onClick={() => handleSelect('finanzas', 'cdo')}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center ${context.rol === 'cdo' ? 'bg-brand/20 border border-brand/50 text-white' : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-brand/10'}`}
+        >
+          <i className="ph ph-database mr-1.5"></i> Datos (CDO)
         </button>
         <button 
           onClick={() => handleSelect('retail', 'ceo')}
@@ -66,12 +71,11 @@ export default function ContextChips() {
     );
   }
 
-
   return (
     <div className="flex flex-wrap items-center justify-center gap-2 mt-8 animate-fade-in z-50 relative">
       <span className="text-gray-400 text-sm mr-2 font-medium">Personaliza tu experiencia:</span>
       <button 
-        onClick={() => handleSelect('publico', 'cdo')}
+        onClick={() => handleSelect('publico', 'cio')}
         className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-brand/20 hover:border-brand/50 transition-all flex items-center"
       >
         <i className="ph ph-bank mr-2"></i> Sector Público
@@ -81,6 +85,12 @@ export default function ContextChips() {
         className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-brand/20 hover:border-brand/50 transition-all flex items-center"
       >
         <i className="ph ph-chart-line-up mr-2"></i> Finanzas / CFO
+      </button>
+      <button 
+        onClick={() => handleSelect('finanzas', 'cdo')}
+        className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-brand/20 hover:border-brand/50 transition-all flex items-center"
+      >
+        <i className="ph ph-database mr-2"></i> Datos / CDO
       </button>
       <button 
         onClick={() => handleSelect('retail', 'ceo')}
