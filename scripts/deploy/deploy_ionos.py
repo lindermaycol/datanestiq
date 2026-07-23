@@ -24,8 +24,14 @@ Variables .env requeridas:
 import argparse
 import os
 import sys
-import stat
 import posixpath
+
+# Forzar UTF-8 en la consola (Windows cp1252 no codifica →/emojis)
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 # --- Cargar .env (sin volcar valores) ---
 def load_env(path):
@@ -49,8 +55,10 @@ KEY_PATH = os.environ.get("IONOS_SSH_KEY_PATH")
 PASSWORD = os.environ.get("IONOS_SSH_PASSWORD")
 REMOTE = os.environ.get("IONOS_REMOTE_PATH")
 
-# Qué se sube (rutas locales relativas a ROOT). NUNCA secretos/PII.
-UPLOAD_DIRS = ["dist", "public/api", "public/admin"]
+# Qué se sube: el CONTENIDO de dist/ va a la RAÍZ del webroot remoto.
+# Astro ya copia public/ (api/, admin/) dentro de dist/, así que dist/ contiene todo el sitio + backend PHP.
+# NUNCA secretos/PII.
+UPLOAD_LOCAL_DIR = "dist"  # su contenido -> IONOS_REMOTE_PATH/
 EXCLUDE = {".env", "secure_leads", "node_modules", ".git", ".venv", "__pycache__"}
 
 
@@ -105,19 +113,22 @@ def ensure_remote_dir(sftp, remote_dir):
 
 
 def deploy(dry_run, with_env, init_crm):
-    print(f"== Despliegue Datanestiq → {HOST}:{REMOTE}  ({'DRY-RUN' if dry_run else 'REAL'}) ==")
+    # En dry-run se permite REMOTE ausente (solo para mostrar el plan); el deploy real lo exige en connect().
+    remote_base = REMOTE or "<IONOS_REMOTE_PATH>"
+    print(f"== Despliegue Datanestiq -> {HOST or '<IONOS_SSH_HOST>'}:{remote_base}  ({'DRY-RUN' if dry_run else 'REAL'}) ==")
+    if dry_run and not REMOTE:
+        print("  (aviso: IONOS_REMOTE_PATH no está en .env; el destino se muestra como placeholder)")
     planned = []
-    for d in UPLOAD_DIRS:
-        ld = os.path.join(ROOT, d)
-        if not os.path.isdir(ld):
-            print(f"  (omito {d}/ — no existe; ¿corriste npm run build?)")
-            continue
-        for lf in iter_files(ld):
-            rel = os.path.relpath(lf, ROOT).replace("\\", "/")
-            planned.append((lf, posixpath.join(REMOTE, rel)))
-    print(f"  Archivos a subir: {len(planned)} (dist/ + backend PHP)")
+    ld = os.path.join(ROOT, UPLOAD_LOCAL_DIR)
+    if not os.path.isdir(ld):
+        fail(f"No existe {UPLOAD_LOCAL_DIR}/ — corre 'npm run build' primero.")
+    for lf in iter_files(ld):
+        # Contenido de dist/ -> raíz remota (index.html, api/, admin/ al webroot)
+        rel = os.path.relpath(lf, ld).replace("\\", "/")
+        planned.append((lf, posixpath.join(remote_base, rel)))
+    print(f"  Archivos a subir: {len(planned)} (contenido de dist/ -> raíz del webroot, incluye api/ y admin/)")
     if with_env:
-        planned.append((os.path.join(ROOT, ".env"), posixpath.join(REMOTE, ".env")))
+        planned.append((os.path.join(ROOT, ".env"), posixpath.join(remote_base, ".env")))
         print("  + .env (⚠️ contiene secretos; solo por SFTP, nunca al repo)")
 
     if dry_run:

@@ -51,11 +51,13 @@ python scripts/deploy/deploy_ionos.py --confirm --init-crm   # corre init_crm_db
 - `secure_leads/` **no** es accesible por URL (`.htaccess deny` en Apache IONOS) y el `.env` remoto tiene permisos `600`.
 
 ## Qué se sube y qué NO
-| Se sube | NO se sube (nunca) |
+Astro copia `public/` (incluidos `api/` y `admin/`) dentro de `dist/` en el build, así que **se sube solo el contenido de `dist/` a la raíz del webroot remoto** — eso ya incluye el sitio + los endpoints PHP + el panel CRM.
+
+| Se sube (contenido de `dist/` → raíz remota) | NO se sube (nunca) |
 |---|---|
-| `dist/` (sitio estático) | `.env` local al **repo** (sí por SFTP con `--with-env`) |
-| `public/api/*.php` (chat, save_wizard, book_appointment, availability) | `secure_leads/` (PII + `crm.sqlite`) |
-| `public/admin/*.php` (panel CRM) | `node_modules`, `.git`, `.venv` |
+| `dist/index.html`, assets → `/` | `.env` local al **repo** (sí por SFTP con `--with-env`, permisos `600`) |
+| `dist/api/*.php` → `/api/` (chat, save_wizard, book_appointment, availability) | `secure_leads/` (PII + `crm.sqlite`) |
+| `dist/admin/*.php` → `/admin/` (panel CRM) | `node_modules`, `.git`, `.venv`, `__pycache__` |
 
 ## Checklist de pendientes de infraestructura
 - [ ] Paso 0: migrar a clave SSH **o** rotar el password comprometido.
