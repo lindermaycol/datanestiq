@@ -66,7 +66,13 @@
       "ceo",
       "cio",
       "cdo"
-    ]
+    ],
+    "roleEquivalents": {
+      "ceo": "Director o Titular de la institución educativa",
+      "cio": "Jefe / Coordinador de Informática",
+      "cdo": "Responsable de Estadística y Sistemas de Información",
+      "cfo": "Director de Administración y Finanzas"
+    }
   },
   {
     "id": "sector-finanzas",
@@ -157,17 +163,17 @@
     ],
     "roiCases": [
       {
-        "title": "Detección Temprana de Fraude Transaccional",
-        "description": "Implementación de un pipeline de streaming y ML para calificación de transacciones en tiempo real.",
-        "context": "Institución financiera procesando >5M tx/día con alta tasa de falsos positivos en el sistema legacy.",
+        "title": "Automatización de Scoring Crediticio y Fraude",
+        "description": "Despliegue de un pipeline de Data Engineering para ingesta en tiempo real y modelos predictivos de Machine Learning.",
+        "context": "Institución financiera procesando >5M tx/día con aprobaciones crediticias manuales de hasta 5 días.",
         "metrics": [
           {
-            "value": "-45%",
-            "label": "Pérdidas por fraude"
+            "value": "-85%",
+            "label": "Tiempo de aprobación"
           },
           {
-            "value": "<50ms",
-            "label": "Latencia de inferencia"
+            "value": "-40%",
+            "label": "Tasa de fraude"
           }
         ]
       }
@@ -311,7 +317,14 @@
     "relevantPersonas": [
       "coo",
       "cto"
-    ]
+    ],
+    "roleEquivalents": {
+      "cio": "Gerente / Jefe de Sistemas",
+      "cto": "Gerente de Operaciones e Ingeniería",
+      "cdo": "Jefe de Analítica y Gestión de Datos",
+      "coo": "Gerente de Planta / Operaciones",
+      "ciso": "Jefe de Ciberseguridad e Infraestructura"
+    }
   },
   {
     "id": "sector-mineria",
@@ -387,7 +400,14 @@
       "coo",
       "cfo",
       "ceo"
-    ]
+    ],
+    "roleEquivalents": {
+      "cio": "Gerente / Jefe de TI y Sistemas",
+      "cto": "Gerente de Automatización e Ingeniería Mina",
+      "cdo": "Jefe de Analítica y Sistemas de Información",
+      "coo": "Gerente de Operaciones Mineras",
+      "ciso": "Jefe de Seguridad de la Información y Control"
+    }
   },
   {
     "id": "sector-publico",
@@ -485,6 +505,23 @@
       "cto",
       "cdo"
     ],
+    "roiCases": [
+      {
+        "title": "Automatización e Interoperabilidad de Expedientes",
+        "description": "Procesamiento inteligente de documentos (IDP) y gobernanza de datos para la tramitación transparente de expedientes gubernamentales.",
+        "context": "Entidad pública con procesamiento manual de expedientes ciudadanos bajo exigencias de la Ley de Transparencia y ENI.",
+        "metrics": [
+          {
+            "value": "-60%",
+            "label": "Tiempos de tramitación"
+          },
+          {
+            "value": "100%",
+            "label": "Trazabilidad de expedientes"
+          }
+        ]
+      }
+    ],
     "institutionalContinuity": {
       "title": "Continuidad Institucional y Transferencia de Conocimiento",
       "description": "Diseñamos soluciones preparadas para sobrevivir a los ciclos políticos y cambios de gestión. No generamos dependencia tecnológica: entregamos documentación exhaustiva, gobernanza clara y capacitación técnica a los equipos de planta.",
@@ -494,6 +531,15 @@
         "Capacidad instalada y ownership institucional",
         "Arquitectura sostenible ante rotación de autoridades"
       ]
+    },
+    "roleEquivalents": {
+      "cio": "Jefe / Director de la OTI",
+      "cto": "Responsable de Infraestructura y Sistemas",
+      "cdo": "Director de Datos / Estadística e Informática",
+      "cfo": "Director de Administración y Finanzas",
+      "ceo": "Director General / Titular de la Entidad",
+      "coo": "Secretario General",
+      "ciso": "Oficial de Seguridad de la Información"
     }
   },
   {
@@ -569,6 +615,23 @@
       "coo",
       "ceo",
       "cdo"
+    ],
+    "roiCases": [
+      {
+        "title": "Optimización Predictiva de Inventario",
+        "description": "Implementación de una arquitectura de Business Intelligence integrada con modelos de series temporales para anticipar la demanda.",
+        "context": "Retailer de gran escala afectado por roturas de stock en temporadas pico y exceso de inventario obsoleto.",
+        "metrics": [
+          {
+            "value": "+22%",
+            "label": "Rotación de activos"
+          },
+          {
+            "value": "98%",
+            "label": "Precisión en forecast"
+          }
+        ]
+      }
     ]
   },
   {
@@ -638,7 +701,31 @@
       "coo",
       "cio",
       "cdo"
-    ]
+    ],
+    "roiCases": [
+      {
+        "title": "Agentes de IA para Análisis Clínico e IDP",
+        "description": "Desarrollo de Sistemas Digitales Premium apoyados por NLP y LLMs privados (GenAI) para extraer, estructurar y anonimizar entidades médicas.",
+        "context": "Red hospitalaria procesando manualmente miles de reportes médicos no estructurados bajo cumplimiento HIPAA.",
+        "metrics": [
+          {
+            "value": "100x",
+            "label": "Velocidad de extracción"
+          },
+          {
+            "value": "100%",
+            "label": "Privacidad (On-Premise)"
+          }
+        ]
+      }
+    ],
+    "roleEquivalents": {
+      "ceo": "Director General / Director del Hospital",
+      "cio": "Jefe de la Unidad de Estadística e Informática",
+      "cdo": "Responsable de Gestión de la Información en Salud",
+      "cfo": "Director de Administración y Finanzas",
+      "ciso": "Oficial de Seguridad de la Información"
+    }
   },
   {
     "id": "sector-seguros",

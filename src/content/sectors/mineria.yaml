@@ -66,6 +66,12 @@ relevantPersonas:
   - coo
   - cfo
   - ceo
+roleEquivalents:
+  cio: "Gerente / Jefe de TI y Sistemas"
+  cto: "Gerente de Automatización e Ingeniería Mina"
+  cdo: "Jefe de Analítica y Sistemas de Información"
+  coo: "Gerente de Operaciones Mineras"
+  ciso: "Jefe de Seguridad de la Información y Control"
 contentAngles:
   - id: gemelos-digitales-mineria
     title: Gemelos Digitales en la Minería

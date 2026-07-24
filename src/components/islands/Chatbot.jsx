@@ -5,6 +5,7 @@ import { CHAT_API, SAVE_WIZARD_API } from '../../lib/endpoints';
 import AppointmentPicker from './AppointmentPicker.jsx';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import personas from '../../data/personas.json';
+import { mapSectorSlugToId, getLocalizedRoleTitle } from '../../lib/roleLocalization';
 export default function Chatbot() {
   const query = useStore(lastUserQuery);
   const isOpen = useStore(chatbotOpen);
@@ -91,19 +92,12 @@ export default function Chatbot() {
 
   const [showScheduler, setShowScheduler] = useState(false);
 
-  // Mapear slug de sector (ej 'finanzas') a ID de sectorsCorpus (ej 'sector-finanzas') - Precisión 2
-  const mapSectorSlugToId = (sectorSlug) => {
-    if (!sectorSlug) return null;
-    const found = sectorsCorpus.find(s => s.id === sectorSlug || s.id === `sector-${sectorSlug}` || s.id.endsWith(`-${sectorSlug}`));
-    return found ? found.id : null;
-  };
-
-  // Initialize intro message or inherit active context chip upon FIRST opening of chatbot (Refix F-03 - 0-LLM)
+  // Initialize intro message or inherit active context chip upon FIRST opening of chatbot (Refix F-03 / F-11 - 0-LLM)
   useEffect(() => {
     if (isOpen && !initialized.current) {
         initialized.current = true;
 
-        const matchedSectorId = mapSectorSlugToId(ctxState.sector);
+        const matchedSectorId = mapSectorSlugToId(ctxState.sector, sectorsCorpus);
         const matchedRoleObj = personas.roles.find(r => r.id === ctxState.rol);
         const matchedSectorObj = matchedSectorId ? sectorsCorpus.find(s => s.id === matchedSectorId) : null;
 
@@ -113,9 +107,10 @@ export default function Chatbot() {
 
             const kpisStr = matchedSectorObj.kpis ? matchedSectorObj.kpis.map(k => k.metric).join(', ') : 'eficiencia';
             const regStr = matchedSectorObj.regulations ? matchedSectorObj.regulations.join(', ') : 'normativas vigentes';
+            const roleTitleDisplay = getLocalizedRoleTitle(matchedRoleObj, matchedSectorObj);
             
             setDisplayMessages([
-                { role: 'assistant', content: `¡Hola! Veo que estás explorando como ${matchedRoleObj.title} en ${matchedSectorObj.title}. Sabemos que buscas "${matchedRoleObj.decisionCriteria?.[0] || 'ROI'}" y optimizar KPIs como ${kpisStr} cumpliendo con ${regStr}.\n\n¿Qué proceso operativo específico te genera más cuellos de botella hoy?` }
+                { role: 'assistant', content: `¡Hola! Veo que estás explorando como ${roleTitleDisplay} en ${matchedSectorObj.title}. Sabemos que buscas "${matchedRoleObj.decisionCriteria?.[0] || 'ROI'}" y optimizar KPIs como ${kpisStr} cumpliendo con ${regStr}.\n\n¿Qué proceso operativo específico te genera más cuellos de botella hoy?` }
             ]);
         } else if (matchedSectorObj) {
             setChatState({ step: 'role', sector: matchedSectorObj.id, role: null, problem: null });
@@ -227,8 +222,9 @@ export default function Chatbot() {
   const selectRole = (roleId) => {
       const roleObj = personas.roles.find(r => r.id === roleId);
       const sectorObj = sectorsCorpus.find(s => s.id === chatState.sector);
+      const displayRole = getLocalizedRoleTitle(roleObj, sectorObj);
       setChatState(prev => ({ ...prev, role: roleId, step: 'problem' }));
-      journeyRef.current.push({ type: 'flow_step', step: 'role', value: roleId, label: roleObj.title });
+      journeyRef.current.push({ type: 'flow_step', step: 'role', value: roleId, label: displayRole });
       
       const objectionsStr = roleObj.objections ? roleObj.objections[0] : 'implementación riesgosa';
       const kpisStr = sectorObj.kpis ? sectorObj.kpis.map(k => k.metric).join(', ') : 'eficiencia';
@@ -236,11 +232,11 @@ export default function Chatbot() {
       
       const newDisplay = [
           ...displayMessages,
-          { role: 'user', content: roleObj.title },
-          { role: 'assistant', content: `Perfecto. Como ${roleObj.title}, sabemos que buscas "${roleObj.decisionCriteria?.[0] || 'ROI'}" y debes mitigar preocupaciones como "${objectionsStr}". En ${sectorObj.title}, ayudamos a optimizar KPIs clave como ${kpisStr} cumpliendo con ${regStr}.\n\n¿Qué proceso operativo específico te genera más cuellos de botella hoy?` }
+          { role: 'user', content: displayRole },
+          { role: 'assistant', content: `Perfecto. Como ${displayRole}, sabemos que buscas "${roleObj.decisionCriteria?.[0] || 'ROI'}" y debes mitigar preocupaciones como "${objectionsStr}". En ${sectorObj.title}, ayudamos a optimizar KPIs clave como ${kpisStr} cumpliendo con ${regStr}.\n\n¿Qué proceso operativo específico te genera más cuellos de botella hoy?` }
       ];
       setDisplayMessages(newDisplay);
-      setMessages([...messages, { role: 'user', content: roleObj.title }]);
+      setMessages([...messages, { role: 'user', content: displayRole }]);
   };
 
   const selectProblem = (problemCode, problemLabel) => {
@@ -368,19 +364,24 @@ export default function Chatbot() {
         )}
 
         {/* State Machine: Role Buttons */}
-        {chatState.step === 'role' && !isTyping && (
-            <div className="flex flex-col gap-2 mt-2 animate-in fade-in">
-                {sectorsCorpus.find(s => s.id === chatState.sector)?.relevantPersonas?.map(roleId => {
-                    const role = personas.roles.find(r => r.id === roleId);
-                    return role ? (
-                        <button key={role.id} onClick={() => selectRole(role.id)} className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition-colors text-gray-300">
-                            {role.title}
-                        </button>
-                    ) : null;
-                })}
-                <button onClick={escapeToSemantic} className="w-full text-left p-2 rounded-lg bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brandCyan text-sm transition-colors font-medium text-center">Otro / Detallar</button>
-            </div>
-        )}
+        {chatState.step === 'role' && !isTyping && (() => {
+            const currentSectorObj = sectorsCorpus.find(s => s.id === chatState.sector);
+            return (
+                <div className="flex flex-col gap-2 mt-2 animate-in fade-in">
+                    {currentSectorObj?.relevantPersonas?.map(roleId => {
+                        const role = personas.roles.find(r => r.id === roleId);
+                        if (!role) return null;
+                        const localizedTitle = getLocalizedRoleTitle(role, currentSectorObj);
+                        return (
+                            <button key={role.id} onClick={() => selectRole(role.id)} className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition-colors text-gray-300">
+                                {localizedTitle}
+                            </button>
+                        );
+                    })}
+                    <button onClick={escapeToSemantic} className="w-full text-left p-2 rounded-lg bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brandCyan text-sm transition-colors font-medium text-center">Otro / Detallar</button>
+                </div>
+            );
+        })()}
 
         {/* State Machine: Problem Buttons */}
         {chatState.step === 'problem' && !isTyping && (

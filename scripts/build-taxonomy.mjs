@@ -85,11 +85,24 @@ if (personas) {
 }
 
 // Check sectors
+const validRoleIds = new Set(personas ? personas.roles.map(r => r.id) : []);
 sectors.forEach(sec => {
     if (sec.relevantPersonas) {
         sec.relevantPersonas.forEach(p => {
             if (personas && !personas.roles.find(role => role.id === p)) {
                 console.error(`Referential Error in Sector '${sec.id}': relevantPersona '${p}' does not exist.`);
+                process.exit(1);
+            }
+        });
+    }
+    if (sec.roleEquivalents) {
+        Object.keys(sec.roleEquivalents).forEach(roleId => {
+            if (!validRoleIds.has(roleId)) {
+                console.error(`Referential Error in Sector '${sec.id}': roleEquivalents key '${roleId}' is not a valid role in personas.json.`);
+                process.exit(1);
+            }
+            if (typeof sec.roleEquivalents[roleId] !== 'string' || !sec.roleEquivalents[roleId].trim()) {
+                console.error(`Referential Error in Sector '${sec.id}': roleEquivalents value for '${roleId}' must be a non-empty string.`);
                 process.exit(1);
             }
         });

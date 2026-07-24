@@ -68,6 +68,15 @@ relevantPersonas:
   - coo
   - ceo
   - cdo
+roiCases:
+  - title: "Optimización Predictiva de Inventario"
+    description: "Implementación de una arquitectura de Business Intelligence integrada con modelos de series temporales para anticipar la demanda."
+    context: "Retailer de gran escala afectado por roturas de stock en temporadas pico y exceso de inventario obsoleto."
+    metrics:
+      - value: "+22%"
+        label: "Rotación de activos"
+      - value: "98%"
+        label: "Precisión en forecast"
 contentAngles:
   - id: forecast-demanda-retail
     title: Predicción de Demanda con Machine Learning

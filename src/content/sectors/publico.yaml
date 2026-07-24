@@ -85,6 +85,23 @@ relevantPersonas:
   - cio
   - cto
   - cdo
+roleEquivalents:
+  cio: "Jefe / Director de la OTI"
+  cto: "Responsable de Infraestructura y Sistemas"
+  cdo: "Director de Datos / Estadística e Informática"
+  cfo: "Director de Administración y Finanzas"
+  ceo: "Director General / Titular de la Entidad"
+  coo: "Secretario General"
+  ciso: "Oficial de Seguridad de la Información"
+roiCases:
+  - title: "Automatización e Interoperabilidad de Expedientes"
+    description: "Procesamiento inteligente de documentos (IDP) y gobernanza de datos para la tramitación transparente de expedientes gubernamentales."
+    context: "Entidad pública con procesamiento manual de expedientes ciudadanos bajo exigencias de la Ley de Transparencia y ENI."
+    metrics:
+      - value: "-60%"
+        label: "Tiempos de tramitación"
+      - value: "100%"
+        label: "Trazabilidad de expedientes"
 institutionalContinuity:
   title: "Continuidad Institucional y Transferencia de Conocimiento"
   description: "Diseñamos soluciones preparadas para sobrevivir a los ciclos políticos y cambios de gestión. No generamos dependencia tecnológica: entregamos documentación exhaustiva, gobernanza clara y capacitación técnica a los equipos de planta."

@@ -63,6 +63,21 @@ relevantPersonas:
   - coo
   - cio
   - cdo
+roleEquivalents:
+  ceo: "Director General / Director del Hospital"
+  cio: "Jefe de la Unidad de Estadística e Informática"
+  cdo: "Responsable de Gestión de la Información en Salud"
+  cfo: "Director de Administración y Finanzas"
+  ciso: "Oficial de Seguridad de la Información"
+roiCases:
+  - title: "Agentes de IA para Análisis Clínico e IDP"
+    description: "Desarrollo de Sistemas Digitales Premium apoyados por NLP y LLMs privados (GenAI) para extraer, estructurar y anonimizar entidades médicas."
+    context: "Red hospitalaria procesando manualmente miles de reportes médicos no estructurados bajo cumplimiento HIPAA."
+    metrics:
+      - value: "100x"
+        label: "Velocidad de extracción"
+      - value: "100%"
+        label: "Privacidad (On-Premise)"
 contentAngles:
   - id: interoperabilidad-salud-fhir
     title: Interoperabilidad Clínica con HL7-FHIR

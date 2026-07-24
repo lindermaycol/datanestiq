@@ -62,6 +62,12 @@ regulations:
 relevantPersonas:
   - coo
   - cto
+roleEquivalents:
+  cio: "Gerente / Jefe de Sistemas"
+  cto: "Gerente de Operaciones e Ingeniería"
+  cdo: "Jefe de Analítica y Gestión de Datos"
+  coo: "Gerente de Planta / Operaciones"
+  ciso: "Jefe de Ciberseguridad e Infraestructura"
 contentAngles:
   - id: mantenimiento-predictivo-iot
     title: Mantenimiento Predictivo con IoT e IA

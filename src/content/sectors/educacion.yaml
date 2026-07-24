@@ -63,6 +63,11 @@ relevantPersonas:
   - ceo
   - cio
   - cdo
+roleEquivalents:
+  ceo: "Director o Titular de la institución educativa"
+  cio: "Jefe / Coordinador de Informática"
+  cdo: "Responsable de Estadística y Sistemas de Información"
+  cfo: "Director de Administración y Finanzas"
 contentAngles:
   - id: prediccion-desercion-estudiantil
     title: Evitando la Deserción Estudiantil con Analítica

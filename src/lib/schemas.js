@@ -76,6 +76,10 @@ export const sectorSchema = z.object({
     description: z.string(),
     features: z.array(z.string()),
   }).optional(),
+  roleEquivalents: z.record(
+    z.string(),
+    z.string().min(1)
+  ).optional(),
   contentAngles: z.array(z.object({ id: z.string(), title: z.string(), brief: z.string() })).optional(),
 });
 

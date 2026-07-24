@@ -2,13 +2,25 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/ui/Navbar.astro';
 import Footer from '../components/ui/Footer.astro';
+import IllustrativeRoiCase from '../components/ui/IllustrativeRoiCase.astro';
+import sectorsCorpus from '../data/sectorsCorpus.json';
+
+// Taxonomía = Única Fuente de Verdad (SSOT)
+// Extraer todos los roiCases de la taxonomía con su sector correspondiente
+const allRoiCases = sectorsCorpus.flatMap((sector: any) => 
+  (sector.roiCases || []).map((rc: any) => ({
+    ...rc,
+    sectorTitle: sector.title,
+    sectorSlug: sector.slug
+  }))
+);
 ---
 
 <BaseLayout title="Casos de Éxito y ROI | Datanestiq" description="Escenarios ilustrativos de aplicación de Ingeniería de Datos e IA en el sector corporativo B2B.">
   <Navbar />
   
   <main class="pt-32 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <section class="text-center mb-24" data-animate="fade-up">
+    <section class="text-center mb-16" data-animate="fade-up">
       <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
         Impacto Cuantificable y<br/>
         <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
@@ -16,113 +28,31 @@ import Footer from '../components/ui/Footer.astro';
         </span>
       </h1>
       <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-300">
-        Descubra escenarios representativos y arquitecturas de referencia sobre cómo nuestras soluciones de Datos e IA resuelven cuellos de botella empresariales y generan ventaja competitiva.
+        Descubra escenarios ilustrativos y arquitecturas de referencia sobre cómo nuestras soluciones de Datos e IA resuelven cuellos de botella empresariales y generan ventaja competitiva.
       </p>
-      <div class="mt-6 inline-block bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm text-gray-400">
-        <i class="ph ph-info mr-2"></i>Los siguientes escenarios son arquitecturas ilustrativas diseñadas para proteger la confidencialidad corporativa.
+      <div class="mt-6 inline-block bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-gray-300 max-w-3xl">
+        <i class="ph ph-info mr-2 text-brandCyan"></i>Escenarios <strong>ilustrativos</strong> del tipo de resultado que nuestras arquitecturas pueden habilitar. <strong>No representan clientes ni proyectos reales</strong>; las cifras son estimaciones de potencial <span class="text-brandCyan font-semibold">[EST]</span>, no resultados medidos.
       </div>
     </section>
 
-    <div class="space-y-12">
-      <!-- Caso 1 -->
-      <div class="glass-card p-8 md:p-12" data-animate="fade-up">
-        <div class="flex flex-col md:flex-row gap-8">
-          <div class="md:w-1/3 border-r border-white/10 pr-8">
-            <h3 class="text-sm uppercase tracking-widest text-brandCyan mb-2">Escenario: Sector Financiero</h3>
-            <h2 class="text-2xl font-bold text-white mb-4">Automatización de Scoring Crediticio</h2>
-            <div class="space-y-3">
-              <div>
-                <span class="text-gray-500 text-sm">Problema</span>
-                <p class="text-white">Procesos de aprobación manuales lentos (hasta 5 días) y alta tasa de falsos positivos en detección de fraude.</p>
-              </div>
-            </div>
-          </div>
-          <div class="md:w-2/3">
-            <h3 class="text-xl font-bold mb-4">La Solución Datanestiq</h3>
-            <p class="text-gray-400 mb-6 text-lg">
-              Despliegue de un pipeline de Data Engineering para ingesta en tiempo real, seguido por la implementación de modelos predictivos de Machine Learning que evalúan cientos de variables financieras y de comportamiento instantáneamente.
-            </p>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">-85%</span>
-                <span class="text-sm text-gray-400">Tiempo de aprobación</span>
-              </div>
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">-40%</span>
-                <span class="text-sm text-gray-400">Tasa de fraude</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    {allRoiCases.length > 0 ? (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {allRoiCases.map((rc: any) => (
+          <IllustrativeRoiCase 
+            title={rc.title}
+            description={rc.description}
+            context={rc.context}
+            metrics={rc.metrics}
+            sectorTitle={rc.sectorTitle}
+          />
+        ))}
       </div>
-
-      <!-- Caso 2 -->
-      <div class="glass-card p-8 md:p-12" data-animate="fade-up">
-        <div class="flex flex-col md:flex-row gap-8">
-          <div class="md:w-1/3 border-r border-white/10 pr-8">
-            <h3 class="text-sm uppercase tracking-widest text-brandCyan mb-2">Escenario: Retail de Gran Escala</h3>
-            <h2 class="text-2xl font-bold text-white mb-4">Optimización Predictiva de Inventario</h2>
-            <div class="space-y-3">
-              <div>
-                <span class="text-gray-500 text-sm">Problema</span>
-                <p class="text-white">Roturas de stock en temporadas pico y exceso de inventario obsoleto debido a forecasting basado en hojas de cálculo.</p>
-              </div>
-            </div>
-          </div>
-          <div class="md:w-2/3">
-            <h3 class="text-xl font-bold mb-4">La Solución Datanestiq</h3>
-            <p class="text-gray-400 mb-6 text-lg">
-              Implementación de una arquitectura de Business Intelligence integrada con modelos de series temporales que anticipan la demanda cruzando datos históricos, estacionalidad, y factores externos (clima, tendencias macroeconómicas).
-            </p>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">+22%</span>
-                <span class="text-sm text-gray-400">Rotación de activos</span>
-              </div>
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">98%</span>
-                <span class="text-sm text-gray-400">Precisión en forecast</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Caso 3 -->
-      <div class="glass-card p-8 md:p-12" data-animate="fade-up">
-        <div class="flex flex-col md:flex-row gap-8">
-          <div class="md:w-1/3 border-r border-white/10 pr-8">
-            <h3 class="text-sm uppercase tracking-widest text-brandCyan mb-2">Escenario: Salud & Farmacéutica</h3>
-            <h2 class="text-2xl font-bold text-white mb-4">Agentes de IA para Análisis Clínico</h2>
-            <div class="space-y-3">
-              <div>
-                <span class="text-gray-500 text-sm">Problema</span>
-                <p class="text-white">Procesamiento manual e ineficiente de miles de reportes médicos no estructurados para investigación clínica.</p>
-              </div>
-            </div>
-          </div>
-          <div class="md:w-2/3">
-            <h3 class="text-xl font-bold mb-4">La Solución Datanestiq</h3>
-            <p class="text-gray-400 mb-6 text-lg">
-              Desarrollo de Sistemas Digitales Premium apoyados por NLP (Procesamiento de Lenguaje Natural) y LLMs privados (GenAI) que extraen, estructuran y anonimizan entidades médicas en milisegundos, operando bajo estricto cumplimiento HIPAA.
-            </p>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">100x</span>
-                <span class="text-sm text-gray-400">Velocidad de extracción</span>
-              </div>
-              <div class="bg-white/5 p-4 rounded-lg">
-                <span class="block text-3xl font-bold text-brand mb-1">100%</span>
-                <span class="text-sm text-gray-400">Privacidad (On-Premise)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    ) : (
+      <p class="text-center text-gray-400 py-12">No hay escenarios disponibles en este momento.</p>
+    )}
     
     <section class="mt-24 text-center" data-animate="fade-up">
-      <h2 class="text-3xl font-bold mb-6">Su arquitectura es la siguiente historia de éxito</h2>
+      <h2 class="text-3xl font-bold mb-6">Diseñemos juntos su próxima arquitectura de valor</h2>
       <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg">
         Inicie un diagnóstico gratuito con nuestros especialistas para identificar las fugas de valor en su ecosistema de datos actual.
       </p>

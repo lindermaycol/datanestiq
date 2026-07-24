@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { semanticHighlight } from '../../store/index';
+import { useStore } from '@nanostores/react';
+import { userContext, semanticHighlight } from '../../store/index';
 import personas from '../../data/personas.json';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import taxonomyCorpus from '../../data/taxonomyCorpus.json';
+import { getLocalizedRoleTitle, mapSectorSlugToId } from '../../lib/roleLocalization';
 
 export default function SolutionsByRoleAndIndustry() {
     const [activeTab, setActiveTab] = useState('role'); // 'role' | 'industry'
     const [selectedRole, setSelectedRole] = useState(null);
+    const ctx = useStore(userContext);
+    const activeSectorId = mapSectorSlugToId(ctx?.sector, sectorsCorpus);
+    const activeSectorObj = activeSectorId ? sectorsCorpus.find(s => s.id === activeSectorId) : null;
 
     const resetServiceCards = () => {
         semanticHighlight.set({});
@@ -78,7 +83,7 @@ export default function SolutionsByRoleAndIndustry() {
                             onClick={() => handleRoleClick(role)}
                             className="glass-card p-4 text-left hover:border-brandCyan/50 transition-colors group relative"
                         >
-                            <h3 className="text-white font-semibold text-sm mb-1">{role.title}</h3>
+                            <h3 className="text-white font-semibold text-sm mb-1">{getLocalizedRoleTitle(role, activeSectorObj)}</h3>
                             <p className="text-xs text-gray-400">Meta: {role.goals[0]}</p>
                             <i className="ph ph-arrow-right absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-brandCyan transition-opacity"></i>
                         </button>

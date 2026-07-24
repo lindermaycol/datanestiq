@@ -77,14 +77,14 @@ relevantPersonas:
   - ciso
   - cdo
 roiCases:
-  - title: "Detección Temprana de Fraude Transaccional"
-    description: "Implementación de un pipeline de streaming y ML para calificación de transacciones en tiempo real."
-    context: "Institución financiera procesando >5M tx/día con alta tasa de falsos positivos en el sistema legacy."
+  - title: "Automatización de Scoring Crediticio y Fraude"
+    description: "Despliegue de un pipeline de Data Engineering para ingesta en tiempo real y modelos predictivos de Machine Learning."
+    context: "Institución financiera procesando >5M tx/día con aprobaciones crediticias manuales de hasta 5 días."
     metrics:
-      - value: "-45%"
-        label: "Pérdidas por fraude"
-      - value: "<50ms"
-        label: "Latencia de inferencia"
+      - value: "-85%"
+        label: "Tiempo de aprobación"
+      - value: "-40%"
+        label: "Tasa de fraude"
 contentAngles:
   - id: fraude-tiempo-real-banca
     title: Detección de Fraude en Tiempo Real
