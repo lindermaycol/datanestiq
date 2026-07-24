@@ -3,7 +3,7 @@ title: "Gobierno del Dato en el Sector Público: Clave para la Trazabilidad, Cal
 description: "Descubre cómo una estrategia robusta de gobierno del dato es fundamental para la transparencia, la calidad y la trazabilidad en la administración pública, fortaleciendo la confianza ciudadana."
 author: "Datanestiq"
 pubDate: 2026-07-14T04:33:43.385Z
-tags: ["Gobierno del Dato","Sector Público","Transparencia","Calidad de Datos","Trazabilidad de Datos","Estrategia de Datos","Administración Pública","CDO"]
+tags: ["Sector Público", "Gobierno del Dato", "Estrategia de Datos", "CDO"]
 draft: false
 ---
 # Gobierno del Dato en el Sector Público: Un Pilar para la Transparencia

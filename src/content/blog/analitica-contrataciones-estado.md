@@ -3,7 +3,7 @@ title: "Detectar Fraudes y Optimizar Presupuestos en Contrataciones Estatales co
 description: "Guía práctica para líderes del sector público: cómo la analítica predictiva y la detección de anomalías reducen desviaciones presupuestarias y aumentan la transparencia en compras públicas."
 author: "Datanestiq"
 pubDate: 2026-07-14T06:04:51.968Z
-tags: ["sector-público","analítica-predictiva","contrataciones-estatales","gobernanza-de-datos","optimización-presupuestaria"]
+tags: ["Sector Público", "Analítica Predictiva", "Gobierno del Dato", "ROI"]
 draft: false
 ---
 # Detectar Fraudes y Optimizar Presupuestos en Contrataciones Estatales con Analítica Avanzada

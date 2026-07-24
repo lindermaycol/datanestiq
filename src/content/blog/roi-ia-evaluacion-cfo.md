@@ -4,7 +4,7 @@ description: "Un marco financiero para CFOs: cómo estructurar un business case 
 pubDate: 2026-07-16
 author: "Datanestiq"
 image: "/images/blog/roi-cfo.jpg"
-tags: ["CFO", "ROI", "Business Case", "Estrategia de Datos"]
+tags: ["CFO", "ROI", "Estrategia de Datos"]
 draft: false
 ---
 

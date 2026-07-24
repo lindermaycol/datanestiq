@@ -3,7 +3,7 @@ title: "Soberanía de Datos con LLMs Locales"
 description: "Despliegue de modelos LLM locales en dependencias gubernamentales para asegurar la soberanía del dato"
 author: "Datanestiq"
 pubDate: 2026-07-14T06:05:16.724Z
-tags: ["LLM","Soberanía de Datos","Gobierno","Seguridad"]
+tags: ["Sector Público", "Soberanía de Datos", "Inteligencia Artificial", "Compliance"]
 draft: false
 ---
 

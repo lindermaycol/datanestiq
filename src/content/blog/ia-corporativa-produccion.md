@@ -3,7 +3,7 @@ title: "Por qué el 70% de las iniciativas de IA corporativa no llegan a producc
 description: "Descubre los errores arquitectónicos y estratégicos comunes que estancan los proyectos de IA en fase de Prueba de Concepto, y cómo estructurar pipelines robustos."
 pubDate: 2026-07-06T12:00:00Z
 author: "Datanestiq"
-tags: ["Inteligencia Artificial", "Estrategia", "LLMOps"]
+tags: ["Inteligencia Artificial", "Estrategia de Datos", "Ingeniería de Datos"]
 draft: false
 ---
 

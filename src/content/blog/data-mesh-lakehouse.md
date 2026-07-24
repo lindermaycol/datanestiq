@@ -3,7 +3,7 @@ title: "Data Mesh vs. Data Lakehouse: Qué arquitectura elige un CDO en 2026"
 description: "Un análisis técnico y organizacional sobre cómo estructurar los datos a escala empresarial utilizando productos de datos frente a centralización."
 pubDate: 2026-07-10T08:00:00Z
 author: "Datanestiq"
-tags: ["Data Engineering", "Arquitectura", "Data Mesh"]
+tags: ["Ingeniería de Datos", "Gobierno del Dato"]
 draft: true
 ---
 

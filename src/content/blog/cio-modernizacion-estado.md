@@ -3,7 +3,7 @@ title: "Integración de Bases de Datos Legacy con IA"
 description: "Guía táctica para CIOs públicos sobre integración de bases de datos legacy con IA, preservando el compliance y reduciendo el TCO"
 author: "Datanestiq"
 pubDate: 2026-07-11T04:02:20.739Z
-tags: ["Integración de Datos","IA","Bases de Datos Legacy","Compliance","TCO"]
+tags: ["Sector Público", "Ingeniería de Datos", "Compliance", "CIO"]
 draft: false
 ---
 

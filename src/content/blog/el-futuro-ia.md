@@ -3,7 +3,7 @@ title: "El Futuro de la IA"
 description: "Explorando el impacto de la inteligencia artificial en la industria y la sociedad"
 author: "Datanestiq"
 pubDate: 2026-07-09T00:00:00Z
-tags: ["inteligencia artificial","innovación","tecnología"]
+tags: ["Inteligencia Artificial", "Estrategia de Datos"]
 draft: true
 ---
 # El Futuro de la IA

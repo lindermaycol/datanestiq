@@ -3,7 +3,7 @@ title: "Unificar Historias Clínicas en un Data Lake Seguro: Guía Técnica para
 description: "Guía práctica para CIOs: cómo consolidar historias clínicas dispersas en un Data Lake seguro, cumpliendo HIPAA y FHIR sin sacrificar interoperabilidad ni gobernanza."
 author: "Datanestiq"
 pubDate: 2026-07-11T04:20:43.560Z
-tags: ["data-engineering","healthcare","compliance","fhir","hipaa","cio"]
+tags: ["Salud", "Interoperabilidad", "Compliance", "Ingeniería de Datos", "CIO"]
 draft: true
 ---
 # Unificar Historias Clínicas en un Data Lake Seguro: Guía Técnica para el CIO

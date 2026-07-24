@@ -3,7 +3,7 @@ title: "Cómo la IA Predictiva Reduce un 45% las Pérdidas por Fraude (PCI-DSS/A
 description: "Análisis financiero para el CFO: cómo el streaming de datos + modelos predictivos en tiempo real generan ROI medible, cumplen normativas y protegen el EBITDA."
 author: "Datanestiq"
 pubDate: 2026-07-11T04:20:41.792Z
-tags: ["cfo","fraude","pci-dss","aml","ia-predictiva","streaming-datos","risk-management","finanzas"]
+tags: ["Finanzas y Banca", "CFO", "Compliance", "Analítica Predictiva", "Ingeniería de Datos"]
 draft: true
 ---
 # Cómo la IA Predictiva y el Streaming de Datos Reducen un 45% las Pérdidas por Fraude — Sin Comprometer el Cumplimiento PCI-DSS ni AML

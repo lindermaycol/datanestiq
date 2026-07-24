@@ -3,7 +3,7 @@ title: "IA para la Gobernanza de Padrones Ciudadanos: Depuración, MDM y Soberan
 description: "Cómo la IA aplicada a la gestión maestra de datos (MDM) transforma padrones ciudadanos: precisión, gobernanza en tiempo real y soberanía con LLMs locales."
 author: "Datanestiq"
 pubDate: 2026-07-14T06:06:17.468Z
-tags: ["ai-data-science","estrategia-datos-ia","soberania-datos-llms","sector-gobierno","mdm"]
+tags: ["Sector Público", "Gobierno del Dato", "Inteligencia Artificial", "CDO"]
 draft: false
 ---
 # IA para la Gobernanza de Padrones Ciudadanos: Depuración, MDM y Soberanía de Datos

@@ -4,7 +4,7 @@ description: "Un manifiesto para CEOs: Por qué delegar la estrategia de IA excl
 pubDate: 2026-07-16
 author: "Datanestiq"
 image: "/images/blog/ceo-estrategia.jpg"
-tags: ["CEO", "Estrategia", "Ventaja Competitiva", "Transformación Digital"]
+tags: ["CEO", "Estrategia de Datos", "Inteligencia Artificial"]
 draft: false
 ---
 

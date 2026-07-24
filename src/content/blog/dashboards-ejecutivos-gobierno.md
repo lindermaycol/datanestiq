@@ -3,7 +3,7 @@ title: "Métricas de Transparencia en Tiempo Real"
 description: "Consolidación de métricas de transparencia y gestión ciudadana en tiempo real con herramientas modernas de BI"
 author: "Datanestiq"
 pubDate: 2026-07-14T06:05:41.081Z
-tags: ["Business Intelligence","Gestión Ciudadana","Transparencia","Métricas en Tiempo Real"]
+tags: ["Sector Público", "Business Intelligence", "Gobierno del Dato"]
 draft: false
 ---
 

@@ -3,7 +3,7 @@ title: "Interoperabilidad Institucional: Reducción de tiempos en expedientes p�
 description: "Cómo la interoperabilidad de datos entre entidades públicas acelera trámites, reduce duplicidad y mejora la atención ciudadana — con casos reales y métricas de impacto."
 author: "Datanestiq"
 pubDate: 2026-07-14T04:36:24.076Z
-tags: ["interoperabilidad","sector-público","gobernanza-datos","eficiencia-gubernamental","data-engineering"]
+tags: ["Sector Público", "Interoperabilidad", "Gobierno del Dato", "Ingeniería de Datos"]
 draft: false
 ---
 # Interoperabilidad Institucional: El acelerador silencioso de la atención pública

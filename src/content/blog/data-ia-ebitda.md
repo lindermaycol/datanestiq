@@ -4,7 +4,7 @@ description: "Por qué los directores financieros están priorizando la analíti
 pubDate: 2026-07-16
 author: "Datanestiq"
 image: "/images/blog/ebitda-data.jpg"
-tags: ["CFO", "EBITDA", "Finanzas", "Eficiencia Operativa"]
+tags: ["Finanzas y Banca", "ROI", "CFO", "Estrategia de Datos"]
 draft: false
 ---
 

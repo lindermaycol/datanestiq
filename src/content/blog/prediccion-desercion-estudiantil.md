@@ -3,7 +3,7 @@ title: "Modelos Predictivos"
 description: "Identificación temprana de estudiantes en riesgo de abandono"
 author: "Datanestiq"
 pubDate: 2026-07-11T04:20:27.328Z
-tags: ["educación","inteligencia artificial","modelos predictivos"]
+tags: ["Educación", "Analítica Predictiva", "Inteligencia Artificial"]
 draft: true
 ---
 
