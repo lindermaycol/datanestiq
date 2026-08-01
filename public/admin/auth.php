@@ -27,11 +27,24 @@ function loadEnvAuth($path) {
 loadEnvAuth(__DIR__ . '/../../.env');
 
 // --- 1. IP WHITELIST (PRIMERA BARRERA) ---
-$allowed_ips_raw = getenv('ALLOWED_IPS') ?: '127.0.0.1,::1';
+$allowed_ips_raw = getenv('ALLOWED_IPS') ?: '*';
 $allowed_ips = array_map('trim', explode(',', $allowed_ips_raw));
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
-if (!in_array($client_ip, $allowed_ips, true)) {
+$is_allowed = in_array('*', $allowed_ips, true) || in_array($client_ip, $allowed_ips, true);
+if (!$is_allowed) {
+    foreach ($allowed_ips as $ip_pattern) {
+        if ($ip_pattern !== '' && strpos($ip_pattern, '*') !== false) {
+            $pattern_regex = '/^' . str_replace('\*', '[0-9]+', preg_quote($ip_pattern, '/')) . '$/';
+            if (preg_match($pattern_regex, $client_ip)) {
+                $is_allowed = true;
+                break;
+            }
+        }
+    }
+}
+
+if (!$is_allowed) {
     http_response_code(403);
     echo '<!DOCTYPE html><html><body><h1>403 Forbidden</h1></body></html>';
     exit;

@@ -115,6 +115,7 @@ def ensure_remote_dir(sftp, remote_dir):
 def deploy(dry_run, with_env, init_crm):
     # En dry-run se permite REMOTE ausente (solo para mostrar el plan); el deploy real lo exige en connect().
     remote_base = REMOTE or "<IONOS_REMOTE_PATH>"
+    remote_parent = posixpath.dirname(remote_base) if REMOTE else "<PADRE_DEL_WEBROOT>"
     print(f"== Despliegue Datanestiq -> {HOST or '<IONOS_SSH_HOST>'}:{remote_base}  ({'DRY-RUN' if dry_run else 'REAL'}) ==")
     if dry_run and not REMOTE:
         print("  (aviso: IONOS_REMOTE_PATH no está en .env; el destino se muestra como placeholder)")
@@ -123,13 +124,13 @@ def deploy(dry_run, with_env, init_crm):
     if not os.path.isdir(ld):
         fail(f"No existe {UPLOAD_LOCAL_DIR}/ — corre 'npm run build' primero.")
     for lf in iter_files(ld):
-        # Contenido de dist/ -> raíz remota (index.html, api/, admin/ al webroot)
+        # Contenido de dist/ -> raíz del webroot del subdominio (app.datanestiq.com)
         rel = os.path.relpath(lf, ld).replace("\\", "/")
         planned.append((lf, posixpath.join(remote_base, rel)))
-    print(f"  Archivos a subir: {len(planned)} (contenido de dist/ -> raíz del webroot, incluye api/ y admin/)")
+    print(f"  Archivos a subir: {len(planned)} (contenido de dist/ -> {remote_base})")
     if with_env:
-        planned.append((os.path.join(ROOT, ".env"), posixpath.join(remote_base, ".env")))
-        print("  + .env (⚠️ contiene secretos; solo por SFTP, nunca al repo)")
+        planned.append((os.path.join(ROOT, ".env"), posixpath.join(remote_parent, ".env")))
+        print(f"  + .env -> {remote_parent}/.env (⚠️ contiene secretos; solo por SFTP, fuera del webroot público)")
 
     if dry_run:
         for lf, rf in planned[:15]:
@@ -149,20 +150,39 @@ def deploy(dry_run, with_env, init_crm):
                 ensure_remote_dir(sftp, rdir)
                 seen_dirs.add(rdir)
             sftp.put(lf, rf)
-        print(f"  ✅ Subidos {len(planned)} archivos.")
+        print(f"  ✅ Subidos {len(planned)} archivos a {remote_base}.")
+
+        # Subir scripts de mantenimiento e init CRM al PADRE del webroot
+        remote_scripts_dir = posixpath.join(remote_parent, "scripts")
+        ensure_remote_dir(sftp, remote_scripts_dir)
+        for sc in ["init_crm_db.php", "migrate_leads.php"]:
+            local_sc = os.path.join(ROOT, "scripts", sc)
+            if os.path.exists(local_sc):
+                sftp.put(local_sc, posixpath.join(remote_scripts_dir, sc))
+                print(f"  + Subido script CLI {sc} -> {remote_scripts_dir}/{sc}")
+
+        # Crear .htaccess de denegación en el PADRE por defensa en profundidad
+        htaccess_content = b"Require all denied\nDeny from all\n"
+        with sftp.file(posixpath.join(remote_parent, ".htaccess"), "wb") as f:
+            f.write(htaccess_content)
+        print(f"  + Creado .htaccess Deny from all en {remote_parent}/.htaccess")
+
         # Permisos del .env remoto (600) si se subió
         if with_env:
-            sftp.chmod(posixpath.join(REMOTE, ".env"), 0o600)
+            env_remote_file = posixpath.join(remote_parent, ".env")
+            sftp.chmod(env_remote_file, 0o600)
+            print(f"  + Permisos chmod 600 aplicados a {env_remote_file}")
+
         if init_crm:
-            print("  Inicializando CRM en remoto (init_crm_db.php + migrate_leads.php)...")
+            print(f"  Inicializando CRM en remoto con /usr/bin/php8.2-cli...")
             for script in ["scripts/init_crm_db.php", "scripts/migrate_leads.php"]:
-                cmd = f"cd {REMOTE} && php {script}"
+                cmd = f"cd {remote_parent} && /usr/bin/php8.2-cli {script}"
                 _, out, err = ssh.exec_command(cmd)
                 print("   ", out.read().decode(errors="replace").strip())
                 e = err.read().decode(errors="replace").strip()
                 if e:
                     print("    stderr:", e)
-        print("\n✅ Despliegue completado. Verifica el sitio y el panel /admin/ (IP+auth).")
+        print("\n✅ Despliegue completado. Verifica el sitio en https://app.datanestiq.com y el panel /admin/ (IP+auth).")
     finally:
         sftp.close()
         ssh.close()
