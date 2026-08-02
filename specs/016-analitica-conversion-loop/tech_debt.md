@@ -18,4 +18,8 @@
 
 ### 4. Migración de la BD SQLite en Producción (`crm.sqlite`)
 - **Riesgo:** La incorporación de las columnas `sector` y `rol` a la tabla `leads` debe ejecutarse sobre una base de datos activa con registros reales.
-- **Mitigación de Diseño:** Ejecutar `PRAGMA table_info(leads)` en `init_crm_db.php` para realizar la adición de columnas de forma estrictamente idempotente. Realizar copia de respaldo preventiva `cp crm.sqlite crm.sqlite.bak` en el servidor antes de aplicar la migración en producción.
+- **Mitigación de Diseño:** Ejecutar `PRAGMA table_info(leads)` en `init_crm_db.php` para realizar la adición de columnas de forma strictly idempotente. Realizar copia de respaldo preventiva `cp crm.sqlite crm.sqlite.bak` en el servidor antes de aplicar la migración en producción.
+
+### 5. Guardarraíl de Honestidad Radical en el Loop `learn` (§2)
+- **Riesgo:** En etapas iniciales con bajo volumen de tráfico (< 10 conversiones), el análisis estadístico automatizado corre el riesgo de derivar patrones falsos o emitir métricas fabricadas.
+- **Mitigación de Diseño:** `scripts/learn_prompt_optimizer.mjs` incorpora un umbral mínimo de muestra (`MIN_CONVERSIONS = 10`). Si los datos de conversión reales en `crm.sqlite` no alcanzan este umbral, el script emite un reporte transparente de "Datos insuficientes" omitiendo la generación de sugerencias ficticias o diffs simulados al `SYSTEM_PROMPT`.
