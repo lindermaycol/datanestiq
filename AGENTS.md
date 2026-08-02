@@ -1,108 +1,74 @@
-# AGENTS.md — Overview de Agentes IA en Datanestiq
+# AGENTS.md: Guía de Configuración y Operación para Agentes IA
 
-Este documento describe la estructura, convenciones, arquitectura y especificaciones fundamentales que rigen el ecosistema de agentes IA en el repositorio de **Datanestiq**. Está diseñado como punto de entrada para nuevos agentes (IA o humanos) que operen dentro del sistema: deben leerlo antes de interactuar con cualquier spec, workflow, prompt o artefacto de implementación.
+Este documento sirve como una guía esencial para los agentes de Inteligencia Artificial que operan dentro del repositorio de Datanestiq. Detalla la estructura del proyecto, las convenciones clave, la arquitectura subyacente y un resumen de las especificaciones de características (Specs) para facilitar una interacción autónoma y efectiva.
 
----
+## 1. Filosofía de Operación para Agentes IA
 
-## 🌐 Arquitectura General de Agentes
+El repositorio de Datanestiq está diseñado para un desarrollo **Specification-Driven** y **Prompt-Driven**. Los agentes IA son actores centrales en la creación, refinamiento y ejecución de las características del producto.
 
-Los agentes en Datanestiq no son entidades aisladas, sino **instancias ejecutables de una fábrica de agentes**, cuya metodología está formalizada en la **Spec 004 — Metodología de Desarrollo Digital Premium**, y refinada en `specs/004-metodologia-desarrollo-digital/spec_004_refined.md`.
+*   **Constitución del Agente**: La base de la operación de cualquier agente se encuentra en `.specify/memory/constitution.md`. Este documento define los principios, directrices y restricciones fundamentales que rigen el comportamiento y las decisiones del agente. Es imperativo que todos los agentes consulten y adhieran a esta constitución.
+*   **Enfoque Modular**: Las tareas se dividen en especificaciones (`specs/`) y planes (`planes/`), con prompts específicos (`prompts/`) para guiar la ejecución.
+*   **Generación y Consumo de Documentación**: Los agentes son responsables de generar y consumir documentación estandarizada utilizando las plantillas provistas en `.specify/templates/`.
 
-La arquitectura se basa en tres capas interconectadas:
+## 2. Estructura del Repositorio
 
-1. **Capa de Constitución y Gobernanza**  
-   - Define los principios éticos, límites operativos y reglas de interacción.  
-   - Ubicación: `.specify/memory/constitution.md`  
-   - Plantilla base: `.specify/templates/constitution-template.md`
+A continuación, se describe la estructura de directorios clave y su propósito para los agentes IA:
 
-2. **Capa de Especificación y Planificación**  
-   - Cada agente opera bajo una *spec* numerada (ej. `001`, `004`, `005`, etc.), con su propio conjunto de artefactos:  
-     - `spec.md`: definición funcional y alcance  
-     - `plan.md`: plan de implementación (cronología, dependencias, validaciones)  
-     - `tasks.md`: lista detallada de tareas ejecutables  
-     - `tech_debt.md`: deuda técnica asociada (si aplica)  
-   - Todas las specs residen bajo `specs/`, organizadas por nombre canónico (ej. `001-elevacion-premium/`).
+*   **`.claude/`**:
+    *   Contiene configuraciones específicas para agentes que utilizan la plataforma Claude, como `deploy-ops.md` para operaciones de despliegue y `launch.json` para configuraciones de lanzamiento.
+*   **`.specify/`**:
+    *   El núcleo de la metodología de especificación y configuración de agentes.
+    *   `extensions.yml`, `feature.json`, `init-options.json`, `integration.json`: Archivos de configuración para definir capacidades, características e integraciones de los agentes.
+    *   `integrations/`: Contiene manifiestos para integraciones específicas (e.g., `agy.manifest.json`, `speckit.manifest.json`).
+    *   `memory/constitution.md`: La constitución fundamental que rige el comportamiento del agente.
+    *   `templates/`: Colección de plantillas Markdown para la generación estandarizada de documentos (e.g., `spec-template.md`, `plan-template.md`, `tasks-template.md`, `constitution-template.md`, `checklist-template.md`).
+    *   `workflows/workflow-registry.json`: Define los flujos de trabajo y secuencias de tareas para los agentes.
+*   **`prompts/`**:
+    *   Un catálogo exhaustivo de prompts diseñados para guiar la ejecución de tareas por parte de los agentes.
+    *   **Prompts de Rol/Persona**: Prompts numerados (e.g., `01-premium-website-builder.md` a `10-objection-killing-faq.md`) que definen roles o especializaciones para la generación de contenido.
+    *   **Prompts Operacionales**: Prompts con el prefijo `prompt-antigravity-` que dirigen acciones específicas como confirmaciones, correcciones, despliegues y cierres de tareas.
+    *   **Prompts de Generación/Refinamiento de Specs**: Prompts como `add_user_stories_spec_XXX.md`, `create_spec_XXX.md`, `refine_spec_XXX.md`, `resolve_tech_debt_XXX.md` para interactuar directamente con el ciclo de vida de las especificaciones.
+    *   **Prompts Específicos de IA**: Prompts con prefijos `prompt-ia-` o `prompt-perplexity-` para tareas especializadas o modelos específicos.
+*   **`specs/`**:
+    *   El directorio central para todas las especificaciones de características. Cada característica tiene su propia carpeta numerada y descriptiva (e.g., `001-elevacion-premium/`).
+    *   Cada carpeta de spec contiene:
+        *   `plan.md`: Plan de implementación.
+        *   `spec.md`: Especificación detallada de la característica.
+        *   `tasks.md`: Lista de tareas de implementación.
+        *   `tech_debt.md`: Deuda técnica asociada a la spec.
+        *   Algunas specs pueden incluir `data-model.md`, `quickstart.md`, `research.md`.
+*   **`planes/`**:
+    *   Contiene diversos planes de implementación, planes estratégicos y planes de acción detallados para proyectos y correcciones.
+    *   `planes/insumos-conversion-consultiva/`: Materiales de entrada para la generación de contenido consultivo.
+*   **`src/data/`**:
+    *   Fuentes de datos maestras en formato JSON, cruciales para la generación de contenido y la lógica del sitio (e.g., `contentAngles.json`, `extendedIndustries.json`, `personas.json`, `taxonomyCorpus.json`).
+*   **`scripts/`**:
+    *   Colección de scripts de utilidad para automatización, despliegue, validación y otras operaciones (e.g., `deploy_ionos.py`, `docs-generator.mjs`, `test-specs.sh`, `validate-taxonomy.js`).
+    *   `scripts/hooks/`: Contiene Git hooks (`pre-commit`, `post-commit`, `post-checkout`) para automatizar acciones en el ciclo de desarrollo.
+*   **`public/api/`**:
+    *   Endpoints de la API pública con los que los agentes pueden interactuar para funcionalidades como chat, reserva de citas o guardado de datos.
+*   **`Walkthrough/`**:
+    *   Documentos que detallan la ejecución y el resultado de implementaciones completadas, sirviendo como referencia y ejemplos prácticos.
+*   **`UX/` y `auditorias/`**:
+    *   Informes de auditorías de UX y de ingeniería inversa, proporcionando contexto y requisitos para mejoras y correcciones.
 
-3. **Capa de Ejecución y Orquestación**  
-   - Los agentes se activan mediante workflows registrados en `.specify/workflows/workflow-registry.json`.  
-   - Se integran con herramientas externas mediante manifiestos declarativos:  
-     - `.specify/integrations/agy.manifest.json`  
-     - `.specify/integrations/speckit.manifest.json`  
-   - La orquestación conversacional (ruteo híbrido, chaining contextual, tool-calling) está especificada en la **Spec 002 — Microexperiencias de IA**, con soporte técnico en `Walkthrough/Walkthrough Context-Aware Chaining (Spec 002).md` y `Walkthrough/Walkthrough Arquitectura Conversacional (Spec 002).md`.
+## 3. Convenciones Clave
 
----
+*   **Formato de Documentación**: Todo el contenido textual y la documentación se gestionan en formato Markdown (`.md`).
+*   **Estructura de Especificaciones**: Las especificaciones en `specs/` siguen una estructura consistente de archivos para cada característica.
+*   **Nomenclatura de Prompts**: Los prompts utilizan prefijos descriptivos para indicar su propósito y contexto de uso.
+*   **Datos y Configuración**: Los datos estructurados y las configuraciones se almacenan en formatos JSON (`.json`) o YAML (`.yml`).
 
-## 📁 Estructura de Directorios Clave para Agentes
+## 4. Arquitectura de Alto Nivel
 
-| Ruta | Propósito | Notas |
-|------|-----------|-------|
-| `.specify/` | **Núcleo operativo de agentes**: memoria, plantillas, workflows, integraciones y configuración de contexto. | Contiene `constitution.md`, `workflow-registry.json`, `templates/`, `integrations/`. |
-| `specs/` | **Catálogo autorizado de funcionalidades**: cada subdirectorio es una spec numerada con sus artefactos (`spec.md`, `plan.md`, `tasks.md`, `tech_debt.md`). | Es la fuente única de verdad para alcance, priorización y estado de implementación. |
-| `prompts/` | **Biblioteca de instrucciones ejecutables**: prompts especializados por rol, tarea o fase (ej. `01-premium-website-builder.md`, `prompt-antigravity-fix-chatbot-textura-spec002.md`). | Muchos están vinculados explícitamente a specs (ej. `add_user_stories_spec_002.md`). |
-| `Walkthrough/` | **Registro ejecutivo de validaciones y cierres**: documentos que confirman la ejecución completa de una spec o componente. | Ejemplos: `Walkthrough Implementación Completada Panel de Sectores Dinámico...`, `Walkthrough Dogfooding y Arquitectura LangGraph (Spec 004).md`. |
-| `planes/` | **Documentos estratégicos de planificación**: planes de implementación, auditorías, correcciones y gobernanza. | Incluye `Plan de Ejecución`, `Informe-Auditoria-UX.md`, `Gobernanza de Costos de IA (Spec 002).md`. |
-| `.claude/` | **Configuración operativa de entornos de agente**: scripts y lanzadores específicos para despliegue y operaciones. | Contiene `launch.json` y `agents/deploy-ops.md`. |
+*   **Desarrollo Centrado en Agentes**: El flujo de trabajo está optimizado para que los agentes IA impulsen la generación de contenido, la gestión de especificaciones y la automatización de tareas.
+*   **Frontend Astro**: El sitio web se construye con Astro, utilizando un enfoque de Generación de Sitios Estáticos (SSG) o Renderizado del Lado del Servidor (SSR) para la fachada de difusión.
+*   **Backend PHP**: Las funcionalidades de API y administración (e.g., `public/api/chat.php`, `public/admin/`) se implementan con PHP.
+*   **Integración OpenWiki**: Existe una integración con un sistema OpenWiki (referenciado en `specs/005-openwiki-agentes/`, `specs/009-openwiki-langchain/`, `specs/010-generador-multidestino/` y scripts) para la gestión de conocimiento y la generación de documentación.
+*   **CI/CD y Hooks**: El repositorio incorpora scripts y Git hooks para automatizar procesos de integración continua y despliegue.
 
-> ⚠️ **Convención crítica**: Ningún agente debe asumir comportamiento implícito. Todo debe derivarse de artefactos versionados en `specs/`, `.specify/` o `Walkthrough/`. Si un comportamiento no está documentado allí, **no existe operativamente**.
+## 5. Resumen de Especificaciones (Specs)
 
----
+A continuación, se presenta un resumen de las especificaciones de características implementadas o en desarrollo, que los agentes deben conocer y consultar:
 
-## 🧩 Convenciones de Nombre y Numeración
-
-- **Specs**: Numeración secuencial (`001`, `002`, ..., `016`) con nombres descriptivos en kebab-case:  
-  `001-elevacion-premium/`, `005-openwiki-agentes/`, `013-conversion-consultiva-rol-sector/`.  
-  El número refleja orden de priorización y dependencia lógica (no cronológica necesariamente).
-
-- **Prompts**:  
-  - `01-*.md` a `10-*.md`: prompts base de la **Fábrica de Agentes (Spec 004)**.  
-  - `prompt-antigravity-*`: prompts de acción inmediata, corrección crítica o validación post-implementación.  
-  - `prompt-*`: prompts genéricos de auditoría, navegación, roleplay o verificación.
-
-- **Walkthroughs**: Siempre incluyen el número de spec y el estado (`Completada`, `Elevación Premium`, `Recuperación`, `Fix`, etc.).  
-  Ej: `Walkthrough Recuperación de Microexperiencias IA (Spec 002).md`.
-
-- **Planes**: Usan formato claro: `Plan de Implementación [Nombre] (Spec XXX).md` o `Plan Estratégico...`.
-
----
-
-## 🛠️ Especificaciones Centrales para Agentes
-
-Estas specs definen los patrones fundamentales que todos los agentes deben conocer y aplicar:
-
-| Spec | Nombre | Rol Clave para Agentes | Ubicación clave |
-|--------|--------|-------------------------|-----------------|
-| **002** | Microexperiencias de IA | Base para arquitectura conversacional, chaining contextual, gobernanza de costos y microexperiencias (chatbot, warmup, highlight por rol). | `specs/002-microexperiencias-ia/`, `Walkthrough/Walkthrough Microexperiencias de IA (Spec 002) Completado.md` |
-| **004** | Metodología de Desarrollo Digital | Define la “Fábrica de Agentes”: 10 roles especializados, su interacción y estandarización de outputs. | `specs/004-metodologia-desarrollo-digital/spec_004_refined.md`, `prompts/01-premium-website-builder.md`–`10-objection-killing-faq.md` |
-| **005** & **009** | OpenWiki Agentes / LangChain | Especifican la infraestructura de documentación viva, CI/CD de conocimiento, gateway LiteLLM y balanceo. | `specs/005-openwiki-agentes/`, `specs/009-openwiki-langchain/`, `scripts/openwiki-llm.yaml` |
-| **006** | Ecosistema Web con Astro | Define el stack frontend (Astro + Content Collections), routing dinámico y fachada de difusión premium. | `specs/006-ecosistema-astro/`, `src/content.config.ts`, `src/pages/[...slug].astro` |
-| **011** | Enriquecimiento Profundo de la Taxonomía | Establece la taxonomía como fuente única de verdad (SSOT) para industrias, personas, madurez analítica y equivalencias de rol (`roleEquivalents`). | `specs/011-enriquecimiento-taxonomia/`, `src/data/extendedIndustries.json`, `src/data/personas.json`, `src/lib/roleLocalization.ts` |
-| **013** | Conversión Consultiva por Rol × Sector | Define el marco de personalización consultiva: cómo los agentes deben adaptar mensajes, casos de éxito y propuestas según rol (CFO, CIO, CEO) y sector (público, seguros, finanzas). | `specs/013-conversion-consultiva-rol-sector/spec.md`, `planes/insumos-conversion-consultiva/` |
-
----
-
-## 🧭 Flujo Operativo Típico de un Agente
-
-1. **Validar contexto**: Leer `.specify/memory/constitution.md` y el `workflow-registry.json` para entender restricciones y flujo esperado.  
-2. **Identificar spec objetivo**: Determinar qué spec se activa (ej. `002`, `011`, `013`) y cargar su `spec.md` + `plan.md`.  
-3. **Consultar artefactos complementarios**:  
-   - Datos: `src/data/*.json`, `specs/XXX/data-model.md`  
-   - Prompts: `prompts/` relevantes (ej. `prompt-antigravity-roleEquivalents-localizacion-roles-por-sector.md`)  
-   - Validaciones pasadas: `Walkthrough/` y `planes/` correspondientes  
-4. **Ejecutar y registrar**: Generar output conforme a plantillas (`spec-template.md`, `plan-template.md`, `tasks-template.md`) y registrar avances en `tasks.md` o `Walkthrough/`.  
-5. **Cerrar con evidencia**: Documentar cierre en `Walkthrough/` y actualizar `ESTADO-SPECS.md` (ubicado en `planes/ESTADO-SPECS.md`).
-
----
-
-## 📜 Referencias Obligatorias
-
-- `.specify/memory/constitution.md` → Reglas de conducta, ética y límites  
-- `.specify/workflows/workflow-registry.json` → Mapa de flujos autorizados  
-- `planes/ESTADO-SPECS.md` → Estado actual de todas las specs (prioridad, estado, dueño)  
-- `specs/004-metodologia-desarrollo-digital/spec_004_refined.md` → Especificación maestra de la Fábrica de Agentes  
-- `Walkthrough/Walkthrough Dogfooding y Arquitectura LangGraph (Spec 004).md` → Validación ejecutiva de la fábrica  
-- `src/lib/roleLocalization.ts` → Lógica de mapeo rol × sector × industria (fuente de verdad para personalización)
-
----
-
-✅ **Este documento es autocontenida y no requiere interpretación externa. Todo lo necesario para operar como agente en Datanestiq está aquí o en los artefactos directamente referenciados.**  
-🔁 Actualizaciones se realizan exclusivamente mediante PRs que modifiquen este archivo y sus dependencias directas en `.specify/` y `specs/`.
+*   **Spec 001: Elevación Premium del Prototipo**: Mejora y refinamiento de la interfaz de usuario y experiencia del prototipo.

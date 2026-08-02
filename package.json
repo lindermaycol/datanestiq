@@ -13,7 +13,8 @@
     "security:scan": "npm audit",
     "openwiki:audit": "echo \"[OPENWIKI] Validando sincronía de documentación... OK\"",
     "audit:lighthouse": "lhci autorun",
-    "docs:sync": "node scripts/docs-generator.mjs --all"
+    "docs:sync": "node scripts/docs-generator.mjs --target=wiki",
+    "docs:sync:all": "node scripts/docs-generator.mjs --all"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",

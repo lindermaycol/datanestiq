@@ -486,14 +486,26 @@ async function main() {
   console.log(`[INFO] docs-generator.mjs | Target: ${currentTarget} | Dry Run: ${DRY_RUN}`);
   
   if (isAllTarget) {
-    // Patrón diamante: fan-out paralelo con Promise.all -> reduce en informe atómico
+    // Patrón diamante: fan-out paralelo con Promise.allSettled -> reduce en informe atómico
     console.log("[DIAMOND PATTERN] Ejecutando los 4 targets (wiki, agents, skills, blog) en paralelo...");
-    await Promise.all([
-      runWiki(),
-      runAgents(),
-      runSkills(),
-      runBlog()
+    const results = await Promise.allSettled([
+      runWiki().then(() => ({ target: 'wiki', status: 'OK' })),
+      runAgents().then(() => ({ target: 'agents', status: 'OK' })),
+      runSkills().then(() => ({ target: 'skills', status: 'OK' })),
+      runBlog().then(() => ({ target: 'blog', status: 'OK' }))
     ]);
+
+    const targetSummary = results.map((res, i) => {
+      const targetName = ['wiki', 'agents', 'skills', 'blog'][i];
+      if (res.status === 'fulfilled') {
+        return { Target: targetName, Status: res.value.status, Error: '-' };
+      } else {
+        return { Target: targetName, Status: 'FAILED', Error: res.reason?.message || String(res.reason) };
+      }
+    });
+
+    console.log("\n--- RESUMEN POR TARGET (DIAMOND PATTERN) ---");
+    console.table(targetSummary);
   } else if (TARGET === 'wiki') await runWiki();
   else if (TARGET === 'agents') await runAgents();
   else if (TARGET === 'skills') await runSkills();
