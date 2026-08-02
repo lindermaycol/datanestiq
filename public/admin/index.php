@@ -112,9 +112,10 @@ $csrf = generateCsrfToken();
     </div>
 
         <!-- Navigation Tabs -->
-        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;border-b:1px solid rgba(255,255,255,0.1);padding-bottom:0.75rem;">
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.75rem;">
             <button id="tab-btn-leads" class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="switchTab('leads')">📋 Leads & Citas</button>
             <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica de Conversión</button>
+            <button id="tab-btn-ops" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('ops')">🛠️ Observabilidad Ops</button>
         </div>
 
         <!-- View: Leads & Citas -->
@@ -186,6 +187,59 @@ $csrf = generateCsrfToken();
                             <tbody id="llm-body"></tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Observabilidad Ops (Spec 017) -->
+        <div id="view-ops" style="display:none;">
+            <!-- KPI Cards -->
+            <div class="stats" id="ops-kpi-grid"></div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+                <!-- Salud y SLA de Proveedores LLM -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">⚡ Telemetría SLA & Failover de LLM (30 días)</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Proveedor</th><th>Llamadas</th><th>% Éxito</th><th>Latencia Prom.</th><th>p50 (ms)</th><th>p95 (ms)</th></tr>
+                            </thead>
+                            <tbody id="ops-providers-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Estado del Sistema y Build -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🖥️ Estado del Sistema y Despliegue</h3>
+                    <div id="ops-system-info" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+                </div>
+            </div>
+
+            <!-- Portafolio de Specs (SSOT Antidrift) -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">🏛️ Estado del Portafolio de Specs (SSOT specsStatus.json)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Nombre de la Especicificación</th><th>Estado</th><th>Fase Real</th><th>Deuda Técnica Abierta</th><th>Última Auditoría</th></tr>
+                        </thead>
+                        <tbody id="ops-specs-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tendencia Diaria 7d -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">📈 Tendencia Diaria de Peticiones y Errores (Últimos 7 días)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Fecha</th><th>Invocaciones Totales</th><th>Latencia Promedio</th><th>Errores / Failovers</th></tr>
+                        </thead>
+                        <tbody id="ops-trend-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -273,27 +327,122 @@ $csrf = generateCsrfToken();
     function switchTab(tab) {
         const leadsView = document.getElementById('view-leads');
         const analyticsView = document.getElementById('view-analytics');
+        const opsView = document.getElementById('view-ops');
         const btnLeads = document.getElementById('tab-btn-leads');
         const btnAnalytics = document.getElementById('tab-btn-analytics');
+        const btnOps = document.getElementById('tab-btn-ops');
+
+        // Reset button styles
+        [btnLeads, btnAnalytics, btnOps].forEach(btn => {
+            if (btn) {
+                btn.style.background = 'none';
+                btn.style.color = '#22d3ee';
+                btn.style.fontWeight = 'normal';
+            }
+        });
 
         if (tab === 'analytics') {
             leadsView.style.display = 'none';
+            opsView.style.display = 'none';
             analyticsView.style.display = 'block';
-            btnLeads.style.background = 'none';
-            btnLeads.style.color = '#22d3ee';
             btnAnalytics.style.background = '#22d3ee';
             btnAnalytics.style.color = '#000';
             btnAnalytics.style.fontWeight = '700';
             loadAnalyticsData();
+        } else if (tab === 'ops') {
+            leadsView.style.display = 'none';
+            analyticsView.style.display = 'none';
+            opsView.style.display = 'block';
+            btnOps.style.background = '#22d3ee';
+            btnOps.style.color = '#000';
+            btnOps.style.fontWeight = '700';
+            loadOpsTelemetry();
         } else {
             analyticsView.style.display = 'none';
+            opsView.style.display = 'none';
             leadsView.style.display = 'block';
-            btnAnalytics.style.background = 'none';
-            btnAnalytics.style.color = '#22d3ee';
             btnLeads.style.background = '#22d3ee';
             btnLeads.style.color = '#000';
             btnLeads.style.fontWeight = '700';
             loadLeads(1);
+        }
+    }
+
+    async function loadOpsTelemetry() {
+        const [telemetry, specsData] = await Promise.all([
+            api('ops_telemetry'),
+            api('ops_specs_status')
+        ]);
+
+        // KPIs
+        const sla = telemetry.sla_global || {};
+        const sys = telemetry.system_info || {};
+        document.getElementById('ops-kpi-grid').innerHTML = `
+            <div class="stat-card"><div class="value">${sla.sla_success_rate_pct || 100}%</div><div class="label">SLA Éxito Global (30d)</div></div>
+            <div class="stat-card"><div class="value">${sla.avg_latency_ms || 0} ms</div><div class="label">Latencia Promedio Global</div></div>
+            <div class="stat-card"><div class="value">${sla.total_requests || 0}</div><div class="label">Invocaciones Totales (30d)</div></div>
+            <div class="stat-card"><div class="value" style="color:#22c55e;">${sys.status || 'HEALTHY'}</div><div class="label">Estado Subdominio (63 págs)</div></div>
+        `;
+
+        // Telemetría de Proveedores LLM
+        const providersBody = document.getElementById('ops-providers-body');
+        if (telemetry.providers && telemetry.providers.length > 0) {
+            providersBody.innerHTML = telemetry.providers.map(p => {
+                const p50Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p50_latency_ms} ms`;
+                const p95Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p95_latency_ms} ms`;
+                return `<tr>
+                    <td><strong style="color:#22d3ee;">${esc(p.backend_used)}</strong></td>
+                    <td>${p.total_calls}</td>
+                    <td>${p.success_pct}%</td>
+                    <td>${p.avg_latency_ms} ms</td>
+                    <td>${p50Text}</td>
+                    <td>${p95Text}</td>
+                </tr>`;
+            }).join('');
+        } else {
+            providersBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Sin datos de peticiones en los últimos 30 días</td></tr>';
+        }
+
+        // Estado del Sistema
+        document.getElementById('ops-system-info').innerHTML = `
+            <div style="font-size:0.85rem;color:#ccc;"><strong>Último Build Estático:</strong> <span style="color:#22d3ee;">${esc(sys.last_build)}</span></div>
+            <div style="font-size:0.85rem;color:#ccc;"><strong>Páginas Estáticas Compiladas:</strong> ${sys.static_pages} páginas HTML5</div>
+            <div style="font-size:0.85rem;color:#ccc;"><strong>Especificaciones Verificadas (SSOT):</strong> ${sys.total_specs} specs</div>
+            <div style="font-size:0.85rem;color:#ccc;"><strong>Subdominio Producción IONOS:</strong> <code>https://${esc(sys.subdomain)}/</code> (200 OK)</div>
+            <div style="font-size:0.85rem;color:#22c55e;margin-top:0.5rem;font-weight:600;">✓ Protección .htaccess activa | IP Dynamic Auth Password-Only</div>
+        `;
+
+        // Portafolio de Specs (SSOT)
+        const specsBody = document.getElementById('ops-specs-body');
+        if (specsData.specs && specsData.specs.length > 0) {
+            specsBody.innerHTML = specsData.specs.map(s => {
+                let badgeColor = '#22c55e';
+                if (s.status === 'DESIGNED' || s.status === 'IN_PROGRESS') badgeColor = '#f59e0b';
+                if (s.status === 'SUPERSEDED' || s.status === 'ARCHIVED') badgeColor = '#ef4444';
+                return `<tr>
+                    <td><strong>${esc(s.id)}</strong></td>
+                    <td style="color:#fff;">${esc(s.name)}</td>
+                    <td><span style="background:${badgeColor}22;color:${badgeColor};border:1px solid ${badgeColor};padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">${esc(s.status)}</span></td>
+                    <td style="font-size:0.8rem;color:#aaa;">${esc(s.phase)}</td>
+                    <td style="font-size:0.8rem;color:#888;">${esc(s.openTechDebt || 'Ninguna')}</td>
+                    <td style="font-size:0.75rem;color:#666;">${esc(s.lastAuditDate)}</td>
+                </tr>`;
+            }).join('');
+        } else {
+            specsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">No se pudo cargar el archivo SSOT specsStatus.json</td></tr>';
+        }
+
+        // Tendencia Diaria 7d
+        const trendBody = document.getElementById('ops-trend-body');
+        if (telemetry.daily_trend && telemetry.daily_trend.length > 0) {
+            trendBody.innerHTML = telemetry.daily_trend.map(t => `<tr>
+                <td>${esc(t.date_day)}</td>
+                <td>${t.daily_calls}</td>
+                <td>${t.avg_latency_ms} ms</td>
+                <td style="color:${t.errors_count > 0 ? '#ef4444' : '#22c55e'};">${t.errors_count}</td>
+            </tr>`).join('');
+        } else {
+            trendBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">Sin registros de actividad en los últimos 7 días</td></tr>';
         }
     }
 

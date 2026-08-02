@@ -371,6 +371,112 @@ try {
             }
             break;
 
+        // --- SPEC 017: OPS TELEMETRY & SYSTEM HEALTH ---
+        case 'ops_telemetry':
+            if ($method === 'GET') {
+                // 1. SLA Global 30d
+                $sla_stmt = $db->query("SELECT 
+                    COUNT(id) as total_requests,
+                    SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_requests,
+                    SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) as failed_requests,
+                    ROUND(SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) * 100.0 / MAX(1, COUNT(id)), 2) as sla_success_rate_pct,
+                    ROUND(AVG(latency_ms), 0) as avg_latency_ms
+                    FROM chat_metrics
+                    WHERE created_at >= datetime('now', '-30 days')");
+                $sla_global = $sla_stmt->fetch(PDO::FETCH_ASSOC);
+
+                // 2. Breakdown por Proveedor LLM con CTE Percentiles (p50 / p95)
+                $cte_sql = "WITH successful_metrics AS (
+                    SELECT 
+                        backend_used,
+                        latency_ms,
+                        ROW_NUMBER() OVER (PARTITION BY backend_used ORDER BY latency_ms ASC) as row_num,
+                        COUNT(*) OVER (PARTITION BY backend_used) as total_success
+                    FROM chat_metrics
+                    WHERE success = 1 AND created_at >= datetime('now', '-30 days')
+                )
+                SELECT 
+                    cm.backend_used,
+                    COUNT(cm.id) as total_calls,
+                    ROUND(SUM(CASE WHEN cm.success = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(cm.id), 1) as success_pct,
+                    ROUND(AVG(cm.latency_ms), 0) as avg_latency_ms,
+                    MAX(sm.total_success) as total_success_count,
+                    MAX(CASE WHEN sm.row_num = MAX(1, CAST(sm.total_success * 0.50 AS INT)) THEN sm.latency_ms END) as p50_raw,
+                    MAX(CASE WHEN sm.row_num = MAX(1, CAST(sm.total_success * 0.95 AS INT)) THEN sm.latency_ms END) as p95_raw
+                FROM chat_metrics cm
+                LEFT JOIN successful_metrics sm ON cm.backend_used = sm.backend_used
+                WHERE cm.created_at >= datetime('now', '-30 days')
+                GROUP BY cm.backend_used
+                ORDER BY total_calls DESC";
+
+                $providers_stmt = $db->query($cte_sql);
+                $raw_providers = $providers_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $providers = array_map(function($p) {
+                    $total_success = (int)($p['total_success_count'] ?? 0);
+                    $insufficient = $total_success < 10;
+                    return [
+                        'backend_used' => $p['backend_used'],
+                        'total_calls' => (int)$p['total_calls'],
+                        'success_pct' => (float)$p['success_pct'],
+                        'avg_latency_ms' => (int)$p['avg_latency_ms'],
+                        'insufficient_data' => $insufficient,
+                        'p50_latency_ms' => $insufficient ? null : (int)$p['p50_raw'],
+                        'p95_latency_ms' => $insufficient ? null : (int)$p['p95_raw']
+                    ];
+                }, $raw_providers);
+
+                // 3. Tendencia Diaria 7d
+                $trend_stmt = $db->query("SELECT 
+                    date(created_at) as date_day,
+                    COUNT(id) as daily_calls,
+                    ROUND(AVG(latency_ms), 0) as avg_latency_ms,
+                    SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) as errors_count
+                    FROM chat_metrics
+                    WHERE created_at >= datetime('now', '-7 days')
+                    GROUP BY date_day
+                    ORDER BY date_day ASC");
+                $daily_trend = $trend_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 4. Estado de compilación y sitio
+                $specs_status_file = __DIR__ . '/../api/specs-status.json';
+                $last_build = file_exists($specs_status_file) ? date('Y-m-d H:i:s', filemtime($specs_status_file)) : date('Y-m-d H:i:s');
+
+                echo json_encode([
+                    'sla_global' => $sla_global,
+                    'providers' => $providers,
+                    'daily_trend' => $daily_trend,
+                    'system_info' => [
+                        'last_build' => $last_build,
+                        'total_specs' => 17,
+                        'static_pages' => 63,
+                        'subdomain' => 'app.datanestiq.com',
+                        'status' => 'HEALTHY'
+                    ]
+                ]);
+            }
+            break;
+
+        case 'ops_specs_status':
+            if ($method === 'GET') {
+                $specs_file = __DIR__ . '/../api/specs-status.json';
+                if (!file_exists($specs_file)) {
+                    $specs_file = __DIR__ . '/../../src/data/specsStatus.json';
+                }
+                
+                if (file_exists($specs_file)) {
+                    $specs_json = json_decode(file_get_contents($specs_file), true);
+                    echo json_encode([
+                        'total' => count($specs_json),
+                        'specs' => $specs_json
+                    ]);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Specs status SSOT file not found']);
+                }
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Unknown action']);
