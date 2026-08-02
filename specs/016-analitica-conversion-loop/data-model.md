@@ -6,6 +6,14 @@ Este documento especifica las extensiones al esquema SQLite de `secure_leads/crm
 
 ## 1. Extensiones al Esquema SQLite (`secure_leads/crm.sqlite`)
 
+### Extensiones a Tabla Existente: `leads`
+Para permitir consultas agregadas directas por Sector y Rol sin joins complejos:
+```sql
+-- Migración idempotente en init_crm_db.php:
+ALTER TABLE leads ADD COLUMN sector VARCHAR(100);
+ALTER TABLE leads ADD COLUMN rol VARCHAR(100);
+```
+
 ### Nueva Tabla: `chat_metrics`
 Registra el rendimiento técnico y la ejecución de cada interacción de texto libre procesada por `public/api/chat.php`.
 
@@ -61,10 +69,10 @@ ORDER BY
     CASE status
         WHEN 'nuevo' THEN 1
         WHEN 'contactado' THEN 2
-        WHEN 'cita/diagnóstico solicitado' THEN 3
+        WHEN 'cita_solicitada' THEN 3
         WHEN 'ganado' THEN 4
         WHEN 'perdido' THEN 5
-        WHEN 'no-interesado' THEN 6
+        WHEN 'no_interesado' THEN 6
         ELSE 7
     END;
 ```
@@ -96,18 +104,18 @@ GROUP BY sh.old_status, sh.new_status;
 ```
 
 ### Consulta 4: Conversión Desglosada por Sector y Rol (Journey Insights)
-Analiza qué combinación de industria y rol produce el mayor ratio de clientes ganados.
+Analiza qué combinación de industria (`l.sector`) y rol (`l.rol`) produce el mayor ratio de clientes ganados.
 
 ```sql
 SELECT 
-    l.organizacion,
-    COUNT(l.id) as total,
+    COALESCE(l.sector, 'no_especificado') as sector,
+    COALESCE(l.rol, 'no_especificado') as rol,
+    COUNT(l.id) as total_leads,
     SUM(CASE WHEN l.status = 'ganado' THEN 1 ELSE 0 END) as ganados,
     ROUND(SUM(CASE WHEN l.status = 'ganado' THEN 1 ELSE 0 END) * 100.0 / COUNT(l.id), 2) as tasa_ganados_pct
 FROM leads l
-GROUP BY l.organizacion
-HAVING total >= 1
-ORDER BY ganados DESC;
+GROUP BY l.sector, l.rol
+ORDER BY total_leads DESC;
 ```
 
 ### Consulta 5: Rendimiento de Proveedores LLM (`chat_metrics`)

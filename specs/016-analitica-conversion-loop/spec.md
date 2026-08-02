@@ -22,8 +22,8 @@ El diseño comprende 3 componentes integrados:
 - Integración nativa con el sistema de enmascaramiento PII preexistente.
 
 ### Componente 2: Analítica de Conversión en Panel CRM (`/admin/`)
-- **Embudo de Conversión (Funnel Agregado):** Conteo de leads por estado (`nuevo`, `contactado`, `cita/diagnóstico solicitado`, `ganado`, `perdido`, `no-interesado`), porcentaje de conversión de etapa a etapa y tiempo promedio en cada fase derivado de `status_history`.
-- **Análisis por Dimensión (¿Qué convierte?):** Desglose de tasa de conversión por Sector (`publico`, `finanzas`, `salud`, etc.), por Rol (`cfo`, `cio`, `cdo`, `ceo`) y por elementos del `journey` (chips seleccionados en Spec 013).
+- **Embudo de Conversión (Funnel Agregado):** Conteo de leads por estado (`nuevo`, `contactado`, `cita_solicitada`, `ganado`, `perdido`, `no_interesado`), porcentaje de conversión de etapa a etapa y tiempo promedio en cada fase derivado de `status_history`.
+- **Análisis por Dimensión (¿Qué convierte?):** Desglose de tasa de conversión por Sector (`publico`, `finanzas`, `salud`, etc.), por Rol (`cfo`, `cio`, `cdo`, `ceo`) almacenados en las columnas `sector` y `rol` de `leads` (pobladas desde el `journey` por `save_wizard.php`).
 - **Trazabilidad Individual de Journey:** Vista de detalle que vincula los datos del lead con su secuencia de interacción (chips de contexto + historial de mensajes `chat_logs`) usando el `session_id` como clave de unión.
 - **Endpoints:** Extensión de `public/admin/api.php` protegida por el middleware `auth.php`.
 

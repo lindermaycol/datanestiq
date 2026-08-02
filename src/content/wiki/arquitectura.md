@@ -1,10 +1,10 @@
 ---
 title: "Arquitectura Web de Datanestiq"
-description: "Documentación técnica que describe la arquitectura web de Datanestiq basada en Astro, sus principios, componentes clave y estrategias de contenido y desplieg"
+description: "Descripción detallada de la arquitectura web de Datanestiq, incluyendo componentes clave, estructura de repositorio y estrategia de despliegue"
 author: "AI Documenter"
 lastUpdated: 2026-08-02
-tags: ["astro","web-architecture","content-collections","openwiki","ssg","island-architecture"]
-seoScore: 100
+tags: ["Astro","Island Architecture","Content Collections","Serverless APIs","Tailwind CSS"]
+seoScore: 95
 ---
 # Arquitectura Web de Datanestiq
 
@@ -26,8 +26,8 @@ El repositorio opera bajo un modelo de *seed* estructurado en capas:
 
 - **`.specify/`:** Contiene la memoria operativa del proyecto: `constitution.md`, `workflows/workflow-registry.json`, plantillas de especificaciones (`spec-template.md`), planes (`plan-template.md`) y manifestos de integraciones (`agy.manifest.json`, `speckit.manifest.json`).
 - **`specs/`:** Directorio organizado por número de especificación (ej. `005-openwiki-agentes/`, `009-openwiki-langchain/`) con `spec.md`, `plan.md`, `tasks.md` y `tech_debt.md` para cada iniciativa.
-- **`Walkthrough/`:** Documentación ejecutiva de implementaciones completadas, como *"Walkthrough Implementación de Spec 005 (OpenWiki)"* o *"Walkthrough Generador Multi-Destino de Documentación (Spec 010)"*, validando el cumplimiento de las especificaciones.
-- **`planes/`:** Planes de implementación detallados, alineados con las specs y los walkthroughs, ej. *"Plan de Implementación OpenWiki Real Motor"* o *"Plan de Implementación Taxonomía de Servicios (Spec 003)"*.
+- **`Walkthrough/`:** Documentación ejecutiva de implementaciones completadas, como *Walkthrough Implementación de Spec 005 (OpenWiki)* o *Walkthrough Generador Multi-Destino de Documentación (Spec 010)*, validando el cumplimiento de las especificaciones.
+- **`planes/`:** Planes de implementación detallados, alineados con las specs y los walkthroughs, ej. *Plan de Implementación OpenWiki Real Motor* o *Plan de Implementación Taxonomía de Servicios (Spec 003)*.
 - **`prompts/`:** Biblioteca de prompts especializados para generación, refinamiento y validación de artefactos técnicos (ej. `prompt-antigravity-spec005-openwiki-real.md`, `refine_spec_005.md`).
 - **`src/content.config.ts`:** Configuración centralizada de colecciones de contenido, definiendo esquemas para `blog`, `wiki`, y futuras colecciones.
 - **`src/data/`:** Fuentes de datos estructurados para taxonomía (`taxonomyCorpus.json`, `extendedIndustries.json`), localización por rol (`roleLocalization.ts`, `personas.json`) y corpus sectorial (`sectorsCorpus.json`).

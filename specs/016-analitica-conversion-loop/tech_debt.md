@@ -15,3 +15,7 @@
 ### 3. Ausencia de Gráficos JavaScript pesados en el Panel
 - **Riesgo:** Evitar sobrecargar el panel `/admin/` con dependencias pesadas de gráficos (Chart.js / D3).
 - **Mitigación de Diseño:** El embudo y las tarjetas de métricas se construirán utilizando HTML/CSS nativo con barras de porcentaje estilizadas en Vanilla CSS (respetando las guías de ligereza y desempeño del proyecto).
+
+### 4. Migración de la BD SQLite en Producción (`crm.sqlite`)
+- **Riesgo:** La incorporación de las columnas `sector` y `rol` a la tabla `leads` debe ejecutarse sobre una base de datos activa con registros reales.
+- **Mitigación de Diseño:** Ejecutar `PRAGMA table_info(leads)` en `init_crm_db.php` para realizar la adición de columnas de forma estrictamente idempotente. Realizar copia de respaldo preventiva `cp crm.sqlite crm.sqlite.bak` en el servidor antes de aplicar la migración en producción.
