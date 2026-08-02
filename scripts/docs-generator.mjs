@@ -34,8 +34,10 @@ const BRIEF = briefArg ? briefArg.split('=')[1] : '';
 const slugArg = args.find(a => a.startsWith('--slug='));
 const SLUG_OVR = slugArg ? slugArg.split('=')[1] : '';
 
-if (!TARGET || !['wiki', 'agents', 'skills', 'blog', 'page'].includes(TARGET)) {
-  console.error("Uso: node scripts/docs-generator.mjs --target=<wiki|agents|skills|blog|page> [opciones]");
+const isAllTarget = TARGET === 'all' || args.includes('--all');
+
+if (!isAllTarget && (!TARGET || !['wiki', 'agents', 'skills', 'blog', 'page'].includes(TARGET))) {
+  console.error("Uso: node scripts/docs-generator.mjs --target=<wiki|agents|skills|blog|page|all> [opciones]");
   process.exit(1);
 }
 
@@ -376,8 +378,8 @@ ${stripFrontmatter(resultJSON.content || '')}`;
 
 async function runBlog() {
   if (!BRIEF) {
-    console.error("[ERROR] --brief=... es requerido para target=blog");
-    process.exit(1);
+    console.log("[INFO] target=blog omitido (se requiere --brief=... para generar un post nuevo).");
+    return;
   }
   
   let taxonomyContext = '';
@@ -480,9 +482,19 @@ function saveDoc(outPath, fileContent, docName) {
 }
 
 async function main() {
-  console.log(`[INFO] docs-generator.mjs | Target: ${TARGET} | Dry Run: ${DRY_RUN}`);
+  const currentTarget = isAllTarget ? 'all (wiki, agents, skills, blog)' : TARGET;
+  console.log(`[INFO] docs-generator.mjs | Target: ${currentTarget} | Dry Run: ${DRY_RUN}`);
   
-  if (TARGET === 'wiki') await runWiki();
+  if (isAllTarget) {
+    // Patrón diamante: fan-out paralelo con Promise.all -> reduce en informe atómico
+    console.log("[DIAMOND PATTERN] Ejecutando los 4 targets (wiki, agents, skills, blog) en paralelo...");
+    await Promise.all([
+      runWiki(),
+      runAgents(),
+      runSkills(),
+      runBlog()
+    ]);
+  } else if (TARGET === 'wiki') await runWiki();
   else if (TARGET === 'agents') await runAgents();
   else if (TARGET === 'skills') await runSkills();
   else if (TARGET === 'blog') await runBlog();

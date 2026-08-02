@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '@nanostores/react';
 import { userContext, semanticHighlight } from '../../store/index.js';
-import personas from '../../data/personas.json';
+import personas from '../../data/personasCorpus.json';
 
 export default function ContextChips() {
   const context = useStore(userContext);

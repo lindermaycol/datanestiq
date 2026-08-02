@@ -1,40 +1,21 @@
 ---
 title: "Skills Overview"
-description: "Overview of available skills in Datanestiq"
+description: "Resumen de las habilidades de IA disponibles en Datanestiq"
 author: "AI Documenter"
-lastUpdated: 2026-07-10
-tags: ["skills"]
+lastUpdated: 2026-08-02
+tags: ["habilidades","IA","Datanestiq"]
 seoScore: 100
 ---
-## Skills Overview
-The following skills are available in Datanestiq:
-### 1. Speckit-Analyze
-* Description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 2. Speckit-Checklist
-* Description: Generate a custom checklist for the current feature based on user requirements.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 3. Speckit-Clarify
-* Description: Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions and encoding answers back into the spec.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 4. Speckit-Constitution
-* Description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 5. Speckit-Converge
-* Description: Assess the current codebase against the feature's spec, plan, and tasks, then append any remaining unbuilt work as new tasks to tasks.md so implement can complete it.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 6. Speckit-Implement
-* Description: Execute the implementation plan by processing and executing all tasks defined in tasks.md
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 7. Speckit-Plan
-* Description: Execute the implementation planning workflow using the plan template to generate design artifacts.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 8. Speckit-Specify
-* Description: Create or update the feature specification from a natural language feature description.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 9. Speckit-Tasks
-* Description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
-### 10. Speckit-Taskstoissues
-* Description: Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts.
-* Compatibility: Requires spec-kit project structure with .specify/ directory
+## Habilidades de IA
+Las siguientes son las habilidades de IA disponibles en Datanestiq:
+* **ionos-deploy**: Automatización de servidor IONOS vía SSH/SFTP
+* **speckit-analyze**: Análisis de consistencia y calidad de los artefactos de especificación
+* **speckit-checklist**: Generación de lista de verificación para la escritura de requisitos
+* **speckit-clarify**: Identificación de áreas poco especificadas en la especificación de la característica
+* **speckit-constitution**: Creación o actualización de la constitución del proyecto
+* **speckit-converge**: Evaluación del código base contra la especificación, plan y tareas de la característica
+* **speckit-implement**: Ejecución del plan de implementación
+* **speckit-plan**: Generación de artefactos de diseño mediante la plantilla de plan
+* **speckit-specify**: Creación o actualización de la especificación de la característica
+* **speckit-tasks**: Generación de tareas para la característica
+* **speckit-taskstoissues**: Conversión de tareas en problemas de GitHub

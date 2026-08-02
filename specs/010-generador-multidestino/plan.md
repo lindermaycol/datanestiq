@@ -1,20 +1,34 @@
-# Plan de Implementación: Spec 010 (Generador Multi-Destino)
+# Plan de Implementación — Spec 010: Generador Multi-Destino OpenWiki
 
-## 1. Objetivo
-Convertir el script de auditoría OpenWiki (Spec 005) en un **motor unificado de generación documental multi-destino** capaz de alimentar la Wiki, los manifiestos de Agentes, los resúmenes de Skills y los borradores del Blog, garantizando resiliencia operativa y alta disponibilidad a través de balanceo de carga LLM.
+Este documento formaliza la arquitectura y el plan de ejecución del generador de documentación multi-destino `scripts/docs-generator.mjs`.
 
-## 2. Arquitectura del Motor (`scripts/docs-generator.mjs`)
-- **Routing por Target:** El motor procesa comandos con `--target=<wiki|agents|skills|blog>` y aplica diferentes system prompts, validaciones y destinos de guardado para cada uno.
-- **Detección de Cambios Segura:** Utiliza `git ls-files` como lista blanca de seguridad para no procesar archivos ignorados o sensibles (contraseñas, `.env`, `wp-config.php`). El modo wiki obtiene su contexto diferencial con `git diff HEAD~1..HEAD`.
-- **Parser Defensivo (IGNORE Blocks):** Extrae bloques delimitados por `<!-- OPENWIKI:IGNORE:START/END -->` antes de enviar el contenido al LLM, los reemplaza con placeholders seguros, y los inyecta idénticos tras el output para garantizar inmutabilidad.
-- **Tipado Zod Frontmatter:** Genera bloques Frontmatter de Markdown asegurando la inclusión de campos requeridos (title, description, seoScore, tags) escapando comillas para evitar rupturas de build. Para el blog, `pubDate` se graba sin comillas de string.
+---
 
-## 3. Resiliencia y Balanceo LLM
-- **Pool de Proveedores:** Configurado para Groq (primario/rápido), DashScope (Qwen, económico) y Gemini (Google). 
-- **Selección Aleatoria (Round-Robin):** Inicia la iteración con un `poolIndex` aleatorio para balancear los costos y peticiones a lo largo del tiempo.
-- **Atomic Failover:** Si un proveedor falla con HTTP 4xx o 5xx (ej. 429 Too Many Requests), el motor automáticamente reintenta en caliente con el siguiente proveedor de la lista.
-- **Backoff Exponencial:** Si toda la lista se agota por Rate Limits (429), entra en un loop de backoff que duplica el tiempo de espera por cada reintento, evitando denegar el servicio permanentemente en el CI/CD.
+## 1. Arquitectura del Motor (Patrón Diamante)
 
-## 4. Estrategia de Testing (Dry Run)
-- Flag `--dry-run` para simular la ejecución de los algoritmos sin tocar APIs ni consumir tokens.
-- Flag `--seed` para generar un documento fundacional (`arquitectura.md`) que lee el árbol del repositorio inicial.
+```mermaid
+graph TD
+    A[Carga de Taxonomía y Archivos Modificados] --> B{Patrón Diamante: Fan-Out}
+    B --> C[Target: wiki]
+    B --> D[Target: agents]
+    B --> E[Target: skills]
+    B --> F[Target: blog]
+    C --> G[Reduce: Registro y Summary Atómico]
+    D --> G
+    E --> G
+    F --> G
+```
+
+1. **Paralelismo Seguro:** Los 4 targets principales (`wiki`, `agents`, `skills`, `blog`) son 100% independientes en sus rutas de salida (`src/content/wiki/`, `AGENTS.md`, `skills-overview.md`, `src/content/blog/`).
+2. **Fan-Out (`Promise.all`):** Ejecución concurrente sin costo de sobrecargas de frameworks extras. Latencia total = `max(t_wiki, t_agents, t_skills, t_blog)`.
+3. **Failover Ponderado:** Rotación de LLMs en pool (`Groq` → `DashScope` → `Gemini`).
+
+---
+
+## 2. Cobertura de Targets
+
+- `wiki`: Documentación de componentes, scripts y hooks en `src/content/wiki/`.
+- `agents`: Resumen de capacidades en `AGENTS.md`.
+- `skills`: Catálogo de habilidades registradas en `skills-overview.md`.
+- `blog`: Artículos automáticos basados en taxonomía en `src/content/blog/`.
+- `page`: Generador de borradores de contenido estático (`--target=page`).

@@ -1,10 +1,14 @@
 # Feature Specification: Metodología de Desarrollo Digital Premium
 
+> [!IMPORTANT]
+> **STATUS: SUPERSEDED_BY: 010**  
+> El pipeline basado en LangGraph nunca se construyó (decisión de arquitectura del usuario por simplicidad y costos). El objetivo original —agentes que redactan y mantienen la documentación y el sitio— se sirve formalmente con el patrón single-shot controlado y multi-destino de la Spec 010 (`docs-generator.mjs`).
+
 **Feature Branch**: `[004-metodologia-desarrollo-digital]`
 
 **Created**: 2026-07-05
 
-**Status**: Parcial / deuda abierta
+**Status**: SUPERSEDED por Spec 010
 
 **Input**: User provided 10 AI agent prompt concepts for building premium websites.
 

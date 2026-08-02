@@ -4,7 +4,7 @@ import { lastUserQuery, chatbotOpen, userContext, userChallenge } from '../../st
 import { CHAT_API, SAVE_WIZARD_API } from '../../lib/endpoints';
 import AppointmentPicker from './AppointmentPicker.jsx';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
-import personas from '../../data/personas.json';
+import personas from '../../data/personasCorpus.json';
 import { mapSectorSlugToId, getLocalizedRoleTitle } from '../../lib/roleLocalization';
 export default function Chatbot() {
   const query = useStore(lastUserQuery);

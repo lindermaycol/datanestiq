@@ -1,38 +1,22 @@
-# AGENTS.md — Guía operativa para Antigravity (agente implementador)
+# Guía para Agentes IA: Estructura y Convenciones del Repositorio Datanestiq
 
-Antigravity, este archivo es tu **guía de trabajo** en el repo de Datanestiq. La fuente de reglas de fondo es la **Constitución**: [`.specify/memory/constitution.md`](.specify/memory/constitution.md) — **léela y respétala**. Ante conflicto entre un prompt puntual y la Constitución, manda la Constitución (salvo que el usuario la cambie).
+Este documento sirve como una guía esencial para los agentes de Inteligencia Artificial que interactúan con el repositorio de Datanestiq. Detalla la estructura del proyecto, las convenciones clave, la arquitectura general y un resumen de las especificaciones (specs) para facilitar la comprensión y la colaboración autónoma.
 
-## Tu rol y el ciclo de trabajo
-- **Tú implementas; Claude (Opus 4.8) audita** en el navegador antes de aprobar. No des nada por hecho sin evidencia.
-- **SDD obligatorio:** `spec → plan → tasks → implement`. Cuando el prompt lo pida, entrega **primero el plan/spec para revisión** y NO implementes hasta la luz verde.
-- **Reporta con evidencia real:** `grep` en `dist/`, panel Network, capturas, salida de `php -l`, conteos antes/después. Nunca reportes "hecho" sin probarlo. Incluye una sección final **"Hallazgos adicionales"**.
+## 1. Propósito del Repositorio
 
-## 🔴 Guardarraíles que NUNCA rompes (resumen; detalle en la Constitución)
-1. **Honestidad radical (§2):** cero casos/testimonios/logos/cifras de clientes **inventados**. Métricas estimadas → **`[EST]`**. Si no es verificable como real, no va como prueba social.
-2. **0-LLM del chatbot guiado (§5):** el flujo por botones **no** hace `fetch`. Solo texto libre llama a `chat.php`; guardar lead llama a `save_wizard.php`.
-3. **Taxonomía = fuente de verdad (§5):** autoriza en `src/content/{pillars,sectors}/*.yaml` y `src/data/personas.json` + corre `build-taxonomy.mjs`. **No** edites los JSON generados (`src/data/*.json`) ni hardcodees contenido en `.astro`.
-4. **Seguridad / PII (§6):** nunca commitees `.env`, `secure_leads/`, `*.jsonl`, `wp-config.php` ni claves. Redacta PII en logs. Paneles internos con PII → auth + IP restringida. Reutiliza el pipeline de leads existente (`save_wizard.php`/`chat.php`), no crees canales de PII nuevos. **Nunca toques `remote_extract.py`.**
-5. **No romper (§5, §7):** islas intactas, `npm run build` verde, consola limpia, markers `[EST]` conservados, progressive enhancement (el sitio funciona sin JS/contexto).
-6. **No toques el core de WordPress** (`wp-admin/`, `wp-includes/`, `wp-content/`): es legado, no producción (§9).
+El repositorio de Datanestiq es el centro neurálgico para el desarrollo, despliegue y gestión de la plataforma Datanestiq. Incluye un ecosistema web premium, microexperiencias de IA, gestión de leads y una fábrica de contenido. Los agentes IA son actores clave en la evolución y mantenimiento de este sistema, desde la generación de código y documentación hasta la ejecución de planes y auditorías.
 
-## Comandos y entorno
-- **Build:** `npm run build` (corre `build-taxonomy.mjs` en `prebuild`).
-- **Probar con backend PHP** (el chatbot texto-libre y los formularios necesitan PHP; `astro preview` NO ejecuta PHP):
-  `C:/xampp/php/php.exe -S localhost:8080 -t dist` → `http://localhost:8080/`.
-- **Validar taxonomía:** `node scripts/build-taxonomy.mjs` (Zod + integridad de aristas; exit 1 = inválido).
-- **Sintaxis PHP tras editar `chat.php`/`save_wizard.php`:** `C:/xampp/php/php.exe -l public/api/<archivo>.php` (una comilla `"` sin escapar dentro del `SYSTEM_PROMPT` ya rompió el chatbot una vez).
-- **Hook de seguridad:** hay un `pre-commit` en `scripts/hooks/` (instalar con `git config core.hooksPath scripts/hooks`) que bloquea secretos/PII y valida taxonomía. No lo evadas con `--no-verify` salvo caso legítimo.
+## 2. Estructura del Repositorio
 
-## Dónde vive cada cosa
-- `specs/` — especificaciones (001–015). `planes/ESTADO-SPECS.md` — estado real. `planes/Fases.md` — hoja de ruta.
-- `planes/insumos-conversion-consultiva/` — insumos por rol (CFO/CEO/público) para la Spec 013.
-- `src/lib/schemas.js` — Zod (campos reales: `objectionResponses`, `deploymentModels`, `roiCases`, `institutionalContinuity`…). Úsalos con el nombre exacto.
-- `public/api/` — `chat.php` (failover Groq→DashScope→Gemini), `save_wizard.php`, `services.json`.
-- **Rama de trabajo:** `007-multi-pagina` (PR #1 hacia `main`). `main` es la foto vieja de Fase 0.
+A continuación, se describen los directorios y archivos más relevantes para la operación de los agentes IA:
 
-## Despliegue y documentación (Constitución §11)
-- **Deploy a IONOS:** automatizado con **paramiko** vía la skill `ionos-deploy` y el agente `deploy-ops` (`scripts/deploy/deploy_ionos.py`). Credenciales solo desde `.env` (clave SSH preferida). **Dry-run por defecto; deploy real solo con `--confirm` explícito del usuario.** Guía: `planes/DESPLIEGUE-IONOS.md`.
-- **Doc-sync obligatorio:** toda entrega actualiza `planes/ESTADO-SPECS.md` + `planes/Fases.md` + specs afectadas en el mismo cambio; la wiki se regenera con `npm run docs:sync` (Spec 010) antes de desplegar.
-
-## Forma de responder
-- Estructura clara, evidencia real, y marca las **decisiones que requieren la revisión del usuario** (no las decidas unilateralmente). Si detectas un dato faltante en la taxonomía, **repórtalo**; no lo hardcodees.
+*   **`.claude/`**: Contiene configuraciones específicas para agentes basados en Claude, como `agents/deploy-ops.md` para operaciones de despliegue y `launch.json` para configuraciones de lanzamiento.
+*   **`.specify/`**: Directorio central para la gobernanza de agentes y especificaciones.
+    *   `extensions.yml`, `feature.json`, `init-options.json`, `integration.json`: Archivos de configuración para extensiones e integraciones.
+    *   `integrations/`: Manifiestos de integración (`agy.manifest.json`, `speckit.manifest.json`).
+    *   `memory/constitution.md`: La "constitución" o principios rectores para los agentes.
+    *   `templates/`: Plantillas para diversos documentos (`checklist-template.md`, `constitution-template.md`, `plan-template.md`, `spec-template.md`, `tasks-template.md`).
+    *   `workflows/workflow-registry.json`: Registro de flujos de trabajo automatizados.
+*   **`AGENTS.md`**: Este documento.
+*   **`DEPLOY.md`**: Documentación relacionada con los procesos de despliegue.
+*   **`UX/`

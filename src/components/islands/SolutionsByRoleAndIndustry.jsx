@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { userContext, semanticHighlight } from '../../store/index';
-import personas from '../../data/personas.json';
+import personas from '../../data/personasCorpus.json';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import taxonomyCorpus from '../../data/taxonomyCorpus.json';
 import { getLocalizedRoleTitle, mapSectorSlugToId } from '../../lib/roleLocalization';

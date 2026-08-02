@@ -139,6 +139,7 @@ const writeGeneratedJson = (filename, data) => {
 writeGeneratedJson('taxonomyCorpus.json', pillars);
 writeGeneratedJson('sectorsCorpus.json', sectors);
 writeGeneratedJson('extendedIndustries.json', industries);
+writeGeneratedJson('personasCorpus.json', personas);
 writeGeneratedJson('contentAngles.json', contentAngles);
 
 // Generate public/api/services.json for chatbot grounding
