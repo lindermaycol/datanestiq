@@ -111,36 +111,83 @@ $csrf = generateCsrfToken();
         <a href="?logout=1" id="logout-link">Cerrar sesión</a>
     </div>
 
-    <div class="container">
-        <div class="stats" id="stats-grid"></div>
-
-        <div class="filters">
-            <select id="filter-status">
-                <option value="">Todos los estados</option>
-                <option value="nuevo">Nuevo</option>
-                <option value="contactado">Contactado</option>
-                <option value="cita_solicitada">Cita Solicitada</option>
-                <option value="ganado">Ganado</option>
-                <option value="perdido">Perdido</option>
-                <option value="no_interesado">No Interesado</option>
-            </select>
-            <input type="text" id="filter-search" placeholder="Buscar email, empresa, reto...">
+        <!-- Navigation Tabs -->
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;border-b:1px solid rgba(255,255,255,0.1);padding-bottom:0.75rem;">
+            <button id="tab-btn-leads" class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="switchTab('leads')">📋 Leads & Citas</button>
+            <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica de Conversión</button>
         </div>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th><th>Email</th><th>Organización</th><th>Estado</th><th>Citas</th><th>Fecha</th><th></th>
-                    </tr>
-                </thead>
-                <tbody id="leads-body"></tbody>
-            </table>
+        <!-- View: Leads & Citas -->
+        <div id="view-leads">
+            <div class="stats" id="stats-grid"></div>
+
+            <div class="filters">
+                <select id="filter-status">
+                    <option value="">Todos los estados</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="contactado">Contactado</option>
+                    <option value="cita_solicitada">Cita Solicitada</option>
+                    <option value="ganado">Ganado</option>
+                    <option value="perdido">Perdido</option>
+                    <option value="no_interesado">No Interesado</option>
+                </select>
+                <input type="text" id="filter-search" placeholder="Buscar email, empresa, reto...">
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Email</th><th>Organización</th><th>Estado</th><th>Sector</th><th>Rol</th><th>Citas</th><th>Fecha</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-body"></tbody>
+                </table>
+            </div>
+            <div style="text-align:center; margin-top:1rem;">
+                <button id="prev-page" class="btn-detail" style="margin-right:0.5rem;">← Anterior</button>
+                <span id="page-info" style="color:#888; font-size:0.85rem;"></span>
+                <button id="next-page" class="btn-detail" style="margin-left:0.5rem;">Siguiente →</button>
+            </div>
         </div>
-        <div style="text-align:center; margin-top:1rem;">
-            <button id="prev-page" class="btn-detail" style="margin-right:0.5rem;">← Anterior</button>
-            <span id="page-info" style="color:#888; font-size:0.85rem;"></span>
-            <button id="next-page" class="btn-detail" style="margin-left:0.5rem;">Siguiente →</button>
+
+        <!-- View: Analítica de Conversión (Spec 016) -->
+        <div id="view-analytics" style="display:none;">
+            <div class="stats" id="analytics-kpi-grid"></div>
+
+            <!-- Embudo de Conversión -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">Embudo de Conversión por Etapa</h3>
+                <div id="funnel-container" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                <!-- Desglose por Sector x Rol -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">Conversión por Sector × Rol</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Sector</th><th>Rol</th><th>Leads</th><th>Ganados</th><th>% Ganados</th></tr>
+                            </thead>
+                            <tbody id="dimensions-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Métricas de Proveedores LLM -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">Rendimiento de Proveedores LLM</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Proveedor</th><th>Peticiones</th><th>Latencia Avg</th><th>% Éxito</th></tr>
+                            </thead>
+                            <tbody id="llm-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -210,6 +257,8 @@ $csrf = generateCsrfToken();
                 <td>${esc(l.email)}</td>
                 <td>${esc(l.organizacion)}</td>
                 <td><span class="status-badge status-${l.status}">${l.status}</span></td>
+                <td><span style="font-size:0.8rem;color:#aaa">${esc(l.sector || 'no_especificado')}</span></td>
+                <td><span style="font-size:0.8rem;color:#aaa">${esc(l.rol || 'no_especificado')}</span></td>
                 <td>${l.appointment_count || 0}</td>
                 <td style="font-size:0.8rem;color:#888">${l.created_at}</td>
                 <td><button class="btn-detail" onclick="openDetail(${l.id})">Ver</button></td>
@@ -219,6 +268,84 @@ $csrf = generateCsrfToken();
         document.getElementById('page-info').textContent = `Página ${page} de ${totalPages || 1}`;
         document.getElementById('prev-page').disabled = page <= 1;
         document.getElementById('next-page').disabled = page >= totalPages;
+    }
+
+    function switchTab(tab) {
+        const leadsView = document.getElementById('view-leads');
+        const analyticsView = document.getElementById('view-analytics');
+        const btnLeads = document.getElementById('tab-btn-leads');
+        const btnAnalytics = document.getElementById('tab-btn-analytics');
+
+        if (tab === 'analytics') {
+            leadsView.style.display = 'none';
+            analyticsView.style.display = 'block';
+            btnLeads.style.background = 'none';
+            btnLeads.style.color = '#22d3ee';
+            btnAnalytics.style.background = '#22d3ee';
+            btnAnalytics.style.color = '#000';
+            btnAnalytics.style.fontWeight = '700';
+            loadAnalyticsData();
+        } else {
+            analyticsView.style.display = 'none';
+            leadsView.style.display = 'block';
+            btnAnalytics.style.background = 'none';
+            btnAnalytics.style.color = '#22d3ee';
+            btnLeads.style.background = '#22d3ee';
+            btnLeads.style.color = '#000';
+            btnLeads.style.fontWeight = '700';
+            loadLeads(1);
+        }
+    }
+
+    async function loadAnalyticsData() {
+        const [funnelData, dimData, llmData] = await Promise.all([
+            api('analytics_funnel'),
+            api('analytics_by_dimension'),
+            api('analytics_llm_metrics')
+        ]);
+
+        // KPIs
+        document.getElementById('analytics-kpi-grid').innerHTML = `
+            <div class="stat-card"><div class="value">${funnelData.total_leads}</div><div class="label">Total Leads</div></div>
+            <div class="stat-card"><div class="value">${funnelData.tasa_citas_pct}%</div><div class="label">Tasa Citas</div></div>
+            <div class="stat-card"><div class="value">${funnelData.tasa_ganados_pct}%</div><div class="label">Tasa Ganados</div></div>
+            <div class="stat-card"><div class="value">${llmData.avg_latency_ms || 0} ms</div><div class="label">Latencia Avg LLM</div></div>
+        `;
+
+        // Funnel
+        const funnelContainer = document.getElementById('funnel-container');
+        funnelContainer.innerHTML = funnelData.funnel.map(f => `
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;">
+                    <span style="color:#fff;"><span class="status-badge status-${f.status}">${f.status}</span></span>
+                    <span style="color:#888;">${f.count} leads (${f.percentage}%)</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:6px;overflow:hidden;">
+                    <div style="width:${Math.max(f.percentage, 2)}%;height:100%;background:#22d3ee;border-radius:6px;transition:width 0.5s;"></div>
+                </div>
+            </div>
+        `).join('');
+
+        // Dimensions Table
+        document.getElementById('dimensions-body').innerHTML = dimData.dimensions.map(d => `
+            <tr>
+                <td>${esc(d.sector_name)}</td>
+                <td>${esc(d.rol_name)}</td>
+                <td>${d.total_leads}</td>
+                <td>${d.ganados}</td>
+                <td><strong style="color:#4ade80;">${d.tasa_ganados_pct}%</strong></td>
+            </tr>
+        `).join('');
+
+        // LLM Metrics Table
+        document.getElementById('llm-body').innerHTML = llmData.backends.map(b => `
+            <tr>
+                <td><strong style="color:#22d3ee;">${esc(b.backend_used)}</strong></td>
+                <td>${b.calls}</td>
+                <td>${b.avg_latency_ms} ms</td>
+                <td><span style="color:${b.success_rate_pct >= 90 ? '#4ade80' : '#f87171'}">${b.success_rate_pct}%</span></td>
+            </tr>
+        `).join('');
     }
 
     function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
@@ -235,9 +362,13 @@ $csrf = generateCsrfToken();
                 <div class="field"><label>Teléfono</label><div class="val">${esc(l.telefono)}</div></div>
                 <div class="field"><label>Organización</label><div class="val">${esc(l.organizacion)}</div></div>
                 <div class="field"><label>Fuente</label><div class="val">${esc(l.source)}</div></div>
+                <div class="field"><label>Sector</label><div class="val">${esc(l.sector || 'no_especificado')}</div></div>
+                <div class="field"><label>Rol</label><div class="val">${esc(l.rol || 'no_especificado')}</div></div>
             </div>
             <div class="field"><label>Reto</label><div class="val">${esc(l.reto)}</div></div>
             <div class="field"><label>Stack</label><div class="val">${esc(l.stack)}</div></div>
+            <div style="margin-top:0.5rem;"><button class="btn-detail" onclick="viewChatHistory('${esc(l.session_id)}')">💬 Ver Historial Chat de Sesión</button></div>
+            <div id="chat-history-container" style="margin-top:0.5rem;display:none;"></div>
             <hr style="border-color:rgba(255,255,255,0.1);margin:1rem 0;">
             <h3 style="font-size:1rem;margin-bottom:0.5rem;">Gestión</h3>
             <div class="field">
@@ -297,6 +428,42 @@ $csrf = generateCsrfToken();
 
         content.innerHTML = html;
         modal.classList.add('active');
+    }
+
+    async function viewChatHistory(sessionId) {
+        const container = document.getElementById('chat-history-container');
+        if (!container) return;
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'block';
+        container.innerHTML = '<div style="color:#888;font-size:0.8rem;">Cargando mensajes...</div>';
+
+        const data = await api('lead_chat_history', { session_id: sessionId });
+        if (!data.interactions || data.interactions.length === 0) {
+            container.innerHTML = '<div style="color:#888;font-size:0.8rem;">No hay registros de chat para esta sesión.</div>';
+            return;
+        }
+
+        let html = '<div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem;max-height:250px;overflow-y:auto;font-size:0.8rem;">';
+        data.interactions.forEach(item => {
+            let body = item.content;
+            try {
+                const parsed = JSON.parse(item.content);
+                body = parsed.content || parsed.label || item.content;
+            } catch (e) {}
+            html += `<div style="margin-bottom:0.4rem;"><span style="color:#22d3ee;font-weight:600;">[${esc(item.interaction_type)}]</span> <span style="color:#ddd;">${esc(body)}</span> <span style="color:#666;font-size:0.7rem;">(${item.created_at})</span></div>`;
+        });
+
+        if (data.metrics && data.metrics.length > 0) {
+            html += '<hr style="border-color:rgba(255,255,255,0.1);margin:0.5rem 0;"><div style="color:#888;font-size:0.75rem;">Métricas LLM:</div>';
+            data.metrics.forEach(m => {
+                html += `<div style="color:#aaa;font-size:0.75rem;">Backend: <strong style="color:#22d3ee;">${esc(m.backend_used)}</strong> | Latencia: ${m.latency_ms}ms | Éxito: ${m.success ? '1' : '0'}</div>`;
+            });
+        }
+        html += '</div>';
+        container.innerHTML = html;
     }
 
     function closeModal() { document.getElementById('detail-modal').classList.remove('active'); }

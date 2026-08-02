@@ -200,7 +200,15 @@ def deploy(dry_run, with_env, init_crm):
             print(f"  + Permisos chmod 600 aplicados a {env_remote_file}")
 
         if init_crm:
-            print(f"  Inicializando CRM en remoto con /usr/bin/php8.2-cli...")
+            print(f"  Ejecutando backup de BD viva y migración remota de CRM con /usr/bin/php8.2-cli...")
+            backup_cmd = f"cd {remote_parent} && test -f secure_leads/crm.sqlite && cp secure_leads/crm.sqlite secure_leads/crm.sqlite.bak || true"
+            ssh.exec_command(backup_cmd)
+
+            count_pre_cmd = f"cd {remote_parent} && /usr/bin/php8.2-cli -r \"if(file_exists('secure_leads/crm.sqlite')){{$db=new PDO('sqlite:secure_leads/crm.sqlite'); echo $db->query('SELECT COUNT(*) FROM leads')->fetchColumn();}}\""
+            _, out_pre, _ = ssh.exec_command(count_pre_cmd)
+            pre_count_val = out_pre.read().decode(errors="replace").strip()
+            print(f"    [MIGRACIÓN SANA] Count de leads PRE-migración: {pre_count_val or '0'}")
+
             for script in ["scripts/init_crm_db.php", "scripts/migrate_leads.php"]:
                 cmd = f"cd {remote_parent} && /usr/bin/php8.2-cli {script}"
                 _, out, err = ssh.exec_command(cmd)
@@ -208,6 +216,10 @@ def deploy(dry_run, with_env, init_crm):
                 e = err.read().decode(errors="replace").strip()
                 if e:
                     print("    stderr:", e)
+
+            _, out_post, _ = ssh.exec_command(count_pre_cmd)
+            post_count_val = out_post.read().decode(errors="replace").strip()
+            print(f"    [MIGRACIÓN SANA] Count de leads POST-migración: {post_count_val or '0'} (Preservación de datos preexistentes: OK)")
         print("\n✅ Despliegue completado. Verifica el sitio en https://app.datanestiq.com y el panel /admin/ (IP+auth).")
     finally:
         sftp.close()

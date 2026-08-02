@@ -45,6 +45,27 @@ $session_id = isset($data['session_id']) ? substr(strip_tags($data['session_id']
 $journey = isset($data['journey']) ? $data['journey'] : [];
 $source = isset($data['source']) ? substr(strip_tags($data['source']), 0, 50) : 'chatbot';
 
+$sector = isset($data['sector']) ? substr(strip_tags($data['sector']), 0, 100) : '';
+$rol = isset($data['rol']) ? substr(strip_tags($data['rol']), 0, 100) : '';
+
+// Si no vienen directo en el payload, intentar derivar del journey
+if ((!$sector || !$rol) && is_array($journey)) {
+    foreach ($journey as $step) {
+        if (is_array($step)) {
+            if (!$sector && ($step['step'] ?? '') === 'sector' && !empty($step['value'])) {
+                $sector = substr(strip_tags($step['value']), 0, 100);
+            }
+            if (!$rol && ($step['step'] ?? '') === 'role' && !empty($step['value'])) {
+                $rol = substr(strip_tags($step['value']), 0, 100);
+            }
+            if (($step['type'] ?? '') === 'context_inherited') {
+                if (!$sector && !empty($step['sector'])) $sector = substr(strip_tags($step['sector']), 0, 100);
+                if (!$rol && !empty($step['role'])) $rol = substr(strip_tags($step['role']), 0, 100);
+            }
+        }
+    }
+}
+
 // --- 1. Persistencia SQLite (primaria, Spec 014) ---
 $sqlite_ok = false;
 $db_path = __DIR__ . '/../../secure_leads/crm.sqlite';
@@ -64,11 +85,11 @@ if (file_exists($db_path)) {
         $lead_id = $existing->fetchColumn();
 
         if ($lead_id) {
-            $upd = $db->prepare("UPDATE leads SET email = ?, telefono = ?, nombre = ?, organizacion = ?, reto = ?, stack = ?, score = ?, updated_at = datetime('now') WHERE id = ?");
-            $upd->execute([$email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $lead_id]);
+            $upd = $db->prepare("UPDATE leads SET email = ?, telefono = ?, nombre = ?, organizacion = ?, reto = ?, stack = ?, score = ?, sector = ?, rol = ?, updated_at = datetime('now') WHERE id = ?");
+            $upd->execute([$email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $sector, $rol, $lead_id]);
         } else {
-            $ins = $db->prepare("INSERT INTO leads (session_id, email, telefono, nombre, organizacion, reto, stack, score, source, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', datetime('now'), datetime('now'))");
-            $ins->execute([$session_id, $email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $source]);
+            $ins = $db->prepare("INSERT INTO leads (session_id, email, telefono, nombre, organizacion, reto, stack, score, source, sector, rol, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', datetime('now'), datetime('now'))");
+            $ins->execute([$session_id, $email, $telefono, $nombre, $organizacion, $reto, $stack, $score, $source, $sector, $rol]);
             $lead_id = (int)$db->lastInsertId();
         }
 

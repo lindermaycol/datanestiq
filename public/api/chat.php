@@ -314,6 +314,8 @@ $providers = [
 ];
 
 $success = false;
+$request_start_time = microtime(true);
+$successful_backend = 'unknown';
 
 foreach ($providers as $provider) {
     if (!$provider['key']) continue;
@@ -322,6 +324,7 @@ foreach ($providers as $provider) {
     
     if ($httpcode >= 200 && $httpcode < 300) {
         $success = true;
+        $successful_backend = strtolower($provider['name']);
         break; // Success, exit loop
     } else {
         // Log the failure silently and continue to next provider
@@ -331,7 +334,27 @@ foreach ($providers as $provider) {
     }
 }
 
+$total_latency_ms = (int)((microtime(true) - $request_start_time) * 1000);
+
+// Helper fail-safe function to insert into chat_metrics without interrupting execution
+$record_chat_metric = function($session_id, $backend, $latency, $is_success, $tokens) {
+    try {
+        $crm_db_path = __DIR__ . '/../../secure_leads/crm.sqlite';
+        if (file_exists($crm_db_path)) {
+            $db_m = new PDO('sqlite:' . $crm_db_path);
+            $db_m->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $db_m->prepare("INSERT INTO chat_metrics (session_id, backend_used, latency_ms, success, tokens_est, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))");
+            $stmt->execute([$session_id, $backend, $latency, $is_success ? 1 : 0, (int)$tokens]);
+        }
+    } catch (\Throwable $e) {
+        error_log('chat_metrics log failed silently: ' . $e->getMessage());
+    }
+};
+
 if (!$success) {
+    // Fail-safe metrics logging for failed request
+    $record_chat_metric($sessionId, 'none', $total_latency_ms, false, 0);
+
     // All providers failed
     http_response_code(200);
     echo json_encode([
@@ -362,6 +385,9 @@ if ($httpcode >= 200 && $httpcode < 300) {
     ];
     @file_put_contents(__DIR__ . '/../../secure_leads/usage_metrics.jsonl', json_encode($metrics) . "\n", FILE_APPEND);
     
+    // Spec 016: Fail-safe database metrics insertion
+    $record_chat_metric($sessionId, $successful_backend, $latency_ms, true, $usage['total_tokens'] ?? 0);
+
     // Increment daily usage
     $usage_data['calls']++;
     $usage_data['tokens'] += $usage['total_tokens'] ?? 0;
@@ -369,6 +395,7 @@ if ($httpcode >= 200 && $httpcode < 300) {
     
     echo $response;
 } else {
+    $record_chat_metric($sessionId, $successful_backend, $total_latency_ms, false, 0);
     http_response_code($httpcode);
     echo $response;
 }

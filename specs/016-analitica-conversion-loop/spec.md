@@ -29,7 +29,7 @@ El diseño comprende 3 componentes integrados:
 
 ### Componente 3: Loop `learn` Offline (Optimización Asistida del `SYSTEM_PROMPT`)
 - Script CLI offline (`scripts/learn_prompt_optimizer.mjs`) diseñado para ejecutarse de forma periódica/semanal.
-- Analiza las conversaciones de leads que convirtieron (`ganado`) vs. leads abandonados (`perdido`/`no-interesado`).
+- Analiza las conversaciones de leads que convirtieron (`ganado`) vs. leads abandonados (`perdido`/`no_interesado`).
 - Emplea modelos free-tier (`Groq` / `Gemini`) o heurísticas deterministas para extraer objeciones frecuentes y patrones de respuesta exitosos.
 - **Generación de PR Draft:** Emite las propuestas de mejora al `SYSTEM_PROMPT` exclusivamente en forma de Pull Request en borrador (flujo `content-pr.yml`).
 - **PROHIBICIÓN ESTRICTA:** El script NUNCA aplica cambios directamente a `public/api/chat.php` en producción.

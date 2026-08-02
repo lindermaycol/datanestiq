@@ -254,6 +254,123 @@ try {
             ]);
             break;
 
+        // --- ANALÍTICA DE CONVERSIÓN Y LOOP LEARN (Spec 016) ---
+        case 'analytics_funnel':
+            if ($method === 'GET') {
+                $total_leads = (int)$db->query("SELECT COUNT(*) FROM leads")->fetchColumn();
+                $funnel = [];
+                $statuses = ['nuevo', 'contactado', 'cita_solicitada', 'ganado', 'perdido', 'no_interesado'];
+                
+                foreach ($statuses as $st) {
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM leads WHERE status = ?");
+                    $stmt->execute([$st]);
+                    $count = (int)$stmt->fetchColumn();
+                    $pct = $total_leads > 0 ? round(($count / $total_leads) * 100, 2) : 0;
+                    $funnel[] = [
+                        'status' => $st,
+                        'count' => $count,
+                        'percentage' => $pct
+                    ];
+                }
+
+                // Citas solicitadas o confirmadas
+                $citas_count = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status IN ('cita_solicitada', 'ganado')")->fetchColumn();
+                $citas_pct = $total_leads > 0 ? round(($citas_count / $total_leads) * 100, 2) : 0;
+
+                // Clientes ganados
+                $ganados_count = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status = 'ganado'")->fetchColumn();
+                $ganados_pct = $total_leads > 0 ? round(($ganados_count / $total_leads) * 100, 2) : 0;
+
+                // Tiempo promedio de permanencia por etapa (en horas)
+                $stmt_transitions = $db->query("SELECT 
+                    old_status, new_status, 
+                    AVG((julianday(created_at) - julianday(COALESCE((SELECT created_at FROM status_history sh2 WHERE sh2.lead_id = sh.lead_id AND sh2.id < sh.id ORDER BY id DESC LIMIT 1), (SELECT created_at FROM leads WHERE id = sh.lead_id)))) * 24) as avg_hours
+                    FROM status_history sh
+                    WHERE old_status IS NOT NULL
+                    GROUP BY old_status, new_status");
+                $transitions = $stmt_transitions ? $stmt_transitions->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                echo json_encode([
+                    'total_leads' => $total_leads,
+                    'funnel' => $funnel,
+                    'tasa_citas_pct' => $citas_pct,
+                    'tasa_ganados_pct' => $ganados_pct,
+                    'transiciones_avg_horas' => $transitions,
+                ]);
+            }
+            break;
+
+        case 'analytics_by_dimension':
+            if ($method === 'GET') {
+                $stmt = $db->query("SELECT 
+                    CASE WHEN sector IS NULL OR sector = '' THEN 'no_especificado' ELSE sector END as sector_name,
+                    CASE WHEN rol IS NULL OR rol = '' THEN 'no_especificado' ELSE rol END as rol_name,
+                    COUNT(id) as total_leads,
+                    SUM(CASE WHEN status = 'ganado' THEN 1 ELSE 0 END) as ganados,
+                    SUM(CASE WHEN status IN ('cita_solicitada', 'ganado') THEN 1 ELSE 0 END) as citas,
+                    ROUND(SUM(CASE WHEN status = 'ganado' THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as tasa_ganados_pct
+                    FROM leads
+                    GROUP BY sector_name, rol_name
+                    ORDER BY total_leads DESC");
+                $breakdown = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                echo json_encode([
+                    'dimensions' => $breakdown
+                ]);
+            }
+            break;
+
+        case 'analytics_llm_metrics':
+            if ($method === 'GET') {
+                $total_calls = (int)$db->query("SELECT COUNT(*) FROM chat_metrics")->fetchColumn();
+                $stmt = $db->query("SELECT 
+                    backend_used,
+                    COUNT(id) as calls,
+                    ROUND(AVG(latency_ms), 0) as avg_latency_ms,
+                    ROUND(SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 1) as success_rate_pct,
+                    SUM(tokens_est) as total_tokens
+                    FROM chat_metrics
+                    GROUP BY backend_used
+                    ORDER BY calls DESC");
+                $backends = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                $avg_latency_total = (int)$db->query("SELECT ROUND(AVG(latency_ms), 0) FROM chat_metrics")->fetchColumn();
+
+                echo json_encode([
+                    'total_calls' => $total_calls,
+                    'avg_latency_ms' => $avg_latency_total,
+                    'backends' => $backends
+                ]);
+            }
+            break;
+
+        case 'lead_chat_history':
+            if ($method === 'GET') {
+                $session_id = $_GET['session_id'] ?? '';
+                if (!$session_id) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'session_id required']);
+                    exit;
+                }
+                
+                // Buscar interacciones asociadas a session_id
+                $stmt = $db->prepare("SELECT i.* FROM interactions i JOIN leads l ON i.lead_id = l.id WHERE l.session_id = ? ORDER BY i.created_at ASC");
+                $stmt->execute([$session_id]);
+                $interactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Buscar métricas de LLM asociadas
+                $stmt_m = $db->prepare("SELECT * FROM chat_metrics WHERE session_id = ? ORDER BY created_at ASC");
+                $stmt_m->execute([$session_id]);
+                $metrics = $stmt_m->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'session_id' => $session_id,
+                    'interactions' => $interactions,
+                    'metrics' => $metrics
+                ]);
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Unknown action']);

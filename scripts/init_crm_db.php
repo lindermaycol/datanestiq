@@ -93,13 +93,38 @@ try {
         reason TEXT DEFAULT ''
     )");
 
+    // Migración idempotente para Spec 016: Añadir columnas sector y rol a leads si no existen
+    $columns = $db->query("PRAGMA table_info(leads)")->fetchAll(PDO::FETCH_COLUMN, 1);
+    if (!in_array('sector', $columns)) {
+        $db->exec("ALTER TABLE leads ADD COLUMN sector VARCHAR(100) DEFAULT ''");
+    }
+    if (!in_array('rol', $columns)) {
+        $db->exec("ALTER TABLE leads ADD COLUMN rol VARCHAR(100) DEFAULT ''");
+    }
+
+    // --- Tabla: chat_metrics (Spec 016) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS chat_metrics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        backend_used VARCHAR(50) NOT NULL,
+        latency_ms INTEGER NOT NULL,
+        success INTEGER DEFAULT 1,
+        tokens_est INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
     // Índices para performance
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_sector ON leads(sector)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_rol ON leads(rol)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_interactions_lead ON interactions(lead_id)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_appointments_lead ON appointments(lead_id)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(requested_date)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_session ON chat_metrics(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_backend ON chat_metrics(backend_used)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_created ON chat_metrics(created_at)");
 
     // Insertar disponibilidad por defecto (Lunes-Viernes, 9:00-18:00, America/Lima)
     $stmt = $db->query("SELECT COUNT(*) FROM availability_config");

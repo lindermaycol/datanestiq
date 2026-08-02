@@ -69,6 +69,8 @@ export default function Chatbot() {
                 reto: leadInfo.reto,
                 stack: leadInfo.stack,
                 source: 'chatbot',
+                sector: chatState.sector || ctxState.sector || '',
+                rol: chatState.role || ctxState.rol || '',
                 journey: journeyRef.current,
             })
         });
