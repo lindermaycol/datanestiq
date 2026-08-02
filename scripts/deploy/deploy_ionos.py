@@ -161,11 +161,37 @@ def deploy(dry_run, with_env, init_crm):
                 sftp.put(local_sc, posixpath.join(remote_scripts_dir, sc))
                 print(f"  + Subido script CLI {sc} -> {remote_scripts_dir}/{sc}")
 
-        # Crear .htaccess de denegación en el PADRE por defensa en profundidad
-        htaccess_content = b"Require all denied\nDeny from all\n"
+        # Crear .htaccess de denegación por-archivo en el PADRE (evita denegar en cascada el webroot public/)
+        parent_htaccess = (
+            "# Protege .env y la BD SQLite sin denegar el resto (evita cascada al docroot servido)\n"
+            "<FilesMatch \"(^\\.env$|\\.sqlite$|\\.sqlite-wal$|\\.sqlite-shm$)\">\n"
+            "    Require all denied\n"
+            "</FilesMatch>\n"
+            "<IfModule !mod_authz_core.c>\n"
+            "    <FilesMatch \"(^\\.env$|\\.sqlite$)\">\n"
+            "        Order allow,deny\n"
+            "        Deny from all\n"
+            "    </FilesMatch>\n"
+            "</IfModule>\n"
+        ).encode("utf-8")
         with sftp.file(posixpath.join(remote_parent, ".htaccess"), "wb") as f:
-            f.write(htaccess_content)
-        print(f"  + Creado .htaccess Deny from all en {remote_parent}/.htaccess")
+            f.write(parent_htaccess)
+        print(f"  + Creado .htaccess defensivo (FilesMatch) en {remote_parent}/.htaccess")
+
+        # Asegurar Require all granted en la raíz servida del subdominio (htdocs/app/public/.htaccess)
+        public_htaccess = (
+            "# Permite acceso público al subdominio app.datanestiq.com\n"
+            "<IfModule mod_authz_core.c>\n"
+            "    Require all granted\n"
+            "</IfModule>\n"
+            "<IfModule !mod_authz_core.c>\n"
+            "    Order allow,deny\n"
+            "    Allow from all\n"
+            "</IfModule>\n"
+        ).encode("utf-8")
+        with sftp.file(posixpath.join(remote_base, ".htaccess"), "wb") as f:
+            f.write(public_htaccess)
+        print(f"  + Creado .htaccess Require all granted en {remote_base}/.htaccess")
 
         # Permisos del .env remoto (600) si se subió
         if with_env:
