@@ -1,3 +1,11 @@
+---
+title: "Modelo de Datos — Spec 017: Panel de Observabilidad Interna (Ops & Specs)"
+description: "Este documento detalla el modelo de datos para el Panel de Observabilidad Interna (Spec 017), estableciendo `src/data/specsStatus.json` como la Única Fuente "
+author: "AI Documenter"
+lastUpdated: 2026-08-02
+tags: ["observabilidad","telemetría","modelo de datos","SQL","specs","SSOT","chat_metrics","SLA","latencia","percentiles","LLM","backend","build-gate","Datanestiq","Spec 017"]
+seoScore: 100
+---
 # Modelo de Datos — Spec 017: Panel de Observabilidad Interna (Ops & Specs)
 
 Este documento especifica la fuente de verdad estructurada (SSOT) para el portafolio de specs y las consultas SQL de telemetría operativa basadas en la reutilización de `chat_metrics`.
@@ -8,9 +16,9 @@ Este documento especifica la fuente de verdad estructurada (SSOT) para el portaf
 
 Para evitar la desincronización y el *drift* entre la narrativa rica de `planes/ESTADO-SPECS.md` y la vista estructurada del panel, se establece la siguiente regla de gobierno:
 
-1. **`src/data/specsStatus.json` es la Única Fuente de Verdad (SSOT)** de los campos estructurados consumidos por la API y la UI (`id`, `name`, `status`, `phase`, `openTechDebt`, `lastAuditDate`, `isHonest`).
-2. **Build-Gate de Consistencia:** En cada compilación (`npm run build`), el script `scripts/build-specs-status.mjs` lee `src/data/specsStatus.json` y valida que el `status` de cada especificación coincida exactamente con la declaración de la tabla en `planes/ESTADO-SPECS.md`.
-3. **Fallo en Build ante Drift:** Si se detecta cualquier discrepancia entre `specsStatus.json` y `ESTADO-SPECS.md`, **el build falla inmediatamente** (`process.exit(1)`), impidiendo que cambios silenciosos o contradictorios lleguen a producción.
+1.  **`src/data/specsStatus.json` es la Única Fuente de Verdad (SSOT)** de los campos estructurados consumidos por la API y la UI (`id`, `name`, `status`, `phase`, `openTechDebt`, `lastAuditDate`, `isHonest`).
+2.  **Build-Gate de Consistencia:** En cada compilación (`npm run build`), el script `scripts/build-specs-status.mjs` lee `src/data/specsStatus.json` y valida que el `status` de cada especificación coincida exactamente con la declaración de la tabla en `planes/ESTADO-SPECS.md`.
+3.  **Fallo en Build ante Drift:** Si se detecta cualquier discrepancia entre `specsStatus.json` y `ESTADO-SPECS.md`, **el build falla inmediatamente** (`process.exit(1)`), impidiendo que cambios silenciosos o contradictorios lleguen a producción.
 
 ### Esquema JSON (`src/data/specsStatus.json`):
 ```json

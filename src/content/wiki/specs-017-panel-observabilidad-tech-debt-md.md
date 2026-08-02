@@ -1,3 +1,11 @@
+---
+title: "Tech Debt — Spec 017: Panel de Observabilidad Interna (Ops & Specs)"
+description: "Documento de deuda técnica para la Spec 017 (Panel de Observabilidad Interna), detallando riesgos de diseño como la muestra en frío para cálculos de latencia"
+author: "AI Documenter"
+lastUpdated: 2026-08-02
+tags: ["tech debt","observability","spec 017","design","risk mitigation","metrics","data synchronization"]
+seoScore: 100
+---
 # Tech Debt — Spec 017: Panel de Observabilidad Interna (Ops & Specs)
 
 **Estado:** Fase de Diseño SDD (2026-08-02)
