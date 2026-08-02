@@ -27,7 +27,7 @@ function loadEnvAuth($path) {
 loadEnvAuth(__DIR__ . '/../../.env');
 
 // --- 1. IP WHITELIST (PRIMERA BARRERA) ---
-$allowed_ips_raw = getenv('ALLOWED_IPS') ?: '*';
+$allowed_ips_raw = getenv('ALLOWED_IPS') ?: '127.0.0.1,::1';
 $allowed_ips = array_map('trim', explode(',', $allowed_ips_raw));
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
