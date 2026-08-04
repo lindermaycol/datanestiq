@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react';
 import { lastUserQuery, chatbotOpen, semanticHighlight, userChallenge } from '../../store/index';
 import { CHAT_API } from '../../lib/endpoints';
 import corpus from '../../data/taxonomyCorpus.json';
+import { trackEvent } from '../../lib/session';
 
 import rawSectorsCorpus from '../../data/sectorsCorpus.json';
 
@@ -78,6 +79,9 @@ export default function DiagnosticWizard() {
   const generatePitch = async (sector) => {
       const challenge = inputs[sector.id];
       if (!challenge || !challenge.trim()) return;
+
+      // Spec 018 Telemetría
+      trackEvent('wizard_step', 'diagnostic-wizard-pitch', `${sector.title}:${challenge}`);
 
       setLoadingIds(prev => ({ ...prev, [sector.id]: true }));
 

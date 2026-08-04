@@ -1,14 +1,14 @@
 ---
 title: "Modelo de Datos — Spec 018: Analítica de Micro-Interacciones (Behavioral)"
-description: "Esquema de base de datos, integración con Spec 016, consultas analíticas optimizadas y algoritmo de sanitización PII para la telemetría de microinteracciones"
+description: "Este documento detalla el esquema de base de datos para la telemetría de comportamiento, la coexistencia no destructiva con el journey de la Spec 016/014 y l"
 author: "AI Documenter"
 lastUpdated: 2026-08-04
-tags: ["spec-018","analitica","microinteracciones","data-model","privacy","sql","pii-sanitization"]
+tags: ["data model","analytics","microinteractions","behavioral telemetry","sqlite","pii sanitization","sql","php","spec 018"]
 seoScore: 100
 ---
 # Modelo de Datos — Spec 018: Analítica de Micro-Interacciones (Behavioral)
 
-Este documento detalla el esquema de base de datos para la telemetría de comportamiento, la unificación del modelo con la Spec 016 y las consultas analíticas optimizadas.
+Este documento detalla el esquema de base de datos para la telemetría de comportamiento, la coexistencia no destructiva con el journey de la Spec 016/014 y las consultas analíticas optimizadas.
 
 ---
 
@@ -32,31 +32,23 @@ CREATE INDEX IF NOT EXISTS idx_events_type ON interaction_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_events_date ON interaction_events(created_at);
 ```
 
-> ✅ **Garantía de integridad**: Todos los campos `NOT NULL` están validados en el endpoint `public/api/track_event.php`. El `session_id` se genera como SHA-256 del fingerprint del navegador + timestamp truncado, garantizando anonimato y trazabilidad por sesión sin identificación personal.
-
 ---
 
-## 2. Integración y Unificación del Journey (Relación con la Spec 016)
+## 2. Coexistencia y Relación con el Journey de la Spec 016/014
 
-Para evitar la duplicación de datos o el doble registro de eventos:
+Para garantizar la estabilidad y confiabilidad de los datos históricos en producción:
 
-1. **Fuente Única:** La tabla `interaction_events` es la **única fuente estructurada** de eventos de interacción en el sistema.
-2. **Desacoplamiento de la Spec 016:** En la Spec 016, el "journey del lead" se almacenaba de forma redundante. A partir de la Spec 018, la base de datos **no duplica estos registros**.
-3. **Consulta Dinámica:** Cuando se requiera mostrar el recorrido de un lead en el modal de detalle del panel `/admin/` (Spec 016), se realiza una consulta dinámica cruzando la tabla `leads` con `interaction_events` por el identificador de sesión:
-   ```sql
-   SELECT event_type, event_value, created_at 
-   FROM interaction_events 
-   WHERE session_id = (SELECT session_id FROM leads WHERE id = :lead_id)
-   ORDER BY created_at ASC;
-   ```
-
-> 🔄 **Migración automática**: Durante el despliegue de Spec 018, el script `migrate_journey_to_events.php` traslada históricamente los eventos de `leads.journey_log` (si existen) a `interaction_events`, preservando `session_id`, `created_at` y normalizando `event_type`/`event_target` según la taxonomía actual.
+1.  **Coexistencia, no reemplazo:**
+    -   **`interactions` (Spec 014/015):** Continúa siendo la tabla confiable y transaccional para almacenar el journey secuencial de un lead convertido. Se registra en el payload de confirmación (`save_wizard.php`), asegurando que no se pierdan datos por problemas de red.
+    -   **`interaction_events` (Spec 018):** Registra eventos best-effort de comportamiento para **todos** los usuarios (conviertan o no). Es adecuada para el análisis agregado.
+2.  **Solapamiento Menor Permitido:** Se acepta que ciertos clics (como la progresión del Wizard) se registren de forma concurrente en ambas tablas. Es una redundancia deliberada para mantener la robustez transaccional del lead sin comprometer los datos de conversión históricos.
+3.  **No-Refactor:** El panel `/admin/` continuará leyendo el journey individual del lead desde la tabla `interactions`, asegurando que los leads históricos sigan visualizándose con sus datos intactos.
 
 ---
 
 ## 3. Consultas SQL de Analítica de Comportamiento (Panel `/admin/`)
 
-### Consulta 1: Popularidad de Sectores Seleccionados (Chips e Islas)
+### Consulta 1: Popularidad de Sectores Seleccionados (Chips e Asistente)
 ```sql
 SELECT event_value as sector, COUNT(id) as selections
 FROM interaction_events
@@ -94,13 +86,11 @@ ORDER BY
     END ASC;
 ```
 
-> 📊 **Dashboard integrado**: Estas tres consultas alimentan directamente los widgets del panel `/admin/analytics/microinteractions`, con caché TTL de 5 minutos y fallback a resultados previos si falla la conexión a SQLite.
-
 ---
 
 ## 4. Algoritmo de Sanitización PII (Servidor PHP)
 
-El endpoint `public/api/track_event.php` interceptará las consultas de búsqueda y textos libres para limpiar cualquier dato sensible antes de guardarlo.
+El endpoint `public/api/track_event.php` interceptará las consultas de búsqueda y mensajes libres para limpiar datos sensibles antes de la inserción.
 
 ```php
 function redactPii($text) {
@@ -112,21 +102,5 @@ function redactPii($text) {
 }
 ```
 
-> ⚠️ **Gato de seguridad**: Si la sanitización falla (p. ej., excepción en expresión regular o memoria insuficiente), el evento se guarda con `event_value = ''` y se registra un error en `logs/pii_sanitization_errors.log` con hash del texto original (sin almacenarlo). No se rechaza la solicitud: se prioriza la continuidad de la telemetría sobre la pérdida de datos.
-
----
-
-## 5. Validaciones y Garantías Operativas
-
-| Capa | Regla | Mecanismo |
-|------|-------|-----------|
-| **Frontend (Astro)** | `event_type` debe pertenecer al catálogo válido | Enum estático en `src/lib/analytics/eventTypes.ts`; envío bloqueado si no coincide |
-| **Backend (PHP)** | `session_id` debe tener ≥ 32 caracteres y ser alfanumérico | Validación regex `^[a-zA-Z0-9]{32,}$` antes de inserción |
-| **Base de Datos** | `created_at` no puede ser futuro | Trigger SQLite: `BEFORE INSERT` que reemplaza valores futuros con `datetime('now')` |
-| **Auditoría** | Todos los `INSERT` en `interaction_events` deben estar trazados | Log estructurado en JSON en `logs/interaction_audit.log` con IP anonimizada (hash SHA-256) y user-agent truncado |
-
-> 🛡️ **Cumplimiento GDPR/LOPDGDD**: Ningún campo de `interaction_events` permite reconstrucción de identidad. El `session_id` no se correlaciona con email, nombre ni ID de usuario. Reportes agregados se generan exclusivamente desde esta tabla — nunca desde datos personales directos.
-
-%%IGNORE_BLOCK_1%%
-%%IGNORE_BLOCK_2%%
-%%IGNORE_BLOCK_3%%
+-   **Ámbito:** La redacción de PII se aplica exclusivamente a los campos de entrada de texto libre (`search_query` y mensajes de chat en `chatbot_step`) en `$event_value`. Los eventos categóricos y estructurados (`chip_click`, `copilot_click`) no pasan por este filtro ya que son enums controlados del sistema.
+-   **Gate/Guardarraíl de seguridad:** Si el proceso de redacción o saneamiento de PII falla, el valor del evento se reemplaza por un string vacío (`""`) o se ignora de manera fail-closed.

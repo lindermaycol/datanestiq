@@ -116,6 +116,7 @@ $csrf = generateCsrfToken();
             <button id="tab-btn-leads" class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="switchTab('leads')">📋 Leads & Citas</button>
             <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica de Conversión</button>
             <button id="tab-btn-ops" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('ops')">🛠️ Observabilidad Ops</button>
+            <button id="tab-btn-behavior" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('behavior')">📈 Engagement & Comportamiento</button>
         </div>
 
         <!-- View: Leads & Citas -->
@@ -243,6 +244,104 @@ $csrf = generateCsrfToken();
                 </div>
             </div>
         </div>
+
+        <!-- View: Engagement & Comportamiento (Spec 018) -->
+        <div id="view-behavior" style="display:none;">
+            <!-- KPI Cards -->
+            <div class="stats" id="behavior-kpi-grid"></div>
+
+            <!-- Insuficiente Datos warning container -->
+            <div id="behavior-insufficient-data-warn" style="display:none;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.9rem;">
+                ⚠️ <strong>Muestra escasa o insuficiente:</strong> Se requieren al menos 20 eventos de micro-interacciones en los últimos 180 días para formular estadísticas y embudos agregados (Constitución &sect;2).
+            </div>
+
+            <div id="behavior-charts-grid" style="display:grid;grid-template-columns:1fr 1.2fr;gap:1.5rem;margin-bottom:1.5rem;">
+                <!-- Top Opciones y Categorías -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;">
+                    <div>
+                        <h3 style="font-size:1rem;color:#fff;margin-bottom:0.75rem;">🎯 Top Sectores / Roles Seleccionados (Chips)</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Valor / Mapeo</th><th>Selecciones</th></tr>
+                                </thead>
+                                <tbody id="behavior-chips-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="font-size:1rem;color:#fff;margin-bottom:0.75rem;">🤖 Top Claves de Selección del Chatbot</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Problema / Hito</th><th>Selecciones</th></tr>
+                                </thead>
+                                <tbody id="behavior-chatbot-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Búsquedas y Copilot -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;">
+                    <div>
+                        <h3 style="font-size:1rem;color:#fff;margin-bottom:0.75rem;">🔍 Top Consultas Semánticas (PII Redactada)</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Consulta de Búsqueda</th><th>Frecuencia</th></tr>
+                                </thead>
+                                <tbody id="behavior-queries-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="font-size:1rem;color:#fff;margin-bottom:0.75rem;">⚡ Escenarios del Copiloto Más Consultados</h3>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Escenario</th><th>Clicks</th></tr>
+                                </thead>
+                                <tbody id="behavior-copilot-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Embudos de Conversión y Pasos -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">📊 Embudos y Progresión por Componente (Sesiones Únicas)</h3>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                    <div>
+                        <h4 style="font-size:0.9rem;color:#22d3ee;margin-bottom:0.75rem;">🤖 Avance en Pasos de Chatbot</h4>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Paso (Target)</th><th>Sesiones Únicas</th></tr>
+                                </thead>
+                                <tbody id="behavior-chatbot-funnel-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size:0.9rem;color:#22d3ee;margin-bottom:0.75rem;">🪄 Avance en Asistente de Diagnóstico (Wizard)</h4>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Hito (Target)</th><th>Sesiones Únicas</th></tr>
+                                </thead>
+                                <tbody id="behavior-wizard-funnel-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal de detalle -->
@@ -328,12 +427,15 @@ $csrf = generateCsrfToken();
         const leadsView = document.getElementById('view-leads');
         const analyticsView = document.getElementById('view-analytics');
         const opsView = document.getElementById('view-ops');
+        const behaviorView = document.getElementById('view-behavior');
+        
         const btnLeads = document.getElementById('tab-btn-leads');
         const btnAnalytics = document.getElementById('tab-btn-analytics');
         const btnOps = document.getElementById('tab-btn-ops');
+        const btnBehavior = document.getElementById('tab-btn-behavior');
 
         // Reset button styles
-        [btnLeads, btnAnalytics, btnOps].forEach(btn => {
+        [btnLeads, btnAnalytics, btnOps, btnBehavior].forEach(btn => {
             if (btn) {
                 btn.style.background = 'none';
                 btn.style.color = '#22d3ee';
@@ -344,6 +446,7 @@ $csrf = generateCsrfToken();
         if (tab === 'analytics') {
             leadsView.style.display = 'none';
             opsView.style.display = 'none';
+            behaviorView.style.display = 'none';
             analyticsView.style.display = 'block';
             btnAnalytics.style.background = '#22d3ee';
             btnAnalytics.style.color = '#000';
@@ -352,14 +455,25 @@ $csrf = generateCsrfToken();
         } else if (tab === 'ops') {
             leadsView.style.display = 'none';
             analyticsView.style.display = 'none';
+            behaviorView.style.display = 'none';
             opsView.style.display = 'block';
             btnOps.style.background = '#22d3ee';
             btnOps.style.color = '#000';
             btnOps.style.fontWeight = '700';
             loadOpsTelemetry();
+        } else if (tab === 'behavior') {
+            leadsView.style.display = 'none';
+            analyticsView.style.display = 'none';
+            opsView.style.display = 'none';
+            behaviorView.style.display = 'block';
+            btnBehavior.style.background = '#22d3ee';
+            btnBehavior.style.color = '#000';
+            btnBehavior.style.fontWeight = '700';
+            loadBehaviorAnalytics();
         } else {
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
+            behaviorView.style.display = 'none';
             leadsView.style.display = 'block';
             btnLeads.style.background = '#22d3ee';
             btnLeads.style.color = '#000';
@@ -443,6 +557,108 @@ $csrf = generateCsrfToken();
             </tr>`).join('');
         } else {
             trendBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">Sin registros de actividad en los últimos 7 días</td></tr>';
+        }
+    }
+
+    async function loadBehaviorAnalytics() {
+        const data = await api('ops_behavior_analytics');
+        const warnBlock = document.getElementById('behavior-insufficient-data-warn');
+        const chartsGrid = document.getElementById('behavior-charts-grid');
+        const kpiGrid = document.getElementById('behavior-kpi-grid');
+
+        // Render KPI Cards
+        kpiGrid.innerHTML = `
+            <div class="stat-card"><div class="value">${data.total_events || 0}</div><div class="label">Eventos Totales Recibidos</div></div>
+            <div class="stat-card"><div class="value">${data.insufficient_data ? 'Muestra Escasa' : 'Completa'}</div><div class="label">Consistencia Métricas (IP Limit)</div></div>
+            <div class="stat-card"><div class="value">180 días</div><div class="label">Ventana de Retención Activa</div></div>
+            <div class="stat-card"><div class="value" style="color:#22c55e;">Activa</div><div class="label" style="font-weight:600;">Telemetría Spec 018</div></div>
+        `;
+
+        if (data.insufficient_data) {
+            warnBlock.style.display = 'block';
+            chartsGrid.style.display = 'none';
+            return;
+        }
+
+        warnBlock.style.display = 'none';
+        chartsGrid.style.display = 'grid';
+
+        // 1. Top Chips Table
+        const chipsBody = document.getElementById('behavior-chips-body');
+        if (data.chips && data.chips.length > 0) {
+            chipsBody.innerHTML = data.chips.map(c => `
+                <tr>
+                    <td><strong style="color:#22d3ee;">${esc(c.event_value)}</strong></td>
+                    <td>${c.qty} selections</td>
+                </tr>
+            `).join('');
+        } else {
+            chipsBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin selecciones registradas</td></tr>';
+        }
+
+        // 2. Top Chatbot Selections Table
+        const chatbotBody = document.getElementById('behavior-chatbot-body');
+        if (data.chatbot_values && data.chatbot_values.length > 0) {
+            chatbotBody.innerHTML = data.chatbot_values.map(c => `
+                <tr>
+                    <td><strong style="color:#22d3ee;">${esc(c.event_value)}</strong></td>
+                    <td>${c.qty} hits</td>
+                </tr>
+            `).join('');
+        } else {
+            chatbotBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin datos de clics de chatbot</td></tr>';
+        }
+
+        // 3. Top Semantic Search Table
+        const queriesBody = document.getElementById('behavior-queries-body');
+        if (data.queries && data.queries.length > 0) {
+            queriesBody.innerHTML = data.queries.map(q => `
+                <tr>
+                    <td><em style="color:#aaa;">"${esc(q.event_value)}"</em></td>
+                    <td>${q.qty} búsquedas</td>
+                </tr>
+            `).join('');
+        } else {
+            queriesBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin consultas de búsqueda registradas</td></tr>';
+        }
+
+        // 4. Top Copilot Clicks Table
+        const copilotBody = document.getElementById('behavior-copilot-body');
+        if (data.copilot && data.copilot.length > 0) {
+            copilotBody.innerHTML = data.copilot.map(c => `
+                <tr>
+                    <td><strong style="color:#a78bfa;">${esc(c.event_value)}</strong></td>
+                    <td>${c.qty} clicks</td>
+                </tr>
+            `).join('');
+        } else {
+            copilotBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin clics en Copiloto registrados</td></tr>';
+        }
+
+        // 5. Chatbot Funnel Table
+        const chatbotFunnelBody = document.getElementById('behavior-chatbot-funnel-body');
+        if (data.chatbot_funnel && data.chatbot_funnel.length > 0) {
+            chatbotFunnelBody.innerHTML = data.chatbot_funnel.map(f => `
+                <tr>
+                    <td><strong style="color:#22d3ee;">${esc(f.event_target)}</strong></td>
+                    <td>${f.unique_sessions} sesiones únicas</td>
+                </tr>
+            `).join('');
+        } else {
+            chatbotFunnelBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin progresión de embudo chatbot</td></tr>';
+        }
+
+        // 6. Wizard Funnel Table
+        const wizardFunnelBody = document.getElementById('behavior-wizard-funnel-body');
+        if (data.wizard_funnel && data.wizard_funnel.length > 0) {
+            wizardFunnelBody.innerHTML = data.wizard_funnel.map(f => `
+                <tr>
+                    <td><strong style="color:#22d3ee;">${esc(f.event_target)}</strong></td>
+                    <td>${f.unique_sessions} sesiones únicas</td>
+                </tr>
+            `).join('');
+        } else {
+            wizardFunnelBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin progresión de embudo de diagnóstico</td></tr>';
         }
     }
 

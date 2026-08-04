@@ -113,6 +113,16 @@ try {
         created_at DATETIME DEFAULT (datetime('now'))
     )");
 
+    // --- Tabla: interaction_events (Spec 018 - Analítica de Micro-Interacciones) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS interaction_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        event_type VARCHAR(50) NOT NULL,
+        event_target VARCHAR(100) NOT NULL,
+        event_value TEXT NOT NULL,
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
     // Índices para performance
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_sector ON leads(sector)");
@@ -125,6 +135,9 @@ try {
     $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_session ON chat_metrics(session_id)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_backend ON chat_metrics(backend_used)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_metrics_created ON chat_metrics(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_session ON interaction_events(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_type ON interaction_events(event_type)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_created ON interaction_events(created_at)");
 
     // Insertar disponibilidad por defecto (Lunes-Viernes, 9:00-18:00, America/Lima)
     $stmt = $db->query("SELECT COUNT(*) FROM availability_config");

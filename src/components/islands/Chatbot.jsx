@@ -6,6 +6,8 @@ import AppointmentPicker from './AppointmentPicker.jsx';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import personas from '../../data/personasCorpus.json';
 import { mapSectorSlugToId, getLocalizedRoleTitle } from '../../lib/roleLocalization';
+import { getSessionId, trackEvent } from '../../lib/session';
+
 export default function Chatbot() {
   const query = useStore(lastUserQuery);
   const isOpen = useStore(chatbotOpen);
@@ -22,7 +24,7 @@ export default function Chatbot() {
   const [chatState, setChatState] = useState({ step: 'intro', sector: null, role: null, problem: null });
   
   // Lead tracking
-  const sessionIdRef = useRef('session_' + Date.now());
+  const sessionIdRef = useRef(getSessionId());
   const [leadData, setLeadData] = useState({ email: '', telefono: '', organizacion: '', reto: '', stack: '' });
   const [leadConfirmed, setLeadConfirmed] = useState(false);
   const [showLeadCard, setShowLeadCard] = useState(false);
@@ -156,6 +158,9 @@ export default function Chatbot() {
     const text = forcedText || inputText;
     if (!text.trim()) return;
 
+    // Spec 018 Telemetría
+    trackEvent('chatbot_step', 'chatbot-text-submit', text);
+
     // Precisión 3: Escapar hacia semántico si usuario escribe texto libre
     if (chatState.step !== 'semantic') {
         setChatState(prev => ({ ...prev, step: 'semantic' }));
@@ -207,8 +212,13 @@ export default function Chatbot() {
   };
 
   // Bloque 1: Ruteo Híbrido Determinista (Cero Latencia, Cero LLM)
+  // Bloque 1: Ruteo Híbrido Determinista (Cero Latencia, Cero LLM)
   const selectSector = (sectorId) => {
       const sectorObj = sectorsCorpus.find(s => s.id === sectorId);
+      
+      // Spec 018 Telemetría
+      trackEvent('chatbot_step', 'chatbot-sector-select', sectorId);
+      
       setChatState(prev => ({ ...prev, sector: sectorId, step: 'role' }));
       journeyRef.current.push({ type: 'flow_step', step: 'sector', value: sectorId, label: sectorObj.title });
       
@@ -225,6 +235,10 @@ export default function Chatbot() {
       const roleObj = personas.roles.find(r => r.id === roleId);
       const sectorObj = sectorsCorpus.find(s => s.id === chatState.sector);
       const displayRole = getLocalizedRoleTitle(roleObj, sectorObj);
+      
+      // Spec 018 Telemetría
+      trackEvent('chatbot_step', 'chatbot-role-select', roleId);
+      
       setChatState(prev => ({ ...prev, role: roleId, step: 'problem' }));
       journeyRef.current.push({ type: 'flow_step', step: 'role', value: roleId, label: displayRole });
       
@@ -242,6 +256,9 @@ export default function Chatbot() {
   };
 
   const selectProblem = (problemCode, problemLabel) => {
+      // Spec 018 Telemetría
+      trackEvent('chatbot_step', 'chatbot-problem-select', problemCode);
+      
       setChatState(prev => ({ ...prev, problem: problemCode, step: 'solution' }));
       journeyRef.current.push({ type: 'flow_step', step: 'problem', value: problemCode, label: problemLabel });
       
@@ -270,6 +287,9 @@ export default function Chatbot() {
   };
 
   const escapeToSemantic = () => {
+      // Spec 018 Telemetría
+      trackEvent('chatbot_step', 'chatbot-escape-semantic', 'escape');
+      
       setChatState(prev => ({ ...prev, step: 'semantic' }));
       const newDisplay = [
           ...displayMessages,

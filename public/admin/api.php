@@ -482,6 +482,87 @@ try {
             }
             break;
 
+        case 'ops_behavior_analytics':
+            if ($method === 'GET') {
+                // 🧹 RETENCIÓN 180 DÍAS (Precisión 2): Limpieza automática e idempotente en cada consulta del admin
+                $db->exec("DELETE FROM interaction_events WHERE created_at < datetime('now', '-180 days')");
+
+                // 1. Conteo total de eventos para el guard de honestidad
+                $total_events = (int)$db->query("SELECT COUNT(*) FROM interaction_events")->fetchColumn();
+                
+                if ($total_events < 20) {
+                    echo json_encode([
+                        'insufficient_data' => true,
+                        'total_events' => $total_events
+                    ]);
+                    exit;
+                }
+
+                // 2. Top chips seleccionadas
+                $chips_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
+                    FROM interaction_events 
+                    WHERE event_type = 'chip_click' 
+                    GROUP BY event_value 
+                    ORDER BY qty DESC 
+                    LIMIT 8");
+                $chips = $chips_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 3. Top búsquedas semánticas
+                $queries_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
+                    FROM interaction_events 
+                    WHERE event_type = 'search_query' 
+                    GROUP BY event_value 
+                    ORDER BY qty DESC 
+                    LIMIT 8");
+                $queries = $queries_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 4. Top clics en Copilot Demo
+                $copilot_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
+                    FROM interaction_events 
+                    WHERE event_type = 'copilot_click' 
+                    GROUP BY event_value 
+                    ORDER BY qty DESC 
+                    LIMIT 8");
+                $copilot = $copilot_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 5. Top clics/respuestas Chatbot (event_value)
+                $chatbot_values_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
+                    FROM interaction_events 
+                    WHERE event_type = 'chatbot_step' 
+                    GROUP BY event_value 
+                    ORDER BY qty DESC 
+                    LIMIT 8");
+                $chatbot_values = $chatbot_values_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 6. Embudo Chatbot interactivo (unique sessions por target)
+                $chatbot_funnel_stmt = $db->query("SELECT event_target, COUNT(DISTINCT session_id) as unique_sessions 
+                    FROM interaction_events 
+                    WHERE event_type = 'chatbot_step' 
+                    GROUP BY event_target
+                    ORDER BY unique_sessions DESC");
+                $chatbot_funnel = $chatbot_funnel_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 7. Embudo Asistente Diagnóstico (unique sessions por target)
+                $wizard_funnel_stmt = $db->query("SELECT event_target, COUNT(DISTINCT session_id) as unique_sessions 
+                    FROM interaction_events 
+                    WHERE event_type = 'wizard_step' 
+                    GROUP BY event_target
+                    ORDER BY unique_sessions DESC");
+                $wizard_funnel = $wizard_funnel_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'insufficient_data' => false,
+                    'total_events' => $total_events,
+                    'chips' => $chips,
+                    'queries' => $queries,
+                    'copilot' => $copilot,
+                    'chatbot_values' => $chatbot_values,
+                    'chatbot_funnel' => $chatbot_funnel,
+                    'wizard_funnel' => $wizard_funnel
+                ]);
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Unknown action']);

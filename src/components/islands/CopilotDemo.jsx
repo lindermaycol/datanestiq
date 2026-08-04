@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { semanticHighlight, chatbotOpen } from '../../store/index';
 import { CHAT_API } from '../../lib/endpoints';
+import { trackEvent } from '../../lib/session';
 const TypewriterText = ({ text }) => {
     const [displayedText, setDisplayedText] = useState('');
     
@@ -87,6 +88,9 @@ export default function CopilotDemo() {
 
     const runDemo = async (item) => {
         if (isLoading) return;
+        
+        // Spec 018 Telemetría
+        trackEvent('copilot_click', 'copilot-demo-card', item.prompt);
         
         setSelectedPrompt(item.prompt);
         setResponse('');

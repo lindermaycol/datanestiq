@@ -5,6 +5,7 @@ import taxonomyCorpus from '../../data/taxonomyCorpus.json';
 import sectorsCorpus from '../../data/sectorsCorpus.json';
 import extendedIndustries from '../../data/extendedIndustries.json';
 import { WORKER_URL } from '../../lib/endpoints';
+import { trackEvent } from '../../lib/session';
 
 export default function SemanticSearch() {
     const [query, setQuery] = useState('');
@@ -144,6 +145,9 @@ export default function SemanticSearch() {
 
     const handleSearch = () => {
         if (!query.trim()) return;
+        
+        // Spec 018 Telemetría
+        trackEvent('search_query', 'semantic-search-bar', query);
         
         // Save to context chaining nanostore
         userChallenge.set(query);

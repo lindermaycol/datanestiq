@@ -2,12 +2,16 @@ import React from 'react';
 import { useStore } from '@nanostores/react';
 import { userContext, semanticHighlight } from '../../store/index.js';
 import personas from '../../data/personasCorpus.json';
+import { trackEvent } from '../../lib/session';
 
 export default function ContextChips() {
   const context = useStore(userContext);
 
   const handleSelect = (sectorSlug, rolId) => {
     userContext.set({ rol: rolId, sector: sectorSlug, dismissed: false });
+    
+    // Telemetría Spec 018
+    trackEvent('chip_click', 'context-chips-select', `${sectorSlug}:${rolId}`);
     
     // Buscar los pilares de interes de este rol y publicarlos en semanticHighlight
     const role = personas.roles.find(r => r.id === rolId);
@@ -23,6 +27,7 @@ export default function ContextChips() {
 
   const handleDismiss = () => {
     userContext.set({ ...context, dismissed: true });
+    trackEvent('chip_click', 'context-chips-dismiss', 'dismissed');
   };
 
   if (context.dismissed) {

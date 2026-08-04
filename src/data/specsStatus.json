@@ -155,8 +155,8 @@
   {
     "id": "018",
     "name": "Analítica de Micro-Interacciones (Behavioral)",
-    "status": "DESIGNED",
-    "phase": "Fase de Diseño SDD",
+    "status": "LIVE",
+    "phase": "Producción Activa",
     "openTechDebt": "Crecimiento de tabla interaction_events y redacción PII en texto libre",
     "lastAuditDate": "2026-08-04",
     "isHonest": true
