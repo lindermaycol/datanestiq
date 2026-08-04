@@ -151,5 +151,14 @@
     "openTechDebt": "Muestra escasa en arranque para p50/p95 (< 10 peticiones)",
     "lastAuditDate": "2026-08-02",
     "isHonest": true
+  },
+  {
+    "id": "018",
+    "name": "Analítica de Micro-Interacciones (Behavioral)",
+    "status": "DESIGNED",
+    "phase": "Fase de Diseño SDD",
+    "openTechDebt": "Crecimiento de tabla interaction_events y redacción PII en texto libre",
+    "lastAuditDate": "2026-08-04",
+    "isHonest": true
   }
 ]
