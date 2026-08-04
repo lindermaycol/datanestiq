@@ -161,6 +161,20 @@ def deploy(dry_run, with_env, init_crm):
                 sftp.put(local_sc, posixpath.join(remote_scripts_dir, sc))
                 print(f"  + Subido script CLI {sc} -> {remote_scripts_dir}/{sc}")
 
+        # 🛡️ SEGURIDAD §6: Subir SSOT de specs al directorio PRIVADO del app (htdocs/app/specsStatus.json)
+        specs_ssot_local = os.path.join(ROOT, "src", "data", "specsStatus.json")
+        if os.path.exists(specs_ssot_local):
+            sftp.put(specs_ssot_local, posixpath.join(remote_parent, "specsStatus.json"))
+            print(f"  + Subido SSOT de specs (PRIVADO) -> {remote_parent}/specsStatus.json")
+
+        # 🛡️ SEGURIDAD §6: Eliminar archivo de datos públicos expuesto si existe en public/api/
+        public_leaked_file = posixpath.join(remote_base, "api", "specs-status.json")
+        try:
+            sftp.remove(public_leaked_file)
+            print(f"  🛡️ [SECURITY §6] Eliminada copia pública no autorizada: {public_leaked_file}")
+        except IOError:
+            pass
+
         # Crear .htaccess de denegación por-archivo en el PADRE (evita denegar en cascada el webroot public/)
         parent_htaccess = (
             "# Protege .env y la BD SQLite sin denegar el resto (evita cascada al docroot servido)\n"

@@ -6,6 +6,10 @@
  * de la tabla de seguimiento humana en `planes/ESTADO-SPECS.md`.
  * Si se detecta *drift*, interrumpe la compilación con código de salida 1 (`process.exit(1)`).
  *
+ * REGLA ESTRICTA DE SEGURIDAD (Constitución §6):
+ * - PROHIBIDO emitir `specs-status.json` en la carpeta `public/` para evitar que
+ *   se expongan públicamente detalles de deuda técnica o arquitectura interna.
+ *
  * Uso:
  *   node scripts/build-specs-status.mjs
  */
@@ -46,7 +50,6 @@ for (const spec of specsJson) {
   const jsonStatus = spec.status; // 'LIVE', 'DESIGNED', 'IN_PROGRESS', 'SUPERSEDED'
 
   // Buscar la fila correspondiente al ID de la spec en ESTADO-SPECS.md
-  // Ejemplo de fila: | **016 (Analítica...)** | ✅ **DESPLEGADA Y AUDITADA...** |
   const regex = new RegExp(`\\|\\s*\\*\\*${specId}\\s*\\([^\\)]+\\)\\*\\*\\s*\\|\\s*([^\\|]+)\\|`, 'i');
   const match = estadoMd.match(regex);
 
@@ -88,13 +91,12 @@ if (hasDrift) {
   process.exit(1);
 }
 
-// Asegurar que la carpeta public/api exista y copiar el JSON limpio
-const publicApiDir = path.dirname(publicApiPath);
-if (!fs.existsSync(publicApiDir)) {
-  fs.mkdirSync(publicApiDir, { recursive: true });
+// 🛡️ SEGURIDAD §6: Eliminar archivo público si existe localmente para evitar servido no autorizado
+if (fs.existsSync(publicApiPath)) {
+  fs.unlinkSync(publicApiPath);
+  console.log(`[SECURITY §6] Eliminada copia pública local en: ${publicApiPath}`);
 }
-fs.writeFileSync(publicApiPath, JSON.stringify(specsJson, null, 2), 'utf-8');
 
 console.log("[SUCCESS] Build-gate Antidrift PASSED 100%.");
 console.log(`[SUCCESS] ${specsJson.length} especificaciones verificadas en SSOT y sincronizadas con ESTADO-SPECS.md.`);
-console.log(`[SUCCESS] Artefacto estático emitido en: ${publicApiPath}\n`);
+console.log("[SECURITY §6] SSOT mantenido PRIVADO en src/data/specsStatus.json (0 fuga de datos de sistema).\n");

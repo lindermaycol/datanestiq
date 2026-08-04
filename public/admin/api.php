@@ -438,8 +438,11 @@ try {
                     ORDER BY date_day ASC");
                 $daily_trend = $trend_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                // 4. Estado de compilación y sitio
-                $specs_status_file = __DIR__ . '/../api/specs-status.json';
+                // 4. Estado de compilación y sitio (leído del directorio privado htdocs/app/specsStatus.json)
+                $specs_status_file = __DIR__ . '/../../specsStatus.json';
+                if (!file_exists($specs_status_file)) {
+                    $specs_status_file = __DIR__ . '/../../src/data/specsStatus.json';
+                }
                 $last_build = file_exists($specs_status_file) ? date('Y-m-d H:i:s', filemtime($specs_status_file)) : date('Y-m-d H:i:s');
 
                 echo json_encode([
@@ -459,8 +462,10 @@ try {
 
         case 'ops_specs_status':
             if ($method === 'GET') {
-                $specs_file = __DIR__ . '/../api/specs-status.json';
+                // 🛡️ SEGURIDAD §6: Leer exclusivamente del directorio privado fuera de public (htdocs/app/specsStatus.json)
+                $specs_file = __DIR__ . '/../../specsStatus.json';
                 if (!file_exists($specs_file)) {
+                    // Fallback para desarrollo local (XAMPP)
                     $specs_file = __DIR__ . '/../../src/data/specsStatus.json';
                 }
                 
@@ -472,7 +477,7 @@ try {
                     ]);
                 } else {
                     http_response_code(404);
-                    echo json_encode(['error' => 'Specs status SSOT file not found']);
+                    echo json_encode(['error' => 'Specs status SSOT file not found in private directory']);
                 }
             }
             break;
