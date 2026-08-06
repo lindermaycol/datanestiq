@@ -160,5 +160,14 @@
     "openTechDebt": "Crecimiento de tabla interaction_events y redacción PII en texto libre",
     "lastAuditDate": "2026-08-04",
     "isHonest": true
+  },
+  {
+    "id": "019",
+    "name": "Router Determinístico Ampliado del Chatbot (0-LLM)",
+    "status": "DESIGNED",
+    "phase": "Diseñada · Pendiente auditoría Claude",
+    "openTechDebt": "Worker singleton, corpus FAQ pequeño, calidad de ejemplos de intención",
+    "lastAuditDate": "2026-08-05",
+    "isHonest": true
   }
 ]
