@@ -178,5 +178,14 @@
     "openTechDebt": "Rendimiento client-side al cargar corpus Xenova, crecimiento de DB SQLite y retención",
     "lastAuditDate": "2026-08-06",
     "isHonest": true
+  },
+  {
+    "id": "021",
+    "name": "Panel-First (Journey navegable y unificación de monitoreo)",
+    "status": "DESIGNED",
+    "phase": "Fase de Diseño",
+    "openTechDebt": "Latencia marginal de escritura dual síncrona en chat.php",
+    "lastAuditDate": "2026-08-06",
+    "isHonest": true
   }
 ]
