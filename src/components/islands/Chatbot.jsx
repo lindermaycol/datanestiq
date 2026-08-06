@@ -296,7 +296,7 @@ export default function Chatbot() {
                 intent,
                 confidence: confidence.toFixed(3),
                 matched_service: demand.matched_service,
-                offered: (demand.offered || ['faq', 'cita', 'guiado'].includes(resolvedRoute)) ? 1 : 0, // Fix A: si se resolvió por 0-LLM, cuenta como ofrecido
+                offered: demand.offered ? 1 : 0,
                 resolved: ['faq', 'cita', 'guiado'].includes(resolvedRoute) ? '0llm' : 'llm',
                 resolved_route: resolvedRoute, // Fix A
                 sector: currentSector, // Fix C

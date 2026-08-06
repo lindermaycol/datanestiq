@@ -1009,6 +1009,11 @@ $csrf = generateCsrfToken();
             const res = await api(`lead_journey&session_id=${encodeURIComponent(sessionId)}`);
             timeline.innerHTML = '';
 
+            if (res.error) {
+                timeline.innerHTML = `<div style="color:#f87171;font-size:0.8rem;font-weight:600;">⚠️ Error en el servidor: ${esc(res.error)}</div>`;
+                return;
+            }
+
             if (!res.journey || res.journey.length === 0) {
                 timeline.innerHTML = '<div style="color:#888;font-size:0.8rem;">No se encontraron interacciones para esta sesión.</div>';
                 return;

@@ -652,30 +652,35 @@ try {
                 $stmt = $db->prepare("
                     SELECT 'behavior' as source, event_type as activity, event_target as target, event_value as detail, created_at as ts
                     FROM interaction_events
-                    WHERE session_id = :session_id
+                    WHERE session_id = :sid1
 
                     UNION ALL
 
                     SELECT 'demand' as source, intent || ' (' || resolved_route || ')' as activity, matched_service as target, query_redacted || ' [Route: ' || resolved_route || '] [Context: ' || sector || '/' || role || ']' as detail, created_at as ts
                     FROM demand_signals
-                    WHERE session_id = :session_id
+                    WHERE session_id = :sid2
 
                     UNION ALL
 
                     SELECT 'crm_interaction' as source, interaction_type as activity, NULL as target, content as detail, created_at as ts
                     FROM interactions
-                    WHERE lead_id = (SELECT id FROM leads WHERE session_id = :session_id)
+                    WHERE lead_id = (SELECT id FROM leads WHERE session_id = :sid3)
 
                     UNION ALL
 
-                    SELECT 'crm_status' as source, 'change_status' as activity, old_status || ' -> ' || new_status as target, notes as detail, created_at as ts
+                    SELECT 'crm_status' as source, 'change_status' as activity, old_status || ' -> ' || new_status as target, sh.notes as detail, sh.created_at as ts
                     FROM status_history sh
                     JOIN leads l ON sh.lead_id = l.id
-                    WHERE l.session_id = :session_id
+                    WHERE l.session_id = :sid4
 
                     ORDER BY ts ASC
                 ");
-                $stmt->execute([':session_id' => $session_id]);
+                $stmt->execute([
+                    ':sid1' => $session_id,
+                    ':sid2' => $session_id,
+                    ':sid3' => $session_id,
+                    ':sid4' => $session_id
+                ]);
                 $journey = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 echo json_encode([
