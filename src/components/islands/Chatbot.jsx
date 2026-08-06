@@ -18,10 +18,22 @@ import {
   isClassifierReady,
 } from '../../lib/intentClassifier';
 
-// Corpus FAQ plano desde personasCorpus (fuente de verdad §2)
-const FAQ_CORPUS = personas.roles.flatMap(r =>
-  (r.objectionResponses || []).map(or => ({ question: or.objection, answer: or.response }))
-);
+import faqData from '../../data/faq.json';
+
+// Corpus FAQ combinado desde personasCorpus y faq.json (fuente de verdad §2)
+const FAQ_CORPUS = [
+  // 1. Objeciones de personasCorpus
+  ...personas.roles.flatMap(r =>
+    (r.objectionResponses || []).map(or => ({ question: or.objection, answer: or.response }))
+  ),
+  // 2. FAQ operativas (expandiendo variants, y filtrando answer: null)
+  ...faqData.faqs
+    .filter(f => f.answer !== null)
+    .flatMap(f => [
+      { question: f.question, answer: f.answer },
+      ...(f.variants || []).map(v => ({ question: v, answer: f.answer }))
+    ])
+];
 
 export default function Chatbot() {
   const query = useStore(lastUserQuery);

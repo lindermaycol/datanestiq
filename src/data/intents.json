@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "confidence_threshold": 0.72,
-  "faq_match_threshold": 0.65,
+  "confidence_threshold": 0.65,
+  "faq_match_threshold": 0.89,
   "intents": [
     {
       "id": "faq",
@@ -20,7 +20,42 @@
         "¿Pueden integrarse con SAP?",
         "¿Cómo protegen la privacidad de los datos?",
         "¿Tienen casos de éxito o referencias?",
-        "¿Cuánto personal necesitamos dedicar al proyecto?"
+        "¿Cuánto personal necesitamos dedicar al proyecto?",
+        "¿cuánto cuesta?",
+        "precio",
+        "tarifas",
+        "presupuesto",
+        "¿es caro?",
+        "¿cuánto vale?",
+        "formas de pago",
+        "¿facturan?",
+        "¿horario de atención?",
+        "¿cuál es el horario de atención?",
+        "¿cuándo responden?",
+        "¿atienden fines de semana?",
+        "¿cómo los contacto?",
+        "¿dónde están?",
+        "¿tienen oficina?",
+        "¿trabajan remoto?",
+        "¿WhatsApp?",
+        "¿correo?",
+        "¿cuánto tarda?",
+        "¿duración del proyecto?",
+        "¿en cuánto tiempo veo resultados?",
+        "¿cómo trabajan?",
+        "¿qué incluye?",
+        "¿etapas?",
+        "¿soporte post-proyecto?",
+        "¿garantías?",
+        "¿qué garantía tienen?",
+        "¿SLA?",
+        "¿referencias?",
+        "¿experiencia en mi sector?",
+        "¿seguridad de datos?",
+        "¿confidencialidad?",
+        "¿trabajan con pymes?",
+        "¿qué sectores?",
+        "¿empresas grandes?"
       ]
     },
     {
@@ -38,7 +73,12 @@
         "¿Pueden mostrarme cómo funciona?",
         "Agenda una sesión de diagnóstico",
         "Quiero reservar un espacio para conversar",
-        "¿Tienen horarios disponibles para una reunión?"
+        "¿Tienen horarios disponibles para una reunión?",
+        "agéndame",
+        "llámenme",
+        "quiero hablar",
+        "reservar",
+        "dame una cita"
       ]
     },
     {
@@ -56,7 +96,13 @@
         "Explícame sus áreas de especialización",
         "¿Cuál es la metodología de trabajo?",
         "¿Qué tipo de proyectos hacen?",
-        "Quiero entender el portafolio de servicios"
+        "Quiero entender el portafolio de servicios",
+        "¿qué hacen?",
+        "¿por dónde empiezo?",
+        "ayúdame a elegir",
+        "recomiéndame algo",
+        "servicios",
+        "soluciones"
       ]
     },
     {
@@ -69,7 +115,13 @@
         "¿Pueden auditar nuestro modelo de machine learning de detección de fraude?",
         "Necesito un sistema de RAG sobre documentos internos en español",
         "¿Cómo implementarían un feature store para nuestro equipo de data science?",
-        "Tenemos un problema de drift en nuestro modelo de forecasting"
+        "Tenemos un problema de drift en nuestro modelo de forecasting",
+        "necesito un feature store",
+        "¿me ayudan con mi tesis?",
+        "¿venden laptops?",
+        "migración aws rds",
+        "tuning postgres",
+        "gpu cluster"
       ]
     }
   ]

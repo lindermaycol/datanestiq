@@ -18,14 +18,12 @@
 
 ---
 
-## TD-019-02 — Corpus FAQ pequeño (v1: ~14 entradas)
+## TD-019-02 — Corpus FAQ pequeño (ACTUALIZADO)
 
 **Severidad:** 🟡 Baja-Media  
-**Descripción:** El corpus de FAQ en v1 proviene solo de los `objectionResponses` de `personasCorpus.json` (~14 pares). El recall será bajo: muchas preguntas válidas (ej. "¿Trabajan en LATAM?", "¿Tienen casos de éxito?") no tendrán match y caerán al LLM aunque no sean "complejas".
-
-**Impacto:** El porcentaje de desvío 0-LLM en ruta `faq` será menor del potencial máximo hasta ampliar el corpus.
-
-**Solución:** Crear un `src/data/faqCorpus.json` dedicado con 50-100+ pares curados basados en las consultas más frecuentes observadas en `chat_metrics` (Spec 016). Alimentar iterativamente con el "loop learn" de la Spec 016.
+**Descripción:** El corpus de FAQ en v1 proviene solo de los `objectionResponses` de `personasCorpus.json` (~14 pares). 
+**Solución parcial (2026-08-06):** Se creó `src/data/faq.json` como base dedicada para FAQ operativas (precio, horario, contacto). Actualmente varias están marcadas como `pendiente_dato_usuario` porque el proyecto no dispone de esta data real.
+**Próximo paso:** Completar las respuestas operativas en `faq.json` con datos reales cuando el cliente los provea.
 
 **Esfuerzo estimado:** 1h curación inicial + iteración continua
 
@@ -70,14 +68,15 @@
 
 ---
 
-## TD-019-06 — Umbral fijo no adaptativo
+## TD-019-06 — Umbral fijo no adaptativo (ACTUALIZADO: Calibración realizada)
 
-**Severidad:** 🟡 Baja (futuro)  
-**Descripción:** Los umbrales `confidence_threshold` (0.72) y `faq_match_threshold` (0.65) son parámetros fijos en `intents.json`. No se adaptan con el uso.
+**Severidad:** ✅ Resuelto (por ahora)
+**Descripción:** Los umbrales `confidence_threshold` (antes 0.72) y `faq_match_threshold` (antes 0.65) generaban muchos falsos negativos en FAQ debido a la naturaleza estricta del modelo (`paraphrase-multilingual-MiniLM-L12-v2`).
+**Solución Aplicada (2026-08-06):** Se creó el script `scripts/eval_router.mjs` para evaluar offline contra un dataset curado de 23 consultas (incluyendo out-of-catalog negativos). Los umbrales fueron ajustados empíricamente a:
+- `confidence_threshold: 0.65` (permite que consultas cortas como "¿cómo los contacto?" pasen el filtro de intención).
+- `faq_match_threshold: 0.89` (exige coincidencia casi verbatim con las *variants* de la FAQ operativa, garantizando 0 Falsos Positivos frente a queries ambiguas como "¿qué hora es?").
 
-**Solución (v2+):** Calcular automáticamente el umbral óptimo por intención basado en los datos de `interaction_events` (tasa de "escape a LLM" por respuesta FAQ = señal de que la FAQ fue insatisfactoria).
-
-**Esfuerzo estimado:** 3h (análisis + implementación)
+**Esfuerzo estimado futuro:** Automatizar el script para que corra en CI.
 
 ---
 
