@@ -1,9 +1,9 @@
 ---
 title: "Arquitectura Web de Datanestiq"
-description: "Documentación técnica que describe la arquitectura basada en Astro, su modelo de seed operativo, componentes clave y estrategia de gobernanza técnica."
+description: "Documentación técnica que describe la arquitectura basada en Astro, su estructura de seed mode, componentes clave y estrategia de gobernanza operativa."
 author: "AI Documenter"
-lastUpdated: 2026-08-02
-tags: ["astro","seed-mode","openwiki","content-collections","taxonomy","langchain","deployment"]
+lastUpdated: 2026-08-06
+tags: ["astro","seed-mode","content-collections","openwiki","spec-driven-development"]
 seoScore: 100
 ---
 # Arquitectura Web de Datanestiq

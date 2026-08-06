@@ -58,7 +58,8 @@ Pipeline en 3 capas (**datos → presentación → conversión**), auditado por 
 - Doc-sync obligatorio: `ESTADO-SPECS.md` + `Fases.md` + specs se actualizan en cada cambio; wiki con `npm run docs:sync` (Spec 010) antes de desplegar.
 
 ### Producto / decisiones abiertas
-- **Spec 016 (Analítica de Conversión y Loop `chat → lead → learn`):** 🟠 Artefactos de diseño SDD creados (`spec.md`, `data-model.md`, `plan.md`, `tech_debt.md`). Instrumentación de latencia/backend en `chat_metrics`, embudo de conversión en panel `/admin/` (0 PII), y script offline de optimización asistida del `SYSTEM_PROMPT` (PR Draft Only, 0 LLM extra en runtime, 0 auto-merge). En espera de auditoría por Claude Code.
+- **Spec 016 (Analítica de Conversión y Loop `chat → lead → learn`):** ✅ **DESPLEGADA Y AUDITADA EN PRODUCCIÓN.** Instrumentación en `chat_metrics`, columnas `sector`/`rol` en CRM y script offline para optimización de prompt en CI.
+- **Spec 020 (Inteligencia de Demanda y Journey Reconstructor):** 🟠 Artefactos de diseño SDD creados (`spec.md`, `data-model.md`, `plan.md`, `tech_debt.md`). Clasificación client-side 0-LLM de demanda, segmentación en 4 buckets y reconstrucción cronológica del Journey de leads. En espera de auditoría por Claude Code.
 - **Spec 008 (Headless WordPress):** en pausa. Decidir si el sitio se mantiene como Astro estático (recomendado por simplicidad) o se porta a WordPress headless.
 - **Casos de éxito / prueba social real:** reincorporar testimonios y casos **cuando existan clientes verificables** (hoy retirados por honestidad).
 - **README/documentación de entorno:** creados (`README.md`, este `Fases.md`); pendiente opcional un índice de `specs/`/`prompts/`.
