@@ -75,9 +75,9 @@ function nextId(prefix: string): string {
 function workerRequest(type: string, payload: Record<string, any>): Promise<any> {
   return new Promise((resolve, reject) => {
     if (!_worker) return reject(new Error('Worker not set'));
-    const id = nextId(type);
+    const id = payload.id ?? nextId(type);
     _pending.set(id, { resolve, reject });
-    _worker.postMessage({ type, id, ...payload });
+    _worker.postMessage({ type, ...payload, id });
     // Timeout de seguridad: 15s para index (el modelo puede estar aún calentando),
     // 5s para search (el modelo ya debe estar listo)
     const timeoutMs = type === 'index' ? 15000 : 5000;
