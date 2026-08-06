@@ -108,8 +108,10 @@ function redactPii($text) {
     try {
         // Redactar Emails
         $text = preg_replace('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[EMAIL_REDACTED]', $text);
-        // Redactar Teléfonos
+        // Redactar Teléfonos (patrón estándar internacional de 10+ dígitos)
         $text = preg_replace('/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4,}/', '[PHONE_REDACTED]', $text);
+        // Móvil Perú: 9XX XXX XXX (con o sin +51 y separadores) (Fix B)
+        $text = preg_replace('/(?<!\d)(\+?51[\s.\-]?)?9\d{2}[\s.\-]?\d{3}[\s.\-]?\d{3}(?!\d)/', '[PHONE_REDACTED]', $text);
         return $text;
     } catch (Exception $e) {
         // Guardarraíl fail-closed: Si la redacción falla, borramos el valor
@@ -131,6 +133,31 @@ try {
 
     $db = new PDO('sqlite:' . $db_path);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    if ($event_type === 'demand_signal') {
+        $data = json_decode($event_value, true);
+        if ($data) {
+            $intent = substr(trim($data['intent'] ?? 'unknown'), 0, 50);
+            $confidence = floatval($data['confidence'] ?? 0);
+            $matched_service = isset($data['matched_service']) ? substr(trim($data['matched_service']), 0, 100) : null;
+            $offered = intval($data['offered'] ?? 0);
+            $resolved = substr(trim($data['resolved'] ?? 'llm'), 0, 50);
+            $query_redacted = redactPii(trim($data['query_redacted'] ?? ''));
+
+            // Spec 020 Fixes (A/C)
+            $resolved_route = substr(trim($data['resolved_route'] ?? 'llm'), 0, 50);
+            $sector = substr(trim($data['sector'] ?? ''), 0, 100);
+            $role = substr(trim($data['role'] ?? ''), 0, 100);
+            $score = floatval($data['score'] ?? 0.0);
+            $faq_score = floatval($data['faq_score'] ?? 0.0);
+
+            $stmt = $db->prepare("INSERT INTO demand_signals (session_id, query_redacted, intent, confidence, matched_service, offered, resolved, resolved_route, sector, role, score, faq_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$session_id, $query_redacted, $intent, $confidence, $matched_service, $offered, $resolved, $resolved_route, $sector, $role, $score, $faq_score]);
+
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+    }
 
     $stmt = $db->prepare("INSERT INTO interaction_events (session_id, event_type, event_target, event_value) VALUES (?, ?, ?, ?)");
     $stmt->execute([$session_id, $event_type, $event_target, $event_value]);

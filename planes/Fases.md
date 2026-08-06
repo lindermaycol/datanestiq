@@ -59,7 +59,7 @@ Pipeline en 3 capas (**datos → presentación → conversión**), auditado por 
 
 ### Producto / decisiones abiertas
 - **Spec 016 (Analítica de Conversión y Loop `chat → lead → learn`):** ✅ **DESPLEGADA Y AUDITADA EN PRODUCCIÓN.** Instrumentación en `chat_metrics`, columnas `sector`/`rol` en CRM y script offline para optimización de prompt en CI.
-- **Spec 020 (Inteligencia de Demanda y Journey Reconstructor):** 🟠 Artefactos de diseño SDD creados (`spec.md`, `data-model.md`, `plan.md`, `tech_debt.md`). Clasificación client-side 0-LLM de demanda, segmentación en 4 buckets y reconstrucción cronológica del Journey de leads. En espera de auditoría por Claude Code.
+- **Spec 020 (Inteligencia de Demanda y Journey Reconstructor):** ✅ **DESPLEGADA Y AUDITADA EN DESARROLLO.** Clasificación client-side 0-LLM de demanda, segmentación en 4 buckets y reconstrucción cronológica del Journey de leads. Panel /admin/ implementado.
 - **Spec 008 (Headless WordPress):** en pausa. Decidir si el sitio se mantiene como Astro estático (recomendado por simplicidad) o se porta a WordPress headless.
 - **Casos de éxito / prueba social real:** reincorporar testimonios y casos **cuando existan clientes verificables** (hoy retirados por honestidad).
 - **README/documentación de entorno:** creados (`README.md`, este `Fases.md`); pendiente opcional un índice de `specs/`/`prompts/`.

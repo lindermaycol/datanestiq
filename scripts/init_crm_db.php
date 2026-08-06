@@ -123,6 +123,42 @@ try {
         created_at DATETIME DEFAULT (datetime('now'))
     )");
 
+    // --- Tabla: demand_signals (Spec 020 - Inteligencia de Demanda) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS demand_signals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        query_redacted TEXT NOT NULL,
+        intent VARCHAR(50) NOT NULL,
+        confidence REAL NOT NULL,
+        matched_service VARCHAR(100) DEFAULT NULL,
+        offered INTEGER NOT NULL,
+        resolved VARCHAR(50) NOT NULL,
+        resolved_route VARCHAR(50) DEFAULT 'llm',
+        sector VARCHAR(100) DEFAULT '',
+        role VARCHAR(100) DEFAULT '',
+        score REAL DEFAULT 0.0,
+        faq_score REAL DEFAULT 0.0,
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
+    // Migración idempotente para Spec 020 Fixes (A/C)
+    $ds_columns = $db->query("PRAGMA table_info(demand_signals)")->fetchAll(PDO::FETCH_COLUMN, 1);
+    if (!in_array('resolved_route', $ds_columns)) {
+        $db->exec("ALTER TABLE demand_signals ADD COLUMN resolved_route VARCHAR(50) DEFAULT 'llm'");
+    }
+    if (!in_array('sector', $ds_columns)) {
+        $db->exec("ALTER TABLE demand_signals ADD COLUMN sector VARCHAR(100) DEFAULT ''");
+    }
+    if (!in_array('role', $ds_columns)) {
+        $db->exec("ALTER TABLE demand_signals ADD COLUMN role VARCHAR(100) DEFAULT ''");
+    }
+    if (!in_array('score', $ds_columns)) {
+        $db->exec("ALTER TABLE demand_signals ADD COLUMN score REAL DEFAULT 0.0");
+    }
+    if (!in_array('faq_score', $ds_columns)) {
+        $db->exec("ALTER TABLE demand_signals ADD COLUMN faq_score REAL DEFAULT 0.0");
+    }
+
     // Índices para performance
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_sector ON leads(sector)");
@@ -138,6 +174,12 @@ try {
     $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_session ON interaction_events(session_id)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_type ON interaction_events(event_type)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_interaction_events_created ON interaction_events(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_session ON demand_signals(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_offered ON demand_signals(offered)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_created ON demand_signals(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_resolved_route ON demand_signals(resolved_route)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_sector ON demand_signals(sector)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_demand_signals_role ON demand_signals(role)");
 
     // Insertar disponibilidad por defecto (Lunes-Viernes, 9:00-18:00, America/Lima)
     $stmt = $db->query("SELECT COUNT(*) FROM availability_config");

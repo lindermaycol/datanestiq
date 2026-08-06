@@ -563,6 +563,128 @@ try {
             }
             break;
 
+        case 'demand_signals':
+            if ($method === 'GET') {
+                // TD-020-02: Limpieza de retención activa de 180 días
+                $db->exec("DELETE FROM demand_signals WHERE created_at < datetime('now', '-180 days')");
+
+                $total = (int)$db->query("SELECT COUNT(*) FROM demand_signals")->fetchColumn();
+                if ($total < 20) {
+                    echo json_encode([
+                        'insufficient_data' => true,
+                        'total' => $total
+                    ]);
+                    exit;
+                }
+
+                // Bucket 1 (Demanda no atendida): Agrupado con limitación a los 5 ejemplos más recientes (Precisión 4) (Fix A)
+                $stmt = $db->query("SELECT 
+                    matched_service, 
+                    COUNT(*) as total_requests,
+                    (
+                        SELECT GROUP_CONCAT(query_redacted, ' | ') 
+                        FROM (
+                            SELECT query_redacted 
+                            FROM demand_signals ds2 
+                            WHERE ds2.matched_service = ds.matched_service AND ds2.offered = 0 AND ds2.resolved_route NOT IN ('faq','cita','guiado')
+                            ORDER BY created_at DESC 
+                            LIMIT 5
+                        )
+                    ) as examples
+                    FROM demand_signals ds
+                    WHERE offered = 0 AND resolved_route NOT IN ('faq','cita','guiado')
+                    GROUP BY matched_service
+                    ORDER BY total_requests DESC");
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'insufficient_data' => false,
+                    'total' => $total,
+                    'demand' => $data
+                ]);
+            }
+            break;
+
+        case 'leakage':
+            if ($method === 'GET') {
+                $total = (int)$db->query("SELECT COUNT(DISTINCT session_id) FROM demand_signals WHERE offered = 1")->fetchColumn();
+                if ($total < 10) {
+                    echo json_encode([
+                        'insufficient_data' => true,
+                        'total' => $total
+                    ]);
+                    exit;
+                }
+
+                // Bucket 2 (Fugas de conversión): Atribución aproximada (§2) alineada con offered = 1 (Precisión 5)
+                $stmt = $db->query("SELECT 
+                    ds.matched_service,
+                    COUNT(DISTINCT ds.session_id) as total_interested_sessions,
+                    COUNT(DISTINCT l.id) as converted_leads,
+                    (COUNT(DISTINCT ds.session_id) - COUNT(DISTINCT l.id)) as leaked_sessions,
+                    ROUND((1.0 - (CAST(COUNT(DISTINCT l.id) AS REAL) / COUNT(DISTINCT ds.session_id))) * 100, 2) as leakage_percentage
+                    FROM demand_signals ds
+                    LEFT JOIN leads l ON ds.session_id = l.session_id
+                    WHERE ds.offered = 1
+                    GROUP BY ds.matched_service
+                    ORDER BY leakage_percentage DESC");
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'insufficient_data' => false,
+                    'total' => $total,
+                    'leakage' => $data
+                ]);
+            }
+            break;
+
+        case 'lead_journey':
+            if ($method === 'GET') {
+                $session_id = trim($_GET['session_id'] ?? '');
+                if (empty($session_id) || !preg_match('/^[a-zA-Z0-9]{32,}$/', $session_id)) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Invalid session_id format']);
+                    exit;
+                }
+
+                // Reconstructor de Journey (Precisión 1): Une eventos de micro-interacciones, demanda,
+                // interacciones CRM reales ( interactions unida por lead_id ) e historial de estados.
+                $stmt = $db->prepare("
+                    SELECT 'behavior' as source, event_type as activity, event_target as target, event_value as detail, created_at as ts
+                    FROM interaction_events
+                    WHERE session_id = :session_id
+
+                    UNION ALL
+
+                    SELECT 'demand' as source, intent || ' (' || resolved_route || ')' as activity, matched_service as target, query_redacted || ' [Route: ' || resolved_route || '] [Context: ' || sector || '/' || role || ']' as detail, created_at as ts
+                    FROM demand_signals
+                    WHERE session_id = :session_id
+
+                    UNION ALL
+
+                    SELECT 'crm_interaction' as source, interaction_type as activity, NULL as target, content as detail, created_at as ts
+                    FROM interactions
+                    WHERE lead_id = (SELECT id FROM leads WHERE session_id = :session_id)
+
+                    UNION ALL
+
+                    SELECT 'crm_status' as source, 'change_status' as activity, old_status || ' -> ' || new_status as target, notes as detail, created_at as ts
+                    FROM status_history sh
+                    JOIN leads l ON sh.lead_id = l.id
+                    WHERE l.session_id = :session_id
+
+                    ORDER BY ts ASC
+                ");
+                $stmt->execute([':session_id' => $session_id]);
+                $journey = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'session_id' => $session_id,
+                    'journey' => $journey
+                ]);
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Unknown action']);

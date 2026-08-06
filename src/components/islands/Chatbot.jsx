@@ -15,10 +15,20 @@ import {
   onWorkerReady,
   classifyIntent,
   matchFAQ,
+  classifyDemand, // Spec 020
   isClassifierReady,
 } from '../../lib/intentClassifier';
 
 import faqData from '../../data/faq.json';
+import taxonomyCorpus from '../../data/taxonomyCorpus.json';
+
+// Mapeo plano para búsqueda semántica contra catálogo de servicios (Spec 020)
+const TAXONOMY_ENTRIES = taxonomyCorpus.flatMap(service => [
+  { text: service.name, id: service.id },
+  { text: service.hero?.headline || '', id: service.id },
+  { text: service.hero?.subheadline || '', id: service.id },
+  { text: service.seo?.description || '', id: service.id }
+]).filter(e => e.text.trim().length > 0);
 
 // Corpus FAQ combinado desde personasCorpus y faq.json (fuente de verdad §2)
 const FAQ_CORPUS = [
@@ -275,6 +285,32 @@ export default function Chatbot() {
       try {
         const { intent, confidence } = await classifyIntent(text);
 
+        // Helper no-bloqueante para clasificar demanda y emitir telemetría (Cautela 2)
+        const logDemandSignal = (resolvedRoute, faqScore = 0) => {
+          classifyDemand(text, TAXONOMY_ENTRIES).then(demand => {
+            if (demand) {
+              const currentSector = chatState.sector || ctxState.sector || '';
+              const currentRole = chatState.role || ctxState.rol || '';
+
+              trackEvent('demand_signal', 'chatbot-router', JSON.stringify({
+                intent,
+                confidence: confidence.toFixed(3),
+                matched_service: demand.matched_service,
+                offered: (demand.offered || ['faq', 'cita', 'guiado'].includes(resolvedRoute)) ? 1 : 0, // Fix A: si se resolvió por 0-LLM, cuenta como ofrecido
+                resolved: ['faq', 'cita', 'guiado'].includes(resolvedRoute) ? '0llm' : 'llm',
+                resolved_route: resolvedRoute, // Fix A
+                sector: currentSector, // Fix C
+                role: currentRole, // Fix C
+                score: demand.score, // Fix C
+                faq_score: faqScore, // Fix C
+                query_redacted: text // track_event.php aplicará redactPii()
+              }));
+            }
+          }).catch(err => {
+            console.warn('[Router 020] Error in non-blocking classifyDemand:', err);
+          });
+        };
+
         // ── Ruta cita (0-LLM) ──────────────────────────────────────────────────
         if (intent === 'cita') {
           trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
@@ -283,6 +319,7 @@ export default function Chatbot() {
             resolved: '0llm',
             route: 'cita'
           }));
+          logDemandSignal('cita', 0);
           const citaMsg = '¡Perfecto! Te muestro la disponibilidad de nuestros arquitectos de datos. Elige el horario que mejor te venga.';
           setDisplayMessages([...newDisplay, { role: 'assistant', content: citaMsg }]);
           setMessages([...newHistory, { role: 'assistant', content: citaMsg }]);
@@ -299,6 +336,7 @@ export default function Chatbot() {
             resolved: '0llm',
             route: 'guiado'
           }));
+          logDemandSignal('guiado', 0);
           const guidedMsg = 'Déjame guiarte por los servicios que aplican a tu situación. ¿A qué sector pertenece tu organización?';
           setChatState(prev => ({ ...prev, step: 'intro' }));
           setDisplayMessages([...newDisplay, { role: 'assistant', content: guidedMsg }]);
@@ -321,6 +359,7 @@ export default function Chatbot() {
             route: 'faq',
             faqScore: (faqMatch.score ?? 0).toFixed(3)
           }));
+          logDemandSignal('faq', faqMatch.score ?? 0);
           // Respuesta verbatim de la taxonomía real (§2 — jamás inventada)
           setFaqResponse({ answer: faqMatch.answer, originalText: text });
           setDisplayMessages([...newDisplay, { role: 'assistant', content: faqMatch.answer, isFAQ: true }]);
@@ -337,6 +376,7 @@ export default function Chatbot() {
           resolved: 'llm',
           route: 'llm'
         }));
+        logDemandSignal('llm', faqMatch ? (faqMatch.score ?? 0) : 0);
 
       } catch (classifyErr) {
         // Error en el clasificador → LLM inmediato (P1: nunca bloquear)

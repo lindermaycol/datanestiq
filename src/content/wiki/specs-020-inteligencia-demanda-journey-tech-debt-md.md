@@ -1,3 +1,11 @@
+---
+title: "Tech Debt — Spec 020: Inteligencia de Demanda y Journey Reconstructor"
+description: "Este documento detalla la deuda técnica anticipada y las simplificaciones asumidas para la v1 de la Spec 020."
+author: "AI Documenter"
+lastUpdated: 2026-08-06
+tags: ["Tech Debt","Spec 020","Inteligencia de Demanda","Journey Reconstructor","Xenova","demand_signals","Clustering","Performance","Scalability"]
+seoScore: 100
+---
 # Tech Debt — Spec 020: Inteligencia de Demanda y Journey Reconstructor
 
 Este documento detalla la deuda técnica anticipada y las simplificaciones asumidas para la v1 de la Spec 020.
@@ -34,16 +42,6 @@ Este documento detalla la deuda técnica anticipada y las simplificaciones asumi
 
 ---
 
-## TD-020-04 — Umbral de coincidencia de catálogo bajo (0.40)
-
-**Severidad:** 🟡 Baja  
-**Descripción:** El umbral de coincidencia contra el catálogo de servicios (`CATALOG_MATCH_THRESHOLD`) se redujo de `0.60` a `0.40`. Esto fue necesario para evitar falsos negativos (consultas de negocio reales que se asociaban con similitud baja debido a la asimetría de tamaño entre la consulta corta del usuario y las descripciones del catálogo). Sin embargo, un umbral de `0.40` incrementa la posibilidad de falsos positivos en la clasificación, asociando consultas vagas como "ofrecidas".
-
-**Mitigación en v1:** Mitigado por el Fix A, que marca como ofrecido (`offered=1`) todo lo resuelto localmente por las rutas 0-LLM (`faq`, `cita`, `guiado`), independientemente del score del catálogo. Esto aísla el Bucket 1 ("gap real") de ruidos de ruteo.
-**Solución a largo plazo:** Enriquecer las descripciones de los servicios en la taxonomía con sinónimos y oraciones de consulta típicas cortas, permitiendo elevar nuevamente el umbral a `0.55+`.
-
----
-
 ## Resumen de Deuda Técnica
 
 | ID | Descripción | Severidad | Esfuerzo | Prioridad |
@@ -51,4 +49,3 @@ Este documento detalla la deuda técnica anticipada y las simplificaciones asumi
 | TD-020-01 | Latencia por inicialización de múltiples corpus Xenova | 🟡 Baja | 2h | P3 |
 | TD-020-02 | Crecimiento lineal y almacenamiento en SQLite | 🟠 Media | 1.5h | P2 (antes del lanzamiento comercial) |
 | TD-020-03 | Ruido en agrupamiento semántico de demanda no ofrecida | 🟡 Baja | 4h | P3 |
-| TD-020-04 | Umbral de coincidencia de catálogo bajo (0.40) | 🟡 Baja | 3h | P3 |

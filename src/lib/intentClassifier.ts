@@ -288,6 +288,54 @@ export async function matchFAQ(text: string, faqEntries: FAQEntry[]): Promise<FA
   }
 }
 
+export interface DemandResult {
+  matched_service: string | null;
+  score: number;
+  offered: boolean;
+}
+
+/**
+ * Clasifica la demanda de una consulta buscando el servicio más cercano de la taxonomía.
+ *
+ * @param text            Texto del usuario
+ * @param taxonomyEntries Array plano de { text, id } (nombre, subheadline, etc. de soluciones)
+ * @returns DemandResult con el matched_service y si supera el umbral (offered)
+ */
+export async function classifyDemand(
+  text: string,
+  taxonomyEntries: Array<{ text: string; id: string }>
+): Promise<DemandResult | null> {
+  if (!_classifierReady || !_worker || taxonomyEntries.length === 0) {
+    return null;
+  }
+
+  try {
+    const corpusTexts = taxonomyEntries.map(e => e.text);
+    const results = await workerRequest('search', {
+      query: text,
+      corpusTexts,
+      id: nextId('demand-match'),
+    }) as Array<{ index: number; score: number }>;
+
+    if (!results || results.length === 0) {
+      return { matched_service: null, score: 0, offered: false };
+    }
+
+    const best = results[0];
+    const offered = best.score >= 0.40; // CATALOG_MATCH_THRESHOLD (0.40)
+
+    return {
+      matched_service: taxonomyEntries[best.index].id,
+      score: best.score,
+      offered: offered
+    };
+  } catch (e) {
+    console.warn('[intentClassifier] classifyDemand error:', e);
+    return null;
+  }
+}
+
+
 /** Expone el estado de disponibilidad del clasificador (para diagnóstico). */
 export function isClassifierReady(): boolean {
   return _classifierReady;

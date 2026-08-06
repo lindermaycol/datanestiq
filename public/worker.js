@@ -22,7 +22,7 @@ class PipelineSingleton {
 }
 
 // Module-level cache for corpus embeddings
-let cachedCorpusData = null; // { embeddingsData: Float32Array, textCount: number, dim: number, hash: string }
+let cachedCorpora = {}; // signature -> { embeddingsData: Float32Array, textCount: number, dim: number, hash: string }
 
 function computeSignature(texts) {
     if (!texts || texts.length === 0) return '';
@@ -32,21 +32,21 @@ function computeSignature(texts) {
 async function indexCorpus(extractor, corpusTexts) {
     if (!corpusTexts || corpusTexts.length === 0) return null;
     const signature = computeSignature(corpusTexts);
-    if (cachedCorpusData && cachedCorpusData.hash === signature && cachedCorpusData.textCount === corpusTexts.length) {
-        return cachedCorpusData;
+    if (cachedCorpora[signature] && cachedCorpora[signature].textCount === corpusTexts.length) {
+        return cachedCorpora[signature];
     }
 
     const corpusOutput = await extractor(corpusTexts, { pooling: 'mean', normalize: true });
     const dim = corpusOutput.dims ? corpusOutput.dims[1] : (corpusOutput.data.length / corpusTexts.length);
     
-    cachedCorpusData = {
+    cachedCorpora[signature] = {
         embeddingsData: corpusOutput.data,
         textCount: corpusTexts.length,
         dim: dim,
         hash: signature
     };
 
-    return cachedCorpusData;
+    return cachedCorpora[signature];
 }
 
 self.addEventListener('message', async (event) => {
@@ -89,8 +89,9 @@ self.addEventListener('message', async (event) => {
         });
 
         // Ensure corpus is indexed (Cache-miss fallback per Precisión 1)
-        let corpusData = cachedCorpusData;
-        if ((!corpusData || (corpusTexts && computeSignature(corpusTexts) !== corpusData.hash)) && corpusTexts && corpusTexts.length > 0) {
+        const signature = corpusTexts ? computeSignature(corpusTexts) : '';
+        let corpusData = signature ? cachedCorpora[signature] : null;
+        if (!corpusData && corpusTexts && corpusTexts.length > 0) {
             corpusData = await indexCorpus(extractor, corpusTexts);
         }
 

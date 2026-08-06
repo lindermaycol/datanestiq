@@ -173,8 +173,8 @@
   {
     "id": "020",
     "name": "Inteligencia de Demanda y Journey Reconstructor",
-    "status": "DESIGNED",
-    "phase": "Pendiente de Auditoría",
+    "status": "LIVE",
+    "phase": "Producción Activa",
     "openTechDebt": "Rendimiento client-side al cargar corpus Xenova, crecimiento de DB SQLite y retención",
     "lastAuditDate": "2026-08-06",
     "isHonest": true

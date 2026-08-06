@@ -117,6 +117,7 @@ $csrf = generateCsrfToken();
             <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica de Conversión</button>
             <button id="tab-btn-ops" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('ops')">🛠️ Observabilidad Ops</button>
             <button id="tab-btn-behavior" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('behavior')">📈 Engagement & Comportamiento</button>
+            <button id="tab-btn-demand" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('demand')">🔍 Demanda & Journey</button>
         </div>
 
         <!-- View: Leads & Citas -->
@@ -344,6 +345,64 @@ $csrf = generateCsrfToken();
         </div>
     </div>
 
+    <!-- View: Demanda & Journey -->
+    <div id="view-demand" style="display:none; padding:1.5rem;">
+        <!-- Insuficiente Datos warning container -->
+        <div id="demand-insufficient" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:1rem;border-radius:8px;margin-bottom:1rem;font-size:0.875rem;">
+            ⚠️ <strong>Datos insuficientes:</strong> Se requieren al menos 20 señales de demanda y 10 interesados para calcular estadísticas fiables (§2).
+        </div>
+
+        <div id="demand-dashboard" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+            <!-- Bucket 1: Demanda No Atendida -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🔍 Posible Demanda No Atendida <span style="font-size:0.75rem;color:#888;font-weight:normal;">(Hipótesis de mercado, N&ge;20)</span></h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Servicio Sugerido</th>
+                                <th>Consultas</th>
+                                <th>Ejemplos Recientes (redactados-imperfectos §2)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="demand-signals-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bucket 2: Fugas de Conversión -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">⚠️ Fugas de Conversión por Servicio <span style="font-size:0.75rem;color:#888;font-weight:normal;">(Atribución aproximada §2, N&ge;10)</span></h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Servicio Ofrecido</th>
+                                <th>Interés (Sesiones)</th>
+                                <th>Leads Capturados</th>
+                                <th>Fuga (Sesiones)</th>
+                                <th>% Fuga</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leakage-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey Reconstructor Trigger -->
+        <div style="margin-top:1.5rem;background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+            <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🧭 Journey Reconstructor por Cliente</h3>
+            <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
+                <input type="text" id="journey-session-id" placeholder="Ingresa session_id del lead (ej. 32+ caracteres)" style="flex:1;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;padding:0.5rem 0.75rem;font-size:0.875rem;outline:none;" />
+                <button class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="reconstructJourney()">Reconstruir Journey</button>
+            </div>
+            <div id="journey-result" style="margin-top:1rem;display:none;background:#1a1a2e;padding:1.5rem;border-radius:12px;border:1px solid rgba(255,255,255,0.05);max-height:400px;overflow-y:auto;">
+                <div id="journey-timeline" style="display:flex;flex-direction:column;gap:1rem;border-left:2px solid rgba(34,211,238,0.3);padding-left:1.5rem;margin-left:0.5rem;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de detalle -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal">
@@ -428,14 +487,16 @@ $csrf = generateCsrfToken();
         const analyticsView = document.getElementById('view-analytics');
         const opsView = document.getElementById('view-ops');
         const behaviorView = document.getElementById('view-behavior');
+        const demandView = document.getElementById('view-demand');
         
         const btnLeads = document.getElementById('tab-btn-leads');
         const btnAnalytics = document.getElementById('tab-btn-analytics');
         const btnOps = document.getElementById('tab-btn-ops');
         const btnBehavior = document.getElementById('tab-btn-behavior');
+        const btnDemand = document.getElementById('tab-btn-demand');
 
         // Reset button styles
-        [btnLeads, btnAnalytics, btnOps, btnBehavior].forEach(btn => {
+        [btnLeads, btnAnalytics, btnOps, btnBehavior, btnDemand].forEach(btn => {
             if (btn) {
                 btn.style.background = 'none';
                 btn.style.color = '#22d3ee';
@@ -447,6 +508,7 @@ $csrf = generateCsrfToken();
             leadsView.style.display = 'none';
             opsView.style.display = 'none';
             behaviorView.style.display = 'none';
+            if (demandView) demandView.style.display = 'none';
             analyticsView.style.display = 'block';
             btnAnalytics.style.background = '#22d3ee';
             btnAnalytics.style.color = '#000';
@@ -456,6 +518,7 @@ $csrf = generateCsrfToken();
             leadsView.style.display = 'none';
             analyticsView.style.display = 'none';
             behaviorView.style.display = 'none';
+            if (demandView) demandView.style.display = 'none';
             opsView.style.display = 'block';
             btnOps.style.background = '#22d3ee';
             btnOps.style.color = '#000';
@@ -465,15 +528,27 @@ $csrf = generateCsrfToken();
             leadsView.style.display = 'none';
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
+            if (demandView) demandView.style.display = 'none';
             behaviorView.style.display = 'block';
             btnBehavior.style.background = '#22d3ee';
             btnBehavior.style.color = '#000';
             btnBehavior.style.fontWeight = '700';
             loadBehaviorAnalytics();
+        } else if (tab === 'demand') {
+            leadsView.style.display = 'none';
+            analyticsView.style.display = 'none';
+            opsView.style.display = 'none';
+            behaviorView.style.display = 'none';
+            if (demandView) demandView.style.display = 'block';
+            btnDemand.style.background = '#22d3ee';
+            btnDemand.style.color = '#000';
+            btnDemand.style.fontWeight = '700';
+            loadDemandData();
         } else {
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
             behaviorView.style.display = 'none';
+            if (demandView) demandView.style.display = 'none';
             leadsView.style.display = 'block';
             btnLeads.style.background = '#22d3ee';
             btnLeads.style.color = '#000';
@@ -850,6 +925,161 @@ $csrf = generateCsrfToken();
         closeModal();
         loadLeads(currentPage);
         loadStats();
+    }
+
+    async function loadDemandData() {
+        try {
+            const [demandRes, leakageRes] = await Promise.all([
+                api('demand_signals'),
+                api('leakage')
+            ]);
+
+            const insufficientContainer = document.getElementById('demand-insufficient');
+            const dashboardContainer = document.getElementById('demand-dashboard');
+
+            if (demandRes.insufficient_data || leakageRes.insufficient_data) {
+                insufficientContainer.style.display = 'block';
+                dashboardContainer.style.display = 'none';
+                return;
+            }
+
+            insufficientContainer.style.display = 'none';
+            dashboardContainer.style.display = 'grid';
+
+            // Render Bucket 1 (Demanda no atendida)
+            const demandBody = document.getElementById('demand-signals-body');
+            demandBody.innerHTML = '';
+            if (demandRes.demand && demandRes.demand.length > 0) {
+                demandRes.demand.forEach(row => {
+                    const examplesEscaped = (row.examples || '')
+                        .split(' | ')
+                        .map(ex => `<span style="background:rgba(255,255,255,0.05);padding:0.2rem 0.4rem;border-radius:4px;display:inline-block;margin:0.1rem;font-size:0.75rem;">${esc(ex)}</span>`)
+                        .join(' ');
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600;color:#fff;">${esc(row.matched_service || 'Otro')}</td>
+                        <td style="color:#22d3ee;">${row.total_requests}</td>
+                        <td style="color:#aaa;">${examplesEscaped}</td>
+                    `;
+                    demandBody.appendChild(tr);
+                });
+            } else {
+                demandBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#666;">No hay registros de brechas de demanda.</td></tr>';
+            }
+
+            // Render Bucket 2 (Fugas de conversión)
+            const leakageBody = document.getElementById('leakage-body');
+            leakageBody.innerHTML = '';
+            if (leakageRes.leakage && leakageRes.leakage.length > 0) {
+                leakageRes.leakage.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600;color:#fff;">${esc(row.matched_service || 'Otro')}</td>
+                        <td>${row.total_interested_sessions}</td>
+                        <td style="color:#22c55e;">${row.converted_leads}</td>
+                        <td style="color:#f87171;">${row.leaked_sessions}</td>
+                        <td style="font-weight:700;color:${row.leakage_percentage > 70 ? '#f87171' : '#fbbf24'};">${row.leakage_percentage}%</td>
+                    `;
+                    leakageBody.appendChild(tr);
+                });
+            } else {
+                leakageBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;">No hay registros de fugas de conversión.</td></tr>';
+            }
+
+        } catch (err) {
+            console.error('Error loading demand data:', err);
+        }
+    }
+
+    async function reconstructJourney() {
+        const sessionId = document.getElementById('journey-session-id').value.trim();
+        if (!sessionId || sessionId.length < 32) {
+            alert('Por favor ingresa un session_id válido (mínimo 32 caracteres)');
+            return;
+        }
+
+        const resultContainer = document.getElementById('journey-result');
+        const timeline = document.getElementById('journey-timeline');
+
+        resultContainer.style.display = 'block';
+        timeline.innerHTML = '<div style="color:#888;font-size:0.8rem;">Cargando Journey...</div>';
+
+        try {
+            const res = await api(`lead_journey&session_id=${encodeURIComponent(sessionId)}`);
+            timeline.innerHTML = '';
+
+            if (!res.journey || res.journey.length === 0) {
+                timeline.innerHTML = '<div style="color:#888;font-size:0.8rem;">No se encontraron interacciones para esta sesión.</div>';
+                return;
+            }
+
+            res.journey.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'timeline-item';
+                itemDiv.style.position = 'relative';
+                itemDiv.style.marginBottom = '1rem';
+
+                let badgeColor = '#666';
+                let sourceTitle = 'Evento';
+                let description = '';
+
+                if (item.source === 'behavior') {
+                    badgeColor = '#3b82f6';
+                    sourceTitle = 'Comportamiento (Micro)';
+                    description = `Acción: <strong>${esc(item.activity)}</strong> en <code>${esc(item.target)}</code> (Valor: ${esc(item.detail)})`;
+                } else if (item.source === 'demand') {
+                    badgeColor = '#a78bfa';
+                    sourceTitle = 'Chatbot 0-LLM';
+                    
+                    let q = item.detail || '';
+                    let routeInfo = '';
+                    let ctxInfo = '';
+                    
+                    const routeMatch = q.match(/\[Route:\s*([^\]]+)\]/);
+                    if (routeMatch) {
+                        routeInfo = routeMatch[1];
+                        q = q.replace(routeMatch[0], '');
+                    }
+                    const ctxMatch = q.match(/\[Context:\s*([^\]]+)\]/);
+                    if (ctxMatch) {
+                        ctxInfo = ctxMatch[1];
+                        q = q.replace(ctxMatch[0], '');
+                    }
+                    q = q.trim();
+
+                    let extraBadge = '';
+                    if (routeInfo) {
+                        extraBadge += ` <span style="background:rgba(34,211,238,0.15);color:#22d3ee;padding:0.15rem 0.4rem;border-radius:4px;font-size:0.7rem;font-weight:600;margin-left:0.5rem;text-transform:uppercase;">${esc(routeInfo)}</span>`;
+                    }
+                    if (ctxInfo && ctxInfo !== '/') {
+                        extraBadge += ` <span style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:0.15rem 0.4rem;border-radius:4px;font-size:0.7rem;font-weight:600;margin-left:0.5rem;text-transform:uppercase;">${esc(ctxInfo)}</span>`;
+                    }
+
+                    description = `Mensaje clasificado: "${esc(q)}"${extraBadge}<br/>Intención: <strong>${esc(item.activity)}</strong> (Servicio: <code>${esc(item.target || 'N/A')}</code>)`;
+                } else if (item.source === 'crm_interaction') {
+                    badgeColor = '#22c55e';
+                    sourceTitle = 'CRM (Contacto)';
+                    description = `Contacto: <strong>${esc(item.activity)}</strong> &rarr; <em>${esc(item.detail)}</em>`;
+                } else if (item.source === 'crm_status') {
+                    badgeColor = '#fbbf24';
+                    sourceTitle = 'CRM Estado';
+                    description = `Cambio de estado: <strong>${esc(item.target)}</strong> &rarr; Notas: <em>${esc(item.detail || 'Ninguna')}</em>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div style="position:absolute;left:-2.1rem;top:0.2rem;width:1rem;height:1rem;border-radius:50%;background:${badgeColor};border:2px solid #1a1a2e;"></div>
+                    <div style="font-size:0.75rem;color:#888;margin-bottom:0.15rem;">
+                        <span style="font-weight:600;color:${badgeColor};text-transform:uppercase;">${sourceTitle}</span> &bull; ${item.ts}
+                    </div>
+                    <div style="font-size:0.875rem;color:#fff;">${description}</div>
+                `;
+                timeline.appendChild(itemDiv);
+            });
+
+        } catch (err) {
+            timeline.innerHTML = `<div style="color:#f87171;font-size:0.8rem;">Error al cargar el journey: ${esc(err.message)}</div>`;
+        }
     }
 
     // Event listeners
