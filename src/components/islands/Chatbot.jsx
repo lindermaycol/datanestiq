@@ -7,6 +7,21 @@ import sectorsCorpus from '../../data/sectorsCorpus.json';
 import personas from '../../data/personasCorpus.json';
 import { mapSectorSlugToId, getLocalizedRoleTitle } from '../../lib/roleLocalization';
 import { getSessionId, trackEvent } from '../../lib/session';
+// Spec 019 — Router 0-LLM
+import intentsConfig from '../../data/intents.json';
+import {
+  setupWorkerListener,
+  initIntentClassifier,
+  onWorkerReady,
+  classifyIntent,
+  matchFAQ,
+  isClassifierReady,
+} from '../../lib/intentClassifier';
+
+// Corpus FAQ plano desde personasCorpus (fuente de verdad §2)
+const FAQ_CORPUS = personas.roles.flatMap(r =>
+  (r.objectionResponses || []).map(or => ({ question: or.objection, answer: or.response }))
+);
 
 export default function Chatbot() {
   const query = useStore(lastUserQuery);
@@ -19,6 +34,12 @@ export default function Chatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const initialized = useRef(false);
+
+  // Spec 019 — Router 0-LLM: worker ref + worker state
+  const workerRef = useRef(null);
+  const [workerReady, setWorkerReady] = useState(false);
+  // Estado para respuesta FAQ 0-LLM (escape a LLM incluido)
+  const [faqResponse, setFaqResponse] = useState(null); // { answer, originalText }
 
   // State Machine (FR-015)
   const [chatState, setChatState] = useState({ step: 'intro', sector: null, role: null, problem: null });
@@ -97,6 +118,38 @@ export default function Chatbot() {
   const [showScheduler, setShowScheduler] = useState(false);
 
   // Initialize intro message or inherit active context chip upon FIRST opening of chatbot (Refix F-03 / F-11 - 0-LLM)
+  // Spec 019 — Inicializar el worker Xenova y el clasificador de intención (una sola vez)
+  useEffect(() => {
+    if (workerRef.current) return; // ya inicializado
+    const w = new Worker('/worker.js', { type: 'module' });
+    workerRef.current = w;
+    // P2: setupWorkerListener instala el handler de respuestas por `id` (cross-wiring cero)
+    setupWorkerListener(w);
+    // Listener de progreso/ready (no gestionado por setupWorkerListener)
+    const handleProgress = async (event) => {
+      const { status } = event.data ?? {};
+      if (status === 'ready') {
+        setWorkerReady(true);
+        // P1: el modelo acaba de cargarse → inicializar el clasificador ahora
+        await onWorkerReady(intentsConfig, FAQ_CORPUS);
+      }
+    };
+    w.addEventListener('message', handleProgress);
+    // Calentar el modelo (puede tardar; si el chatbot se abre antes, P1 garantiza LLM inmediato)
+    w.postMessage({ type: 'warmup' });
+    return () => {
+      w.removeEventListener('message', handleProgress);
+      // No terminar el worker al desmontar — puede ser reutilizado si el chatbot vuelve a abrirse
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Spec 019 — Cuando el worker ya estaba listo al montar el chatbot, inicializar de inmediato
+  useEffect(() => {
+    if (workerReady) {
+      initIntentClassifier(intentsConfig, FAQ_CORPUS, true);
+    }
+  }, [workerReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (isOpen && !initialized.current) {
         initialized.current = true;
@@ -154,53 +207,21 @@ export default function Chatbot() {
     }
   }, [query]);
 
-  const handleUserSubmit = async (forcedText = null) => {
-    const text = forcedText || inputText;
-    if (!text.trim()) return;
-
-    // Spec 018 Telemetría
-    trackEvent('chatbot_step', 'chatbot-text-submit', text);
-
-    // Precisión 3: Escapar hacia semántico si usuario escribe texto libre
-    if (chatState.step !== 'semantic') {
-        setChatState(prev => ({ ...prev, step: 'semantic' }));
-    }
-
-    // Journey: registrar mensaje de texto libre (sin fetch adicional)
-    journeyRef.current.push({ type: 'chat_message', content: text, step: chatState.step });
-
-    extractLeadSignals(text);
-
-    setInputText('');
-    const newDisplay = [...displayMessages, { role: 'user', content: text }];
-    const newHistory = [...messages, { role: 'user', content: text }];
-    
-    setDisplayMessages(newDisplay);
-    setMessages(newHistory);
-    setIsTyping(true);
-
+  // Spec 019 — Ruta LLM (fallback, igual que antes)
+  const _callLLM = async (text, newDisplay, newHistory) => {
     try {
-      // Bloque 2: Tool-centric - Enviar el contexto actual
       const response = await fetch(CHAT_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           session_id: sessionIdRef.current,
           messages: newHistory,
-          context: {
-              step: chatState.step,
-              sector: chatState.sector,
-              role: chatState.role,
-              problem: chatState.problem
-          }
+          context: { step: chatState.step, sector: chatState.sector, role: chatState.role, problem: chatState.problem }
         })
       });
-
       if (!response.ok) throw new Error('Network error');
-      
       const data = await response.json();
       const aiContent = data.choices[0].message.content;
-      
       setMessages([...newHistory, { role: 'assistant', content: aiContent }]);
       setDisplayMessages([...newDisplay, { role: 'assistant', content: aiContent }]);
     } catch (e) {
@@ -209,6 +230,87 @@ export default function Chatbot() {
     } finally {
       setIsTyping(false);
     }
+  };
+
+  const handleUserSubmit = async (forcedText = null, skipRouter = false) => {
+    const text = forcedText || inputText;
+    if (!text.trim()) return;
+
+    // Spec 018 Telemetría
+    trackEvent('chatbot_step', 'chatbot-text-submit', text);
+
+    // Escapar hacia semántico si usuario escribe texto libre
+    if (chatState.step !== 'semantic') {
+        setChatState(prev => ({ ...prev, step: 'semantic' }));
+    }
+
+    // Journey: registrar mensaje de texto libre (sin fetch adicional)
+    journeyRef.current.push({ type: 'chat_message', content: text, step: chatState.step });
+
+    extractLeadSignals(text);
+    setFaqResponse(null); // Limpiar respuesta FAQ previa
+    setInputText('');
+    const newDisplay = [...displayMessages, { role: 'user', content: text }];
+    const newHistory = [...messages, { role: 'user', content: text }];
+    setDisplayMessages(newDisplay);
+    setMessages(newHistory);
+    setIsTyping(true);
+
+    // ── Spec 019: Router 0-LLM ─────────────────────────────────────────────────
+    // P1: si el clasificador no está listo (modelo aún descargando) → LLM inmediato, sin bloquear.
+    // skipRouter=true se usa desde el botón de escape FAQ para ir directo al LLM.
+    if (!skipRouter && isClassifierReady()) {
+      try {
+        const { intent, confidence } = await classifyIntent(text);
+
+        // Instrumentación: registrar decisión de ruteo (Spec 018 + 019)
+        const routingResolved = ['faq', 'cita', 'guiado'].includes(intent) ? '0llm' : 'llm';
+        trackEvent('intent_routing', 'chatbot-router', JSON.stringify({ intent, confidence: confidence.toFixed(3), resolved: routingResolved }));
+
+        // ── Ruta cita (0-LLM) ──────────────────────────────────────────────────
+        if (intent === 'cita') {
+          const citaMsg = '¡Perfecto! Te muestro la disponibilidad de nuestros arquitectos de datos. Elige el horario que mejor te venga.';
+          setDisplayMessages([...newDisplay, { role: 'assistant', content: citaMsg }]);
+          setMessages([...newHistory, { role: 'assistant', content: citaMsg }]);
+          setShowScheduler(true);
+          setIsTyping(false);
+          return;
+        }
+
+        // ── Ruta guiado (0-LLM) ────────────────────────────────────────────────
+        if (intent === 'guiado') {
+          const guidedMsg = 'Déjame guiarte por los servicios que aplican a tu situación. ¿A qué sector pertenece tu organización?';
+          setChatState(prev => ({ ...prev, step: 'intro' }));
+          setDisplayMessages([...newDisplay, { role: 'assistant', content: guidedMsg }]);
+          setMessages([...newHistory, { role: 'assistant', content: guidedMsg }]);
+          setIsTyping(false);
+          return;
+        }
+
+        // ── Ruta faq (0-LLM, doble umbral §2) ─────────────────────────────────
+        if (intent === 'faq') {
+          const faqMatch = await matchFAQ(text, FAQ_CORPUS);
+          if (faqMatch) {
+            // Respuesta verbatim de la taxonomía real (§2 — jamás inventada)
+            setFaqResponse({ answer: faqMatch.answer, originalText: text });
+            setDisplayMessages([...newDisplay, { role: 'assistant', content: faqMatch.answer, isFAQ: true }]);
+            setMessages([...newHistory, { role: 'assistant', content: faqMatch.answer }]);
+            setIsTyping(false);
+            return;
+          }
+          // match < faq_match_threshold → fallback a LLM (§2: no forzar FAQ errónea)
+        }
+
+        // ── Ruta complejo / unknown / confianza baja → LLM ─────────────────────
+      } catch (classifyErr) {
+        // Error en el clasificador → LLM inmediato (P1: nunca bloquear)
+        console.warn('[Router 019] classifyIntent error, falling back to LLM:', classifyErr);
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Ruta LLM (exactamente igual que antes)
+    await _callLLM(text, newDisplay, newHistory);
   };
 
   // Bloque 1: Ruteo Híbrido Determinista (Cero Latencia, Cero LLM)
@@ -461,6 +563,31 @@ export default function Chatbot() {
               Confirmar y agendar diagnóstico
             </button>
           </div>
+        )}
+
+        {/* Spec 019 — FAQ 0-LLM: botón de escape siempre visible en respuestas FAQ */}
+        {faqResponse && (
+          <div className="mt-1 animate-in fade-in">
+            <button
+              onClick={() => {
+                setFaqResponse(null);
+                handleUserSubmit(faqResponse.originalText, true);
+              }}
+              className="w-full text-left p-2 rounded-lg bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brandCyan text-xs transition-colors font-medium"
+            >
+              <i className="ph ph-chat-dots mr-1"></i>
+              ¿No era exactamente lo que buscabas? Escríbeme más detalles →
+            </button>
+          </div>
+        )}
+
+        {/* Spec 019 — AppointmentPicker para ruta cita 0-LLM */}
+        {showScheduler && !leadConfirmed && (
+          <AppointmentPicker
+            sessionId={sessionIdRef.current}
+            email={leadData.email}
+            onBooked={() => setShowScheduler(false)}
+          />
         )}
 
         {/* Appointment Picker — tras captura exitosa del lead */}

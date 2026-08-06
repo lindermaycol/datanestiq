@@ -164,8 +164,8 @@
   {
     "id": "019",
     "name": "Router Determinístico Ampliado del Chatbot (0-LLM)",
-    "status": "DESIGNED",
-    "phase": "Diseñada · Pendiente auditoría Claude",
+    "status": "LIVE",
+    "phase": "Producción Activa",
     "openTechDebt": "Worker singleton, corpus FAQ pequeño, calidad de ejemplos de intención",
     "lastAuditDate": "2026-08-05",
     "isHonest": true

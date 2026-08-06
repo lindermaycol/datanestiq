@@ -1,3 +1,11 @@
+---
+title: "Plan de Implementación — Spec 019: Router Determinístico Ampliado (0-LLM)"
+description: "Este documento detalla el plan de implementación para el Spec 019, un router determinístico ampliado (0-LLM) para el chatbot de Datanestiq. Incluye la arquit"
+author: "AI Documenter"
+lastUpdated: 2026-08-06
+tags: ["router","0-LLM","implementation plan","chatbot","intent classification","Xenova","FAQ","architecture","development phases"]
+seoScore: 100
+---
 # Plan de Implementación — Spec 019: Router Determinístico Ampliado (0-LLM)
 
 **Estado:** 🟠 Diseñada · PENDIENTE BUILD  
