@@ -72,9 +72,9 @@ self.addEventListener('message', async (event) => {
             if (data.corpusTexts) {
                 await indexCorpus(extractor, data.corpusTexts);
             }
-            self.postMessage({ status: 'indexed' });
+            self.postMessage({ status: 'indexed', id: data.id });
         } catch (e) {
-            self.postMessage({ status: 'error', error: e.message });
+            self.postMessage({ status: 'error', id: data.id, error: e.message });
         }
         return;
     }

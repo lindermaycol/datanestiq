@@ -78,13 +78,15 @@ function workerRequest(type: string, payload: Record<string, any>): Promise<any>
     const id = nextId(type);
     _pending.set(id, { resolve, reject });
     _worker.postMessage({ type, id, ...payload });
-    // Timeout de seguridad: si no responde en 5s → rechazar
+    // Timeout de seguridad: 15s para index (el modelo puede estar aún calentando),
+    // 5s para search (el modelo ya debe estar listo)
+    const timeoutMs = type === 'index' ? 15000 : 5000;
     setTimeout(() => {
       if (_pending.has(id)) {
         _pending.delete(id);
         reject(new Error(`Worker timeout: ${id}`));
       }
-    }, 5000);
+    }, timeoutMs);
   });
 }
 
@@ -95,7 +97,9 @@ function handleWorkerMessage(event: MessageEvent) {
   const pending = _pending.get(id);
   if (!pending) return; // No es para nosotros
   _pending.delete(id);
-  if (status === 'complete') {
+  if (status === 'complete' || status === 'indexed') {
+    // 'indexed' = respuesta del handler 'index' del worker (Spec 019 Bug #2 fix)
+    // results será undefined para 'indexed'; initIntentClassifier no lo usa
     pending.resolve(results);
   } else if (status === 'error') {
     pending.reject(new Error(error ?? 'Worker error'));

@@ -3,11 +3,12 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+$allowed_origins = ['https://app.datanestiq.com', 'https://datanestiq.com'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if ($origin) {
     $parsed_origin = parse_url($origin);
     $host = $parsed_origin['host'] ?? '';
-    if ($host !== 'localhost' && $origin !== 'https://datanestiq.com') {
+    if ($host !== 'localhost' && !in_array($origin, $allowed_origins, true)) {
         http_response_code(403);
         echo json_encode(['error' => 'Forbidden']);
         exit;
