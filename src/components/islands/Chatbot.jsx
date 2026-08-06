@@ -299,21 +299,22 @@ export default function Chatbot() {
           return;
         }
 
-        // ── Ruta faq (0-LLM, doble umbral §2) ─────────────────────────────────
-        if (intent === 'faq') {
-          const faqMatch = await matchFAQ(text, FAQ_CORPUS);
-          if (faqMatch) {
-            // Respuesta verbatim de la taxonomía real (§2 — jamás inventada)
-            setFaqResponse({ answer: faqMatch.answer, originalText: text });
-            setDisplayMessages([...newDisplay, { role: 'assistant', content: faqMatch.answer, isFAQ: true }]);
-            setMessages([...newHistory, { role: 'assistant', content: faqMatch.answer }]);
-            setIsTyping(false);
-            return;
-          }
-          // match < faq_match_threshold → fallback a LLM (§2: no forzar FAQ errónea)
+        // ── FAQ-first sobre toda rama que iría al LLM (faq | complejo | unknown) ─
+        // §2: matchFAQ SIEMPRE antes de LLM, no solo cuando intent===faq.
+        // Objeciones declarativas clasificadas como 'complejo' también alcanzan
+        // su respuesta de la taxonomía si el score supera faq_match_threshold.
+        // Si no hay match suficiente → LLM (la duda sigue cayendo al LLM).
+        const faqMatch = await matchFAQ(text, FAQ_CORPUS);
+        if (faqMatch) {
+          // Respuesta verbatim de la taxonomía real (§2 — jamás inventada)
+          setFaqResponse({ answer: faqMatch.answer, originalText: text });
+          setDisplayMessages([...newDisplay, { role: 'assistant', content: faqMatch.answer, isFAQ: true }]);
+          setMessages([...newHistory, { role: 'assistant', content: faqMatch.answer }]);
+          setIsTyping(false);
+          return;
         }
+        // match < faq_match_threshold → fallback a LLM (§2: no forzar FAQ errónea)
 
-        // ── Ruta complejo / unknown / confianza baja → LLM ─────────────────────
       } catch (classifyErr) {
         // Error en el clasificador → LLM inmediato (P1: nunca bloquear)
         console.warn('[Router 019] classifyIntent error, falling back to LLM:', classifyErr);

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "confidence_threshold": 0.65,
-  "faq_match_threshold": 0.89,
+  "faq_match_threshold": 0.60,
   "intents": [
     {
       "id": "faq",
