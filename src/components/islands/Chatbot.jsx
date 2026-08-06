@@ -275,12 +275,14 @@ export default function Chatbot() {
       try {
         const { intent, confidence } = await classifyIntent(text);
 
-        // Instrumentación: registrar decisión de ruteo (Spec 018 + 019)
-        const routingResolved = ['faq', 'cita', 'guiado'].includes(intent) ? '0llm' : 'llm';
-        trackEvent('intent_routing', 'chatbot-router', JSON.stringify({ intent, confidence: confidence.toFixed(3), resolved: routingResolved }));
-
         // ── Ruta cita (0-LLM) ──────────────────────────────────────────────────
         if (intent === 'cita') {
+          trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
+            intent,
+            confidence: confidence.toFixed(3),
+            resolved: '0llm',
+            route: 'cita'
+          }));
           const citaMsg = '¡Perfecto! Te muestro la disponibilidad de nuestros arquitectos de datos. Elige el horario que mejor te venga.';
           setDisplayMessages([...newDisplay, { role: 'assistant', content: citaMsg }]);
           setMessages([...newHistory, { role: 'assistant', content: citaMsg }]);
@@ -291,6 +293,12 @@ export default function Chatbot() {
 
         // ── Ruta guiado (0-LLM) ────────────────────────────────────────────────
         if (intent === 'guiado') {
+          trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
+            intent,
+            confidence: confidence.toFixed(3),
+            resolved: '0llm',
+            route: 'guiado'
+          }));
           const guidedMsg = 'Déjame guiarte por los servicios que aplican a tu situación. ¿A qué sector pertenece tu organización?';
           setChatState(prev => ({ ...prev, step: 'intro' }));
           setDisplayMessages([...newDisplay, { role: 'assistant', content: guidedMsg }]);
@@ -306,6 +314,13 @@ export default function Chatbot() {
         // Si no hay match suficiente → LLM (la duda sigue cayendo al LLM).
         const faqMatch = await matchFAQ(text, FAQ_CORPUS);
         if (faqMatch) {
+          trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
+            intent,
+            confidence: confidence.toFixed(3),
+            resolved: '0llm',
+            route: 'faq',
+            faqScore: (faqMatch.score ?? 0).toFixed(3)
+          }));
           // Respuesta verbatim de la taxonomía real (§2 — jamás inventada)
           setFaqResponse({ answer: faqMatch.answer, originalText: text });
           setDisplayMessages([...newDisplay, { role: 'assistant', content: faqMatch.answer, isFAQ: true }]);
@@ -314,6 +329,14 @@ export default function Chatbot() {
           return;
         }
         // match < faq_match_threshold → fallback a LLM (§2: no forzar FAQ errónea)
+
+        // sin match → LLM
+        trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
+          intent,
+          confidence: confidence.toFixed(3),
+          resolved: 'llm',
+          route: 'llm'
+        }));
 
       } catch (classifyErr) {
         // Error en el clasificador → LLM inmediato (P1: nunca bloquear)
