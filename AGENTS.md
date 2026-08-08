@@ -39,6 +39,17 @@ Para mantener la coherencia y facilitar la automatización, se siguen las siguie
 *   **Documentación en Markdown**: La mayoría de la documentación, planes y especificaciones se redactan en formato Markdown (`.md`).
 *   **Configuración y Datos Estructurados**: Se utilizan archivos JSON y YAML para configuraciones y datos estructurados (ej. `.specify/`, `src/data/`).
 
+## 4. 🔴 Reglas operativas de Despliegue y QA (aprendidas en campo — obligatorias)
+
+Estas reglas nacen de errores reales y repetidos. Respetarlas evita reportar "verde" sobre algo que no está vivo o no funciona.
+
+*   **El backend PHP se sirve desde `dist/`.** Astro copia `public/` → `dist/` en `npm run build`. Por lo tanto **TODO cambio de PHP** (`api.php`, `chat.php`, `index.php`, etc.) exige **`npm run build` ANTES** de `deploy_ionos.py --confirm`. Sin recompilar se re-sube la versión vieja (pasó 3 veces).
+*   **"Desplegado" ≠ "vivo".** Tras desplegar, **verifica contra el endpoint/archivo REAL en producción** (no solo local): pide el endpoint autenticado y confirma un **marcador** en la respuesta (una clave/campo nuevo que solo emite el código nuevo, p. ej. `include_demo`). Si el marcador no está, el `api.php` viejo sigue sirviéndose → **limpia opcache** (`clear_prod_opcache.py`) y vuelve a verificar. No reportes verde sin este check.
+*   **QA de UI obligatorio tras tocar el panel.** Al agregar/renombrar/mover cualquier pestaña, sub-pestaña, vista o loader, haz un **click-through completo**: abre **cada pestaña Y cada sub-pestaña** y confirma que su **contenido con DATOS** carga (no solo el encabezado) y que la **consola no tiene errores** (`ReferenceError`, etc.). "Pestaña visible" no es "pestaña funciona". Verifica el mapeo `onclick`↔`id de vista`, que las vistas sean **hermanas** (no anidadas), que las funciones `switch*` manejen **todas** las ramas, y que los helpers referenciados **existan**.
+*   **Las queries SQL van contra el esquema REAL.** Antes de escribir un endpoint, verifica los nombres de columna y el enum de estado en el DDL real (`scripts/init_crm_db.php`) — no asumas `service_slug`/`start_time`/`pending` si el esquema dice `requested_date`/`type`/`solicitada`. Placeholders nombrados: no reutilices el mismo `:param` varias veces (usa `:p1..:pN`) para evitar HY093.
+*   **§2 Honestidad (recordatorio):** cero datos/métricas fabricados; estimaciones marcadas `[EST]` con base real (tokens×tarifa, nunca latencia); guards de "datos insuficientes" con muestra mínima; datos DEMO **marcados y excluidos por defecto**.
+*   **Checklist de cierre antes de reportar "completado":** (1) `npm run build` OK; (2) deploy `--confirm` ejecutado; (3) endpoints reales responden 200 + marcador; (4) click-through de todo el panel con datos y consola limpia; (5) doc-sync + build-gate PASSED. Si falta alguno, no es verde.
+
 ## 4. Arquitectura General
 
 La arquitectura del proyecto Datanestiq se caracteriza por:
