@@ -155,7 +155,7 @@ def deploy(dry_run, with_env, init_crm):
         # Subir scripts de mantenimiento e init CRM al PADRE del webroot
         remote_scripts_dir = posixpath.join(remote_parent, "scripts")
         ensure_remote_dir(sftp, remote_scripts_dir)
-        for sc in ["init_crm_db.php", "migrate_leads.php"]:
+        for sc in ["init_crm_db.php", "migrate_leads.php", "migrate_file_free_history.php", "extraer_leads.php"]:
             local_sc = os.path.join(ROOT, "scripts", sc)
             if os.path.exists(local_sc):
                 sftp.put(local_sc, posixpath.join(remote_scripts_dir, sc))

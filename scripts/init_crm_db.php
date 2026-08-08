@@ -159,7 +159,79 @@ try {
         $db->exec("ALTER TABLE demand_signals ADD COLUMN faq_score REAL DEFAULT 0.0");
     }
 
+    // --- Tabla: alerts (Spec 021 - Alertas de infraestructura/consumo) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) DEFAULT NULL,
+        alert_type VARCHAR(50) NOT NULL,
+        message TEXT NOT NULL,
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
+    // --- Tabla: conversations (Spec 022 - Conversaciones Redactadas Monitoreables) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS conversations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        role VARCHAR(20) NOT NULL CHECK(role IN ('user', 'assistant', 'system')),
+        content_redacted TEXT NOT NULL,
+        backend_used VARCHAR(50) DEFAULT 'unknown',
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
+    // --- Tabla: chat_raw (Spec 022 - Conversaciones Crudas con PII, Estrictamente Privada Backend) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS chat_raw (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        role VARCHAR(20) NOT NULL CHECK(role IN ('user', 'assistant', 'system')),
+        content_raw TEXT NOT NULL,
+        created_at DATETIME DEFAULT (datetime('now'))
+    )");
+
+    // --- Tabla: usage_daily (Spec 022 - Agregado Diario de Consumo vs Cap) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS usage_daily (
+        usage_date VARCHAR(10) PRIMARY KEY,
+        total_tokens INTEGER DEFAULT 0,
+        prompt_tokens INTEGER DEFAULT 0,
+        completion_tokens INTEGER DEFAULT 0,
+        request_count INTEGER DEFAULT 0,
+        daily_cap INTEGER DEFAULT 500000,
+        cap_alert_80_sent INTEGER DEFAULT 0,
+        cap_alert_100_sent INTEGER DEFAULT 0,
+        updated_at DATETIME DEFAULT (datetime('now'))
+    )");
+
+    // --- Tabla: leads_extracted (Spec 022 - Leads Detectados por LLM desde Chat) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS leads_extracted (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id VARCHAR(100) NOT NULL,
+        nombre VARCHAR(100) DEFAULT '',
+        email VARCHAR(200) DEFAULT '',
+        telefono VARCHAR(50) DEFAULT '',
+        intencion TEXT DEFAULT '',
+        canal_origen VARCHAR(50) DEFAULT 'llm_extraction',
+        created_at DATETIME DEFAULT (datetime('now')),
+        UNIQUE(session_id, email)
+    )");
+
+    // Migración idempotente para Spec 021 (Métricas de tokens)
+    $cm_columns = $db->query("PRAGMA table_info(chat_metrics)")->fetchAll(PDO::FETCH_COLUMN, 1);
+    if (!in_array('prompt_tokens', $cm_columns)) {
+        $db->exec("ALTER TABLE chat_metrics ADD COLUMN prompt_tokens INTEGER DEFAULT 0");
+    }
+    if (!in_array('completion_tokens', $cm_columns)) {
+        $db->exec("ALTER TABLE chat_metrics ADD COLUMN completion_tokens INTEGER DEFAULT 0");
+    }
+
     // Índices para performance
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_alerts_session ON alerts(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_alerts_created ON alerts(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_conversations_session ON conversations(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_conversations_created ON conversations(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_raw_session ON chat_raw(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_chat_raw_created ON chat_raw(created_at)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_usage_daily_date ON usage_daily(usage_date)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_extracted_session ON leads_extracted(session_id)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_extracted_email ON leads_extracted(email)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_sector ON leads(sector)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_leads_rol ON leads(rol)");

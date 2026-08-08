@@ -63,7 +63,7 @@ for (const spec of specsJson) {
   let mdStatusEquivalent = 'UNKNOWN';
 
   if (estadoLineText.includes('✅') || estadoLineText.includes('🟢')) {
-    mdStatusEquivalent = 'LIVE';
+    mdStatusEquivalent = 'LIVE'; // Mapea tanto a LIVE como a COMPLETED
   } else if (estadoLineText.includes('🟠')) {
     mdStatusEquivalent = 'DESIGNED';
   } else if (estadoLineText.includes('🔴')) {
@@ -74,7 +74,7 @@ for (const spec of specsJson) {
 
   // Verificar congruencia entre SSOT y Markdown
   const isMatch = (jsonStatus === mdStatusEquivalent) ||
-                  (jsonStatus === 'LIVE' && mdStatusEquivalent === 'LIVE') ||
+                  ((jsonStatus === 'LIVE' || jsonStatus === 'COMPLETED') && mdStatusEquivalent === 'LIVE') ||
                   ((jsonStatus === 'DESIGNED' || jsonStatus === 'IN_PROGRESS') && (mdStatusEquivalent === 'DESIGNED' || mdStatusEquivalent === 'IN_PROGRESS'));
 
   if (!isMatch) {

@@ -112,53 +112,181 @@ $csrf = generateCsrfToken();
     </div>
 
         <!-- Navigation Tabs -->
-        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.75rem;">
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.75rem;flex-wrap:wrap;">
             <button id="tab-btn-leads" class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="switchTab('leads')">📋 Leads & Citas</button>
-            <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica de Conversión</button>
-            <button id="tab-btn-ops" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('ops')">🛠️ Observabilidad Ops</button>
+            <button id="tab-btn-conversations" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('conversations')">💬 Conversaciones</button>
+            <button id="tab-btn-analytics" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('analytics')">📊 Analítica & Eficiencia IA</button>
+            <button id="tab-btn-ops" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('ops')">⚡ Salud & Costos IA</button>
             <button id="tab-btn-behavior" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('behavior')">📈 Engagement & Comportamiento</button>
             <button id="tab-btn-demand" class="btn-detail" style="padding:0.5rem 1rem;" onclick="switchTab('demand')">🔍 Demanda & Journey</button>
         </div>
 
         <!-- View: Leads & Citas -->
         <div id="view-leads">
-            <div class="stats" id="stats-grid"></div>
-
-            <div class="filters">
-                <select id="filter-status">
-                    <option value="">Todos los estados</option>
-                    <option value="nuevo">Nuevo</option>
-                    <option value="contactado">Contactado</option>
-                    <option value="cita_solicitada">Cita Solicitada</option>
-                    <option value="ganado">Ganado</option>
-                    <option value="perdido">Perdido</option>
-                    <option value="no_interesado">No Interesado</option>
-                </select>
-                <input type="text" id="filter-search" placeholder="Buscar email, empresa, reto...">
+            <!-- Sub-Navigation for Leads & Citas -->
+            <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:0.75rem;">
+                <button id="leads-subtab-crm" class="btn-detail" style="background:#22d3ee;color:#000;font-size:0.75rem;padding:0.35rem 0.75rem;font-weight:700;" onclick="switchLeadsSubTab('crm')">Formularios CRM</button>
+                <button id="leads-subtab-detected" class="btn-detail" style="background:rgba(255,255,255,0.05);color:#fff;font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="switchLeadsSubTab('detected')">Detectados en Chat (LLM)</button>
+                <button id="leads-subtab-agenda" class="btn-detail" style="background:rgba(255,255,255,0.05);color:#fff;font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="switchLeadsSubTab('agenda')">📅 Agenda Global de Citas</button>
             </div>
 
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th><th>Email</th><th>Organización</th><th>Estado</th><th>Sector</th><th>Rol</th><th>Citas</th><th>Fecha</th><th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="leads-body"></tbody>
-                </table>
+            <!-- Sub-View: CRM Forms -->
+            <div id="leads-content-crm">
+                <div class="stats" id="stats-grid"></div>
+
+                <div class="filters">
+                    <select id="filter-status">
+                        <option value="">Todos los estados</option>
+                        <option value="nuevo">Nuevo</option>
+                        <option value="contactado">Contactado</option>
+                        <option value="cita_solicitada">Cita Solicitada</option>
+                        <option value="ganado">Ganado</option>
+                        <option value="perdido">Perdido</option>
+                        <option value="no_interesado">No Interesado</option>
+                    </select>
+                    <input type="text" id="filter-search" placeholder="Buscar email, empresa, reto...">
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Email</th><th>Organización</th><th>Estado</th><th>Sector</th><th>Rol</th><th>Citas</th><th>Fecha</th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-body"></tbody>
+                    </table>
+                </div>
+                <div style="text-align:center; margin-top:1rem;">
+                    <button id="prev-page" class="btn-detail" style="margin-right:0.5rem;">← Anterior</button>
+                    <span id="page-info" style="color:#888; font-size:0.85rem;"></span>
+                    <button id="next-page" class="btn-detail" style="margin-left:0.5rem;">Siguiente →</button>
+                </div>
             </div>
-            <div style="text-align:center; margin-top:1rem;">
-                <button id="prev-page" class="btn-detail" style="margin-right:0.5rem;">← Anterior</button>
-                <span id="page-info" style="color:#888; font-size:0.85rem;"></span>
-                <button id="next-page" class="btn-detail" style="margin-left:0.5rem;">Siguiente →</button>
+
+            <!-- Sub-View: Extracted Chat Leads (LLM) -->
+            <div id="leads-content-detected" style="display:none;">
+                <div style="background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.4;">
+                    💡 <strong>Leads Detectados por IA:</strong> Estos contactos fueron extraídos por modelos LLM de forma asíncrona analizando conversaciones de chat libres que <em>no</em> completaron el formulario formal. Se presentan de forma deducida y deduplicada automáticamente si ya completaron un formulario posteriormente.
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th><th>Email</th><th>Teléfono</th><th>Intención Detectada</th><th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detected-leads-body"></tbody>
+                    </table>
+                </div>
+            <!-- Sub-View: Agenda Global de Citas (Spec 015 / Spec 023 Parte 3) -->
+            <div id="leads-content-agenda" style="display:none;">
+                <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.8);line-height:1.4;">
+                    📅 <strong>Agenda Global de Citas:</strong> Listado cronológico de solicitudes de diagnóstico y citas técnicas agendadas mediante el componente interactivo. Permite confirmar, reagendar o actualizar el estado de atención.
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha Solic.</th>
+                                <th>Cliente / Email</th>
+                                <th>Empresa</th>
+                                <th>Sector • Rol</th>
+                                <th>Tipo de Cita</th>
+                                <th>Duración</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agenda-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- View: Analítica de Conversión (Spec 016) -->
+        <!-- View: Visor de Conversaciones Redactadas (Spec 022) -->
+        <div id="view-conversations" style="display:none; padding:1.5rem;">
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3 style="font-size:1.1rem;color:#fff;margin:0;">💬 Historial de Conversaciones del Chatbot (PII Redactada §2)</h3>
+                    <span style="font-size:0.75rem;color:#888;">Fuente Única SQLite `conversations`</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:1.5rem;">
+                    <!-- Lista de Sesiones de Chat -->
+                    <div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:#0d0d16;max-height:450px;overflow-y:auto;">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.75rem;text-align:left;">
+                            <thead>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);">
+                                    <th style="padding:0.6rem;color:rgba(255,255,255,0.6);">Sesión</th>
+                                    <th style="padding:0.6rem;color:rgba(255,255,255,0.6);">Backend</th>
+                                    <th style="padding:0.6rem;color:rgba(255,255,255,0.6);text-align:center;">Msgs</th>
+                                </tr>
+                            </thead>
+                            <tbody id="conversations-sessions-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Visualizador de Mensajes Interactivos -->
+                    <div style="background:#0d0d16;border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:1.25rem;display:flex;flex-direction:column;">
+                        <h4 id="conversation-detail-title" style="font-size:0.9rem;color:#22d3ee;margin-top:0;margin-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:0.5rem;">Selecciona una conversación</h4>
+                        <div id="conversation-messages-container" style="flex:1;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:0.75rem;">
+                            <span style="color:#666;font-size:0.8rem;text-align:center;margin-top:2rem;">Haz clic en una sesión del panel izquierdo para reconstruir el diálogo.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Analítica de Conversión & Eficiencia IA (Spec 016 / Spec 023) -->
         <div id="view-analytics" style="display:none;">
             <div class="stats" id="analytics-kpi-grid"></div>
 
-            <!-- Embudo de Conversión -->
+            <!-- Spec 023 Parte 1: Tarjeta de Eficiencia 0-LLM y Ahorro Estimado -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3 style="font-size:1.1rem;color:#fff;margin:0;">⚡ Eficiencia del Router 0-LLM y Costos Evitados</h3>
+                    <span id="ai-efficiency-badge" style="background:rgba(34,211,238,0.15);color:#22d3ee;font-size:0.75rem;padding:0.25rem 0.5rem;border-radius:4px;font-weight:600;">[EST] Escenario Estimado §2</span>
+                </div>
+
+                <div id="ai-efficiency-insufficient" style="display:none;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;padding:0.75rem;border-radius:8px;font-size:0.85rem;">
+                    ⚠️ <strong>Muestra insuficiente para Eficiencia 0-LLM:</strong> Se requieren al menos 20 eventos de enrutamiento para calcular métricas de ahorro fiables (§2).
+                </div>
+
+                <div id="ai-efficiency-content" style="display:grid;grid-template-columns: 1fr 1fr 1.2fr;gap:1.5rem;align-items:center;">
+                    <!-- Dona SVG Inline 0-LLM -->
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d0d16;padding:1.25rem;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+                        <svg viewBox="0 0 36 36" style="width:110px;height:110px;transform:rotate(-90deg);">
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3.8"/>
+                            <path id="svg-donut-segment" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#22d3ee" stroke-width="3.8" stroke-dasharray="0, 100"/>
+                        </svg>
+                        <div id="ai-donut-percent" style="font-size:1.25rem;font-weight:700;color:#fff;margin-top:0.5rem;">0%</div>
+                        <span style="font-size:0.75rem;color:#888;">Consultas Resueltas 0-LLM</span>
+                    </div>
+
+                    <!-- Métricas de Ahorro -->
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;justify-content:center;">
+                        <div style="background:#0d0d16;padding:0.75rem 1rem;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size:0.75rem;color:#888;">Llamadas a LLM Evitadas</div>
+                            <div id="ai-saved-calls" style="font-size:1.4rem;font-weight:700;color:#34d399;">0</div>
+                        </div>
+                        <div style="background:#0d0d16;padding:0.75rem 1rem;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size:0.75rem;color:#888;">Ahorro Estimado ($ USD) <span style="color:#22d3ee;font-size:0.7rem;">[EST]</span></div>
+                            <div id="ai-saved-dollars" style="font-size:1.4rem;font-weight:700;color:#22d3ee;">$0.0000</div>
+                        </div>
+                    </div>
+
+                    <!-- Desglose por Ruta -->
+                    <div style="background:#0d0d16;padding:1rem;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.8rem;color:#fff;font-weight:600;margin-bottom:0.5rem;">Desglose de Ruteo:</div>
+                        <div id="ai-routes-breakdown-list" style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.75rem;color:rgba(255,255,255,0.8);"></div>
+                        <div style="font-size:0.68rem;color:#666;margin-top:0.75rem;line-height:1.3;" id="ai-efficiency-note">
+                            * Cómputo basado en tokens reales de chat_metrics y tarifa ref. ($0.30/1M). Proveedores activos en free-tier.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Embudo de Conversión CSS (Spec 023 Parte 6) -->
             <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
                 <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">Embudo de Conversión por Etapa</h3>
                 <div id="funnel-container" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
@@ -191,6 +319,14 @@ $csrf = generateCsrfToken();
                     </div>
                 </div>
             </div>
+
+            <!-- Loop Learn Prompt Optimization Insights -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-top:1.5rem;">
+                <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">💡 Optimizador Automático del Prompt (Loop Learn Insights)</h3>
+                <div id="ops-learn-report" style="background:#0d0d16;padding:1.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.05);max-height:300px;overflow-y:auto;font-family:monospace;white-space:pre-wrap;color:rgba(255,255,255,0.85);font-size:0.8rem;line-height:1.5;">
+                    Cargando reporte de optimización...
+                </div>
+            </div>
         </div>
 
         <!-- View: Observabilidad Ops (Spec 017) -->
@@ -212,28 +348,27 @@ $csrf = generateCsrfToken();
                     </div>
                 </div>
 
-                <!-- Estado del Sistema y Build -->
+                <!-- Tarjeta de Consumo Diario vs Cap (Spec 022 File-Free) -->
                 <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
-                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🖥️ Estado del Sistema y Despliegue</h3>
-                    <div id="ops-system-info" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
-                </div>
-            </div>
-
-            <!-- Portafolio de Specs (SSOT Antidrift) -->
-            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
-                <h3 style="font-size:1.1rem;color:#fff;margin-bottom:1rem;">🏛️ Estado del Portafolio de Specs (SSOT specsStatus.json)</h3>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr><th>ID</th><th>Nombre de la Especicificación</th><th>Estado</th><th>Fase Real</th><th>Deuda Técnica Abierta</th><th>Última Auditoría</th></tr>
-                        </thead>
-                        <tbody id="ops-specs-body"></tbody>
-                    </table>
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🛡️ Consumo Diario de Tokens vs Daily Cap (Gobernanza)</h3>
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:0.8rem;color:#888;">Consumo Hoy (<span id="ops-daily-date">-</span>):</span>
+                            <span id="ops-daily-status-badge" style="background:rgba(34,197,94,0.15);color:#34d399;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;font-weight:600;">NORMAL</span>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.05);height:14px;border-radius:7px;overflow:hidden;position:relative;">
+                            <div id="ops-daily-progress-bar" style="background:#22d3ee;width:0%;height:100%;transition:width 0.5s ease;"></div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:rgba(255,255,255,0.7);">
+                            <span>Tokens: <strong id="ops-daily-tokens-val" style="color:#fff;">0</strong> / <span id="ops-daily-cap-val">500,000</span></span>
+                            <span>Peticiones Hoy: <strong id="ops-daily-reqs-val" style="color:#fff;">0</strong></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Tendencia Diaria 7d -->
-            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
                 <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">📈 Tendencia Diaria de Peticiones y Errores (Últimos 7 días)</h3>
                 <div class="table-wrap">
                     <table>
@@ -243,6 +378,36 @@ $csrf = generateCsrfToken();
                         <tbody id="ops-trend-body"></tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- New Spec 021 Sections: SQLite Alerts & Token Usage -->
+            <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:1.5rem;">
+                
+                <!-- Infrastructure Alerts Table -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">⚠️ Registro de Alertas de Infraestructura (SQLite)</h3>
+                    <div class="table-wrap" style="max-height:250px;overflow-y:auto;flex:1;">
+                        <table style="width:100%;font-size:0.75rem;text-align:left;">
+                            <thead>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                                    <th style="padding:0.5rem;color:rgba(255,255,255,0.6);">Fecha</th>
+                                    <th style="padding:0.5rem;color:rgba(255,255,255,0.6);">Tipo</th>
+                                    <th style="padding:0.5rem;color:rgba(255,255,255,0.6);">Mensaje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ops-alerts-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- LLM Token Usage Breakdown -->
+                <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;">
+                    <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🪙 Consumo y Desglose de Tokens LLM</h3>
+                    <div style="display:flex;flex-direction:column;gap:1rem;flex:1;" id="ops-tokens-usage-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -352,6 +517,11 @@ $csrf = generateCsrfToken();
             ⚠️ <strong>Datos insuficientes:</strong> Se requieren al menos 20 señales de demanda y 10 interesados para calcular estadísticas fiables (§2).
         </div>
 
+        <!-- Banner DEMO (§2): visible solo cuando el toggle está ON -->
+        <div id="demand-demo-banner" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:0.6rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.8rem;font-weight:600;">
+            🧪 <strong>MODO DEMO ACTIVO:</strong> Los buckets incluyen datos sembrados artificialmente. Los conteos y ejemplos que ves NO son demanda real. Desactiva "Incluir Demo" para ver solo datos reales.
+        </div>
+
         <div id="demand-dashboard" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
             <!-- Bucket 1: Demanda No Atendida -->
             <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
@@ -390,16 +560,54 @@ $csrf = generateCsrfToken();
             </div>
         </div>
 
-        <!-- Journey Reconstructor Trigger -->
-        <div style="margin-top:1.5rem;background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;">
-            <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🧭 Journey Reconstructor por Cliente</h3>
-            <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
-                <input type="text" id="journey-session-id" placeholder="Ingresa session_id del lead (ej. 32+ caracteres)" style="flex:1;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;padding:0.5rem 0.75rem;font-size:0.875rem;outline:none;" />
-                <button class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="reconstructJourney()">Reconstruir Journey</button>
+        <!-- Journey Reconstructor Container (Two-column layout) -->
+        <div style="margin-top:1.5rem;display:grid;grid-template-columns: 1fr 1.3fr;gap:1.5rem;">
+            
+            <!-- Left Column: Recents sessions list -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3 style="font-size:1rem;color:#fff;margin:0;">🧭 Sesiones Recientes</h3>
+                    <label style="font-size:0.75rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+                        <input type="checkbox" id="journey-demo-toggle" onchange="loadDemandData()" style="cursor:pointer;" /> Incluir Demo
+                    </label>
+                </div>
+                <div id="journey-sessions-list-container" style="flex:1;max-height:350px;overflow-y:auto;border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:#0d0d16;">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.75rem;text-align:left;">
+                        <thead>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);">
+                                <th style="padding:0.5rem;color:rgba(255,255,255,0.6);">Sesión / Contacto</th>
+                                <th style="padding:0.5rem;color:rgba(255,255,255,0.6);text-align:center;">Eventos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="journey-sessions-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;font-size:0.75rem;">
+                    <button class="btn-detail" onclick="journeyPrevPage()" style="padding:0.25rem 0.5rem;font-size:0.7rem;background:rgba(255,255,255,0.05);color:#fff;border:none;border-radius:4px;cursor:pointer;">« Ant</button>
+                    <span id="journey-page-info" style="color:rgba(255,255,255,0.5);">Pág. 1</span>
+                    <button class="btn-detail" onclick="journeyNextPage()" style="padding:0.25rem 0.5rem;font-size:0.7rem;background:rgba(255,255,255,0.05);color:#fff;border:none;border-radius:4px;cursor:pointer;">Sig »</button>
+                </div>
             </div>
-            <div id="journey-result" style="margin-top:1rem;display:none;background:#1a1a2e;padding:1.5rem;border-radius:12px;border:1px solid rgba(255,255,255,0.05);max-height:400px;overflow-y:auto;">
-                <div id="journey-timeline" style="display:flex;flex-direction:column;gap:1rem;border-left:2px solid rgba(34,211,238,0.3);padding-left:1.5rem;margin-left:0.5rem;"></div>
+
+            <!-- Right Column: Timeline Reconstructor -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;display:flex;flex-direction:column;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🔬 Journey Reconstructor</h3>
+                <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
+                    <input type="text" id="journey-session-label" placeholder="Selecciona una sesión de la izquierda..." readonly style="flex:1;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#aaa;padding:0.5rem 0.75rem;font-size:0.875rem;outline:none;cursor:default;" />
+                    <input type="hidden" id="journey-session-id" />
+                    <button class="btn-detail" style="background:#22d3ee;color:#000;font-weight:700;padding:0.5rem 1rem;" onclick="reconstructJourney()">Reconstruir</button>
+                </div>
+                
+                <div id="journey-result" style="display:none;background:#1a1a2e;padding:1.5rem;border-radius:12px;border:1px solid rgba(255,255,255,0.05);max-height:300px;overflow-y:auto;flex:1;">
+                    <div id="journey-timeline" style="display:flex;flex-direction:column;gap:1rem;border-left:2px solid rgba(34,211,238,0.3);padding-left:1.5rem;margin-left:0.5rem;"></div>
+                </div>
+                <div id="journey-empty-state" style="display:flex;align-items:center;justify-content:center;height:200px;border:1px dashed rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.4);font-size:0.875rem;text-align:center;padding:1rem;">
+                    Selecciona una sesión de la lista de la izquierda para ver su Journey de conversión interactivo.
+                </div>
             </div>
+            
         </div>
     </div>
 
@@ -415,6 +623,7 @@ $csrf = generateCsrfToken();
     <script>
     const CSRF = '<?= htmlspecialchars($csrf) ?>';
     let currentPage = 1;
+    let journeyPage = 1;
     let currentCsrf = CSRF;
 
     // Logout
@@ -484,19 +693,21 @@ $csrf = generateCsrfToken();
 
     function switchTab(tab) {
         const leadsView = document.getElementById('view-leads');
+        const conversationsView = document.getElementById('view-conversations');
         const analyticsView = document.getElementById('view-analytics');
         const opsView = document.getElementById('view-ops');
         const behaviorView = document.getElementById('view-behavior');
         const demandView = document.getElementById('view-demand');
         
         const btnLeads = document.getElementById('tab-btn-leads');
+        const btnConversations = document.getElementById('tab-btn-conversations');
         const btnAnalytics = document.getElementById('tab-btn-analytics');
         const btnOps = document.getElementById('tab-btn-ops');
         const btnBehavior = document.getElementById('tab-btn-behavior');
         const btnDemand = document.getElementById('tab-btn-demand');
 
         // Reset button styles
-        [btnLeads, btnAnalytics, btnOps, btnBehavior, btnDemand].forEach(btn => {
+        [btnLeads, btnConversations, btnAnalytics, btnOps, btnBehavior, btnDemand].forEach(btn => {
             if (btn) {
                 btn.style.background = 'none';
                 btn.style.color = '#22d3ee';
@@ -504,8 +715,20 @@ $csrf = generateCsrfToken();
             }
         });
 
-        if (tab === 'analytics') {
+        if (tab === 'conversations') {
             leadsView.style.display = 'none';
+            analyticsView.style.display = 'none';
+            opsView.style.display = 'none';
+            behaviorView.style.display = 'none';
+            if (demandView) demandView.style.display = 'none';
+            conversationsView.style.display = 'block';
+            btnConversations.style.background = '#22d3ee';
+            btnConversations.style.color = '#000';
+            btnConversations.style.fontWeight = '700';
+            loadConversations();
+        } else if (tab === 'analytics') {
+            leadsView.style.display = 'none';
+            if (conversationsView) conversationsView.style.display = 'none';
             opsView.style.display = 'none';
             behaviorView.style.display = 'none';
             if (demandView) demandView.style.display = 'none';
@@ -516,6 +739,7 @@ $csrf = generateCsrfToken();
             loadAnalyticsData();
         } else if (tab === 'ops') {
             leadsView.style.display = 'none';
+            if (conversationsView) conversationsView.style.display = 'none';
             analyticsView.style.display = 'none';
             behaviorView.style.display = 'none';
             if (demandView) demandView.style.display = 'none';
@@ -524,8 +748,10 @@ $csrf = generateCsrfToken();
             btnOps.style.color = '#000';
             btnOps.style.fontWeight = '700';
             loadOpsTelemetry();
+            loadDailyUsage();
         } else if (tab === 'behavior') {
             leadsView.style.display = 'none';
+            if (conversationsView) conversationsView.style.display = 'none';
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
             if (demandView) demandView.style.display = 'none';
@@ -536,6 +762,7 @@ $csrf = generateCsrfToken();
             loadBehaviorAnalytics();
         } else if (tab === 'demand') {
             leadsView.style.display = 'none';
+            if (conversationsView) conversationsView.style.display = 'none';
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
             behaviorView.style.display = 'none';
@@ -545,6 +772,7 @@ $csrf = generateCsrfToken();
             btnDemand.style.fontWeight = '700';
             loadDemandData();
         } else {
+            if (conversationsView) conversationsView.style.display = 'none';
             analyticsView.style.display = 'none';
             opsView.style.display = 'none';
             behaviorView.style.display = 'none';
@@ -557,11 +785,197 @@ $csrf = generateCsrfToken();
         }
     }
 
+    function switchLeadsSubTab(sub) {
+        const crmContent = document.getElementById('leads-content-crm');
+        const detectedContent = document.getElementById('leads-content-detected');
+        const agendaContent = document.getElementById('leads-content-agenda');
+
+        const btnCrm = document.getElementById('leads-subtab-crm');
+        const btnDetected = document.getElementById('leads-subtab-detected');
+        const btnAgenda = document.getElementById('leads-subtab-agenda');
+
+        [btnCrm, btnDetected, btnAgenda].forEach(btn => {
+            if (btn) {
+                btn.style.background = 'rgba(255,255,255,0.05)';
+                btn.style.color = '#fff';
+                btn.style.fontWeight = 'normal';
+            }
+        });
+
+        if (sub === 'detected') {
+            if (crmContent) crmContent.style.display = 'none';
+            if (agendaContent) agendaContent.style.display = 'none';
+            if (detectedContent) detectedContent.style.display = 'block';
+            if (btnDetected) {
+                btnDetected.style.background = '#22d3ee';
+                btnDetected.style.color = '#000';
+                btnDetected.style.fontWeight = '700';
+            }
+            loadDetectedLeads();
+        } else if (sub === 'agenda') {
+            if (crmContent) crmContent.style.display = 'none';
+            if (detectedContent) detectedContent.style.display = 'none';
+            if (agendaContent) agendaContent.style.display = 'block';
+            if (btnAgenda) {
+                btnAgenda.style.background = '#22d3ee';
+                btnAgenda.style.color = '#000';
+                btnAgenda.style.fontWeight = '700';
+            }
+            loadAgenda();
+        } else {
+            if (detectedContent) detectedContent.style.display = 'none';
+            if (agendaContent) agendaContent.style.display = 'none';
+            if (crmContent) crmContent.style.display = 'block';
+            if (btnCrm) {
+                btnCrm.style.background = '#22d3ee';
+                btnCrm.style.color = '#000';
+                btnCrm.style.fontWeight = '700';
+            }
+            loadLeads(1);
+        }
+    }
+
+    async function loadConversations() {
+        const data = await api('conversations', { include_demo: getIncludeDemoFlag() });
+        const tbody = document.getElementById('conversations-sessions-tbody');
+        if (!data.conversations || data.conversations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:1rem;color:#888;">Sin conversaciones registradas</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.conversations.map(c => `
+            <tr style="cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);" onclick="selectConversation('${esc(c.session_id)}')">
+                <td style="padding:0.6rem;color:#22d3ee;font-family:monospace;">${esc(c.session_id.substring(0, 16))}...</td>
+                <td style="padding:0.6rem;color:#aaa;">${esc(c.backend_used || 'groq')}</td>
+                <td style="padding:0.6rem;text-align:center;color:#fff;font-weight:600;">${c.message_count}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function selectConversation(sessionId) {
+        const data = await api('conversations', { session_id: sessionId });
+        const container = document.getElementById('conversation-messages-container');
+        const title = document.getElementById('conversation-detail-title');
+
+        title.textContent = `Sesión: ${sessionId}`;
+
+        if (!data.messages || data.messages.length === 0) {
+            container.innerHTML = '<span style="color:#666;font-size:0.8rem;">Sin mensajes grabados en esta sesión.</span>';
+            return;
+        }
+
+        container.innerHTML = data.messages.map(m => {
+            const isUser = m.role === 'user';
+            const isSystem = m.role === 'system';
+            if (isSystem) return ''; // Omitir prompt de sistema en la visualización
+
+            const align = isUser ? 'flex-end' : 'flex-start';
+            const bg = isUser ? 'rgba(34,211,238,0.15)' : 'rgba(255,255,255,0.05)';
+            const border = isUser ? '1px solid rgba(34,211,238,0.3)' : '1px solid rgba(255,255,255,0.1)';
+            const color = isUser ? '#22d3ee' : '#e2e8f0';
+            const label = isUser ? 'Usuario' : 'Asistente IA';
+
+            return `
+                <div style="align-self:${align};max-width:85%;background:${bg};border:${border};padding:0.65rem 0.85rem;border-radius:8px;font-size:0.8rem;line-height:1.4;">
+                    <div style="font-size:0.7rem;color:#888;margin-bottom:0.25rem;display:flex;justify-content:space-between;gap:1rem;">
+                        <strong>${label}</strong>
+                        <span>${m.created_at || ''}</span>
+                    </div>
+                    <div style="color:${color};white-space:pre-wrap;">${esc(m.content)}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function loadAgenda() {
+        const data = await api('agenda', { include_demo: getIncludeDemoFlag() });
+        const tbody = document.getElementById('agenda-body');
+        if (!data.appointments || data.appointments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#888;">No hay citas o diagnósticos agendados.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.appointments.map(a => `
+            <tr>
+                <td style="font-size:0.8rem;color:#22d3ee;font-weight:600;">${esc(a.requested_date)}</td>
+                <td>
+                    <div style="font-weight:600;color:#fff;">${esc(a.nombre || 'Cliente Cita')}</div>
+                    <div style="font-size:0.75rem;color:#888;">${esc(a.email)} ${a.telefono ? '• ' + esc(a.telefono) : ''}</div>
+                </td>
+                <td>${esc(a.organizacion || 'Individual')}</td>
+                <td style="font-size:0.75rem;color:#aaa;">${esc(a.sector || 'general')} • ${esc(a.rol || 'lider')}</td>
+                <td><span style="background:rgba(139,92,246,0.15);color:#a78bfa;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;">${esc(a.service_type)}</span></td>
+                <td>${a.duration_minutes || 30} min</td>
+                <td><span class="status-badge status-${a.status}">${esc(a.status)}</span></td>
+                <td>
+                    ${a.status === 'solicitada' ? `<button class="btn-detail" style="background:#22c55e;color:#000;font-weight:700;margin-right:0.3rem;" onclick="updateAppointmentStatus(${a.appointment_id}, 'confirmada')">Confirmar</button>` : ''}
+                    ${a.status !== 'cancelada' ? `<button class="btn-detail" style="background:rgba(239,68,68,0.2);color:#ef4444;" onclick="updateAppointmentStatus(${a.appointment_id}, 'cancelada')">Cancelar</button>` : ''}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async function updateAppointmentStatus(appointmentId, newStatus) {
+        if (!confirm(`¿Confirmas cambiar el estado de la cita #${appointmentId} a "${newStatus}"?`)) return;
+        const res = await api('update_appointment', {}, 'POST', { appointment_id: appointmentId, status: newStatus });
+        if (res.success) {
+            loadAgenda();
+        } else {
+            alert('Error al actualizar la cita: ' + (res.error || 'Acción denegada'));
+        }
+    }
+
+    async function loadDailyUsage() {
+        const data = await api('usage_daily');
+        document.getElementById('ops-daily-date').textContent = data.usage_date || '-';
+        document.getElementById('ops-daily-tokens-val').textContent = (data.total_tokens || 0).toLocaleString();
+        document.getElementById('ops-daily-cap-val').textContent = (data.daily_cap || 500000).toLocaleString();
+        document.getElementById('ops-daily-reqs-val').textContent = (data.request_count || 0).toLocaleString();
+
+        const pct = Math.min(100, data.percentage_used || 0);
+        const bar = document.getElementById('ops-daily-progress-bar');
+        bar.style.width = `${pct}%`;
+        bar.style.background = pct >= 100 ? '#ef4444' : (pct >= 80 ? '#f59e0b' : '#22d3ee');
+
+        const badge = document.getElementById('ops-daily-status-badge');
+        badge.textContent = data.status || 'NORMAL';
+        badge.style.background = pct >= 100 ? 'rgba(239,68,68,0.15)' : (pct >= 80 ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)');
+        badge.style.color = pct >= 100 ? '#ef4444' : (pct >= 80 ? '#f59e0b' : '#34d399');
+    }
+
+    async function loadAiEfficiency() {
+        const data = await api('ai_efficiency', { include_demo: getIncludeDemoFlag() });
+        const warn = document.getElementById('ai-efficiency-insufficient');
+        const content = document.getElementById('ai-efficiency-content');
+
+        if (data.insufficient_data) {
+            warn.style.display = 'block';
+            content.style.opacity = '0.4';
+            return;
+        }
+
+        warn.style.display = 'none';
+        content.style.opacity = '1';
+
+        const pct = data.zero_llm_percentage || 0;
+        document.getElementById('ai-donut-percent').textContent = `${pct}%`;
+        document.getElementById('svg-donut-segment').setAttribute('stroke-dasharray', `${pct}, 100`);
+
+        document.getElementById('ai-saved-calls').textContent = (data.zero_llm_count || 0).toLocaleString();
+        document.getElementById('ai-saved-dollars').textContent = `$${(data.estimated_savings_usd || 0).toFixed(4)}`;
+
+        const rList = document.getElementById('ai-routes-breakdown-list');
+        const rData = data.routes_breakdown || {};
+        rList.innerHTML = `
+            <div>• FAQ Determinístico (0-LLM): <strong>${rData.faq || 0}</strong></div>
+            <div>• Cita Directa (0-LLM): <strong>${rData.cita || 0}</strong></div>
+            <div>• Flujo Guiado (0-LLM): <strong>${rData.guiado || 0}</strong></div>
+            <div style="color:#22d3ee;margin-top:0.2rem;">• Proveedor LLM (Modelos): <strong>${rData.llm || 0}</strong></div>
+        `;
+    }
+
     async function loadOpsTelemetry() {
-        const [telemetry, specsData] = await Promise.all([
-            api('ops_telemetry'),
-            api('ops_specs_status')
-        ]);
+        const telemetry = await api('ops_telemetry');
 
         // KPIs
         const sla = telemetry.sla_global || {};
@@ -632,6 +1046,80 @@ $csrf = generateCsrfToken();
             </tr>`).join('');
         } else {
             trendBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">Sin registros de actividad en los últimos 7 días</td></tr>';
+        }
+
+        // Spec 021: Load SQLite alerts and token usage breakdown
+        try {
+            const [alertsData, usageData] = await Promise.all([
+                api('alerts_ops', { limit: 20 }),
+                api('usage_ops')
+            ]);
+
+            // Render alerts
+            const alertsBody = document.getElementById('ops-alerts-body');
+            if (alertsData.alerts && alertsData.alerts.length > 0) {
+                alertsBody.innerHTML = alertsData.alerts.map(a => `<tr>
+                    <td style="padding:0.4rem 0.5rem;color:#888;">${esc(a.created_at)}</td>
+                    <td style="padding:0.4rem 0.5rem;"><span style="color:${a.alert_type === 'burst' || a.alert_type === 'cap_80' ? '#ef4444' : '#f59e0b'};font-weight:600;">${esc(a.alert_type.toUpperCase())}</span></td>
+                    <td style="padding:0.4rem 0.5rem;color:#ccc;">${esc(a.message)}</td>
+                </tr>`).join('');
+            } else {
+                alertsBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#666;padding:1rem;">Sin alertas registradas en SQLite</td></tr>';
+            }
+
+            // Render token usage
+            const tokensContainer = document.getElementById('ops-tokens-usage-container');
+            const summary = usageData.summary || {};
+            const total = parseInt(summary.total_tokens || 0);
+            const prompt = parseInt(summary.total_prompt_tokens || 0);
+            const completion = parseInt(summary.total_completion_tokens || 0);
+            // Costo estimado (§2: solo cuando hay desglose real)
+            const hasBreakdown = prompt > 0 || completion > 0;
+            const cost = hasBreakdown ? ((prompt * 0.15) + (completion * 0.60)) / 1000000 : 0;
+            
+            const promptPct = total > 0 && hasBreakdown ? Math.round((prompt / total) * 100) : 0;
+            const compPct = total > 0 && hasBreakdown ? Math.round((completion / total) * 100) : 0;
+
+            // §2 — Honestidad Radical: si el desglose es 0, no mostrar barras vacías
+            const breakdownHtml = hasBreakdown ? `
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.25rem;color:#aaa;">
+                        <span>Prompt / Entrada (${promptPct}%)</span>
+                        <span>${prompt.toLocaleString()} tokens</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);height:8px;border-radius:4px;overflow:hidden;margin-bottom:0.75rem;">
+                        <div style="width:${promptPct}%;height:100%;background:#22d3ee;border-radius:4px;"></div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:0.25rem;color:#aaa;">
+                        <span>Completion / Salida (${compPct}%)</span>
+                        <span>${completion.toLocaleString()} tokens</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);height:8px;border-radius:4px;overflow:hidden;">
+                        <div style="width:${compPct}%;height:100%;background:#c084fc;border-radius:4px;"></div>
+                    </div>
+                </div>
+            ` : `
+                <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:0.75rem;font-size:0.8rem;color:#f59e0b;line-height:1.5;">
+                    ⚠️ <strong>Desglose no disponible (§2):</strong> Los campos <code>prompt_tokens</code> / <code>completion_tokens</code> llegan como 0 desde el proveedor activo. Solo se registra el total de tokens estimados. El desglose se mostrará automáticamente cuando esté disponible en la respuesta del LLM.
+                </div>
+            `;
+
+            tokensContainer.innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:8px;">
+                    <div>
+                        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Tokens Totales</div>
+                        <div style="font-size:1.25rem;color:#fff;font-weight:700;">${total.toLocaleString()}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Costo Acumulado Est.</div>
+                        <div style="font-size:1.25rem;color:${hasBreakdown ? '#4ade80' : '#888'};font-weight:700;">${hasBreakdown ? '$' + cost.toFixed(5) + ' USD' : 'N/A'}</div>
+                    </div>
+                </div>
+                ${breakdownHtml}
+            `;
+        } catch (e) {
+            console.error('Error loading spec 021 ops details:', e);
         }
     }
 
@@ -738,6 +1226,9 @@ $csrf = generateCsrfToken();
     }
 
     async function loadAnalyticsData() {
+        // Cargar tarjeta de Eficiencia 0-LLM (Spec 023 Parte 1)
+        loadAiEfficiency();
+
         const [funnelData, dimData, llmData] = await Promise.all([
             api('analytics_funnel'),
             api('analytics_by_dimension'),
@@ -752,19 +1243,37 @@ $csrf = generateCsrfToken();
             <div class="stat-card"><div class="value">${llmData.avg_latency_ms || 0} ms</div><div class="label">Latencia Avg LLM</div></div>
         `;
 
-        // Funnel
+        // Funnel con Guardarraíl §2 ($N < 20$ leads)
         const funnelContainer = document.getElementById('funnel-container');
-        funnelContainer.innerHTML = funnelData.funnel.map(f => `
-            <div>
-                <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;">
-                    <span style="color:#fff;"><span class="status-badge status-${f.status}">${f.status}</span></span>
-                    <span style="color:#888;">${f.count} leads (${f.percentage}%)</span>
+        if (funnelData.total_leads < 20) {
+            funnelContainer.innerHTML = `
+                <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#f59e0b;padding:0.75rem 1rem;border-radius:8px;font-size:0.85rem;">
+                    ⚠️ <strong>Muestra escasa de leads (${funnelData.total_leads} &lt; 20):</strong> Se muestran porcentajes orientativos por etapa sin extrapolar conclusiones estocásticas (§2).
                 </div>
-                <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:6px;overflow:hidden;">
-                    <div style="width:${Math.max(f.percentage, 2)}%;height:100%;background:#22d3ee;border-radius:6px;transition:width 0.5s;"></div>
+            ` + funnelData.funnel.map(f => `
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;">
+                        <span style="color:#fff;"><span class="status-badge status-${f.status}">${f.status}</span></span>
+                        <span style="color:#888;">${f.count} leads (${f.percentage}%)</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:6px;overflow:hidden;">
+                        <div style="width:${Math.max(f.percentage, 2)}%;height:100%;background:#22d3ee;border-radius:6px;transition:width 0.5s;"></div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        } else {
+            funnelContainer.innerHTML = funnelData.funnel.map(f => `
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;">
+                        <span style="color:#fff;"><span class="status-badge status-${f.status}">${f.status}</span></span>
+                        <span style="color:#888;">${f.count} leads (${f.percentage}%)</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);height:12px;border-radius:6px;overflow:hidden;">
+                        <div style="width:${Math.max(f.percentage, 2)}%;height:100%;background:#22d3ee;border-radius:6px;transition:width 0.5s;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         // Dimensions Table
         document.getElementById('dimensions-body').innerHTML = dimData.dimensions.map(d => `
@@ -786,6 +1295,14 @@ $csrf = generateCsrfToken();
                 <td><span style="color:${b.success_rate_pct >= 90 ? '#4ade80' : '#f87171'}">${b.success_rate_pct}%</span></td>
             </tr>
         `).join('');
+
+        // Spec 021: Load Prompt Optimization insights report
+        try {
+            const reportData = await api('learn_insights');
+            document.getElementById('ops-learn-report').textContent = reportData.content;
+        } catch (e) {
+            document.getElementById('ops-learn-report').textContent = "Error al cargar reporte de optimización: " + e.message;
+        }
     }
 
     function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
@@ -928,10 +1445,19 @@ $csrf = generateCsrfToken();
     }
 
     async function loadDemandData() {
+        // Fix Arreglo 1: cargar sesiones SIEMPRE al inicio, antes de cualquier guard §2
+        loadJourneySessions();
+
+        const includeDemo = document.getElementById('journey-demo-toggle')?.checked ? 1 : 0;
+
+        // Banner §2: visible cuando toggle está ON
+        const demoBanner = document.getElementById('demand-demo-banner');
+        if (demoBanner) demoBanner.style.display = includeDemo ? 'block' : 'none';
+
         try {
             const [demandRes, leakageRes] = await Promise.all([
-                api('demand_signals'),
-                api('leakage')
+                api('demand_signals', { include_demo: includeDemo }),
+                api('leakage', { include_demo: includeDemo })
             ]);
 
             const insufficientContainer = document.getElementById('demand-insufficient');
@@ -987,6 +1513,8 @@ $csrf = generateCsrfToken();
                 leakageBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;">No hay registros de fugas de conversión.</td></tr>';
             }
 
+            // (loadJourneySessions ya se llama al inicio de loadDemandData)
+
         } catch (err) {
             console.error('Error loading demand data:', err);
         }
@@ -1001,7 +1529,9 @@ $csrf = generateCsrfToken();
 
         const resultContainer = document.getElementById('journey-result');
         const timeline = document.getElementById('journey-timeline');
+        const emptyState = document.getElementById('journey-empty-state');
 
+        if (emptyState) emptyState.style.display = 'none';
         resultContainer.style.display = 'block';
         timeline.innerHTML = '<div style="color:#888;font-size:0.8rem;">Cargando Journey...</div>';
 
@@ -1085,6 +1615,146 @@ $csrf = generateCsrfToken();
         } catch (err) {
             timeline.innerHTML = `<div style="color:#f87171;font-size:0.8rem;">Error al cargar el journey: ${esc(err.message)}</div>`;
         }
+    }
+
+    // Spec 021: Sub-Navegación de Leads Detectados
+    function switchLeadsSubTab(subtab) {
+        const crmTab = document.getElementById('leads-subtab-crm');
+        const detTab = document.getElementById('leads-subtab-detected');
+        const crmContent = document.getElementById('leads-content-crm');
+        const detContent = document.getElementById('leads-content-detected');
+
+        if (subtab === 'detected') {
+            crmTab.style.background = 'rgba(255,255,255,0.05)';
+            crmTab.style.color = '#fff';
+            crmTab.style.fontWeight = 'normal';
+            detTab.style.background = '#22d3ee';
+            detTab.style.color = '#000';
+            detTab.style.fontWeight = '700';
+
+            crmContent.style.display = 'none';
+            detContent.style.display = 'block';
+            loadDetectedLeads();
+        } else {
+            crmTab.style.background = '#22d3ee';
+            crmTab.style.color = '#000';
+            crmTab.style.fontWeight = '700';
+            detTab.style.background = 'rgba(255,255,255,0.05)';
+            detTab.style.color = '#fff';
+            detTab.style.fontWeight = 'normal';
+
+            crmContent.style.display = 'block';
+            detContent.style.display = 'none';
+            loadLeads(currentPage);
+        }
+    }
+
+    async function loadDetectedLeads() {
+        const body = document.getElementById('detected-leads-body');
+        body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:1rem;">Cargando leads detectados por LLM...</td></tr>';
+        try {
+            const data = await api('leads_detected');
+            if (data.leads && data.leads.length > 0) {
+                body.innerHTML = data.leads.map(l => `
+                    <tr>
+                        <td style="color:#fff;font-weight:600;">${esc(l.nombre)}</td>
+                        <td><a href="mailto:${esc(l.email)}" style="color:#22d3ee;text-decoration:none;">${esc(l.email)}</a></td>
+                        <td>${esc(l.telefono)}</td>
+                        <td><span style="background:rgba(167,139,250,0.15);color:#a78bfa;padding:0.2rem 0.4rem;border-radius:4px;font-size:0.75rem;font-weight:600;">${esc(l.intencion)}</span></td>
+                        <td>
+                            <button class="btn-detail" onclick="goToJourney('${esc(l.session_id)}')" style="padding:0.25rem 0.5rem;font-size:0.75rem;background:#22d3ee;color:#000;border:none;border-radius:4px;cursor:pointer;">Ver Chat</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;padding:1rem;">No se detectaron leads adicionales en el historial de chat</td></tr>';
+            }
+        } catch (e) {
+            body.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;padding:1rem;">Error al cargar leads detectados: ${esc(e.message)}</td></tr>`;
+        }
+    }
+
+    function goToJourney(sessionId) {
+        switchTab('demand');
+        document.getElementById('journey-session-id').value = sessionId;
+        reconstructJourney();
+    }
+
+    // Spec 021: Carga y paginación de la lista de sesiones
+    async function loadJourneySessions() {
+        const tbody = document.getElementById('journey-sessions-tbody');
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;padding:1rem;">Cargando sesiones...</td></tr>';
+        
+        const includeDemo = document.getElementById('journey-demo-toggle').checked ? 1 : 0;
+        const limit = 20;
+        const offset = (journeyPage - 1) * limit;
+
+        try {
+            const data = await api('journey_sessions', { include_demo: includeDemo, limit, offset });
+            if (data.sessions && data.sessions.length > 0) {
+                tbody.innerHTML = data.sessions.map(s => {
+                    const emailTxt = s.email === 'Anónimo' ? `<span style="color:#888;font-style:italic;">${esc(s.organizacion)}</span>` : `<strong style="color:#fff;">${esc(s.email)}</strong><br/><span style="color:#888;font-size:0.7rem;">${esc(s.organizacion)}</span>`;
+                    const dateTxt = (s.last_activity || '').split(' ')[0] || '';
+                    const firstQuery = s.first_query ? s.first_query : 'N/A';
+                    
+                    const queryTruncated = firstQuery.length > 35 ? firstQuery.substring(0, 35) + '...' : firstQuery;
+                    
+                    const badge = s.session_type === 'lead_crm' 
+                        ? '<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.65rem;font-weight:600;margin-left:0.25rem;">CRM</span>'
+                        : '<span style="background:rgba(167,139,250,0.15);color:#a78bfa;padding:0.1rem 0.3rem;border-radius:4px;font-size:0.65rem;font-weight:600;margin-left:0.25rem;">CHAT</span>';
+
+                    const demoBadge = s.session_id.startsWith('demoseed') ? ' <span style="color:#ef4444;font-weight:bold;font-size:0.65rem;">[DEMO]</span>' : '';
+
+                    return `
+                        <tr data-session-id="${esc(s.session_id)}" data-sector="${esc(s.sector || '')}" data-role="${esc(s.role || '')}" onclick="selectSessionRow(this)" style="border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.2s;">
+                            <td style="padding:0.5rem;">
+                                <div style="display:flex;align-items:center;">${emailTxt}${badge}${demoBadge}</div>
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.7rem;margin-top:0.15rem;font-style:italic;" title="${esc(firstQuery)}">"${esc(queryTruncated)}"</div>
+                            </td>
+                            <td style="padding:0.5rem;text-align:center;color:#aaa;">
+                                ${dateTxt}<br/>
+                                <span style="background:rgba(255,255,255,0.05);padding:0.1rem 0.3rem;border-radius:4px;font-size:0.65rem;">${s.events_count || 0} ev.</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#666;padding:1rem;">No se encontraron sesiones recientes</td></tr>';
+            }
+            document.getElementById('journey-page-info').textContent = `Pág. ${journeyPage}`;
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#ef4444;padding:1rem;">Error: ${esc(e.message)}</td></tr>`;
+        }
+    }
+
+    function selectSessionRow(row) {
+        const tbody = document.getElementById('journey-sessions-tbody');
+        Array.from(tbody.getElementsByTagName('tr')).forEach(tr => {
+            tr.style.background = 'none';
+        });
+
+        row.style.background = 'rgba(34,211,238,0.1)';
+
+        const sessionId = row.getAttribute('data-session-id');
+        const sector = row.getAttribute('data-sector') || '';
+        const role = row.getAttribute('data-role') || '';
+        const label = [sector, role].filter(Boolean).join(' • ') || sessionId.substring(0, 8) + '…';
+        // Mostrar resumen legible en el input visible; mantener ID en campo oculto
+        document.getElementById('journey-session-label').value = '📍 ' + label;
+        document.getElementById('journey-session-id').value = sessionId;
+        reconstructJourney();
+    }
+
+    function journeyPrevPage() {
+        if (journeyPage > 1) {
+            journeyPage--;
+            loadJourneySessions();
+        }
+    }
+
+    function journeyNextPage() {
+        journeyPage++;
+        loadJourneySessions();
     }
 
     // Event listeners

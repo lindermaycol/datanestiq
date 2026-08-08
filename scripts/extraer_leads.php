@@ -1,14 +1,16 @@
 <?php
 /**
- * Extraer Leads Batch Script
- * Procesa chat_raw.jsonl, extrae información usando LLM y guarda en leads_datanestiq.csv
- * Uso: php extraer_leads.php
+ * Extraer Leads Batch Script (Spec 022 File-Free)
+ * Procesa la tabla privada chat_raw de SQLite, extrae información usando LLM
+ * y guarda de forma idempotente en la tabla leads_extracted.
+ * Uso: php scripts/extraer_leads.php
  */
 
-$raw_log = __DIR__ . '/../secure_leads/chat_raw.jsonl';
-$csv_out = __DIR__ . '/../secure_leads/leads_datanestiq.csv';
+$db_path = __DIR__ . '/../secure_leads/crm.sqlite';
+if (!file_exists($db_path)) {
+    die("Error: Base de datos no encontrada en $db_path.\n");
+}
 
-// Simple .env parser
 function loadEnv($path) {
     if (!file_exists($path)) return false;
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -26,95 +28,89 @@ if (!$groq_api_key) {
     die("Error: GROQ_API_KEY no configurada.\n");
 }
 
-if (!file_exists($raw_log)) {
-    die("No hay archivo raw log: $raw_log\n");
-}
+try {
+    $db = new PDO('sqlite:' . $db_path);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$is_new_csv = !file_exists($csv_out);
-$fp_csv = fopen($csv_out, 'a');
-if ($is_new_csv) {
-    fputcsv($fp_csv, ['SessionID', 'Nombre', 'Email', 'Telefono', 'Intencion']);
-}
+    // Obtener session_ids de chat_raw no procesados en leads_extracted
+    $stmt_sessions = $db->query("
+        SELECT DISTINCT cr.session_id 
+        FROM chat_raw cr 
+        LEFT JOIN leads_extracted le ON cr.session_id = le.session_id 
+        WHERE le.id IS NULL
+    ");
+    $pending_sessions = $stmt_sessions->fetchAll(PDO::FETCH_COLUMN);
 
-// Track procesados para evitar re-procesar (simple cache)
-$processed_file = __DIR__ . '/../secure_leads/.processed_sessions';
-$processed = file_exists($processed_file) ? json_decode(file_get_contents($processed_file), true) : [];
-if (!is_array($processed)) $processed = [];
-
-$lines = file($raw_log, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$new_leads_count = 0;
-
-foreach ($lines as $line) {
-    $data = json_decode($line, true);
-    if (!$data || !isset($data['session_id'])) continue;
-    
-    $sid = $data['session_id'];
-    
-    // Skip si ya procesamos esta sesion y sabemos que tiene todos los datos,
-    // o simplemente reprocesamos si queremos (aqui para simplificar saltamos)
-    if (in_array($sid, $processed)) {
-        continue;
+    if (empty($pending_sessions)) {
+        echo "No hay sesiones pendientes de análisis en chat_raw.\n";
+        exit;
     }
 
-    $messages = $data['messages'];
-    // Concatenate user messages to analyze
-    $conversation = "";
-    foreach ($messages as $m) {
-        $role = $m['role'] ?? 'user';
-        $content = $m['content'] ?? '';
-        $conversation .= strtoupper($role) . ": " . $content . "\n";
-    }
+    echo "Analizando " . count($pending_sessions) . " sesiones pendientes en SQLite...\n";
+    $new_leads_count = 0;
 
-    echo "Analizando sesion: $sid...\n";
+    $stmt_msgs = $db->prepare("SELECT role, content_raw FROM chat_raw WHERE session_id = ? ORDER BY id ASC");
+    $stmt_insert_lead = $db->prepare("INSERT OR IGNORE INTO leads_extracted (session_id, nombre, email, telefono, intencion, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))");
 
-    // Call Groq API
-    $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . $groq_api_key,
-        'Content-Type: application/json'
-    ]);
+    foreach ($pending_sessions as $sid) {
+        $stmt_msgs->execute([$sid]);
+        $rows = $stmt_msgs->fetchAll(PDO::FETCH_ASSOC);
 
-    $prompt = "Eres un extractor de datos de conversaciones. Analiza la siguiente conversacion y extrae en formato JSON exacto las siguientes claves: 'nombre', 'email', 'telefono', 'intencion'. Si un dato no esta, pon null.\n\nConversacion:\n" . $conversation;
+        $conversation = "";
+        foreach ($rows as $r) {
+            $conversation .= strtoupper($r['role']) . ": " . $r['content_raw'] . "\n";
+        }
 
-    $payload = [
-        'model' => 'llama-3.1-8b-instant',
-        'messages' => [
-            ['role' => 'system', 'content' => 'Responde SOLAMENTE con un objeto JSON valido. Sin texto markdown adicional.'],
-            ['role' => 'user', 'content' => $prompt]
-        ],
-        'temperature' => 0.1
-    ];
+        echo "Analizando sesión: $sid...\n";
 
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $res_data = json_decode($response, true);
-    $content = $res_data['choices'][0]['message']['content'] ?? '';
-    
-    // Limpiar markdown si el modelo lo agrega
-    $content = str_replace(['```json', '```'], '', $content);
-    $extracted = json_decode(trim($content), true);
-
-    if (is_array($extracted) && (!empty($extracted['email']) || !empty($extracted['telefono']))) {
-        fputcsv($fp_csv, [
-            $sid,
-            $extracted['nombre'] ?? '',
-            $extracted['email'] ?? '',
-            $extracted['telefono'] ?? '',
-            $extracted['intencion'] ?? ''
+        // Call Groq API
+        $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $groq_api_key,
+            'Content-Type: application/json'
         ]);
-        echo "Lead encontrado y guardado: " . ($extracted['email'] ?? $extracted['telefono']) . "\n";
-        $processed[] = $sid;
-        $new_leads_count++;
-    } else {
-        echo "No hay lead claro en esta sesion.\n";
+
+        $prompt = "Eres un extractor de datos de conversaciones. Analiza la siguiente conversacion y extrae en formato JSON exacto las siguientes claves: 'nombre', 'email', 'telefono', 'intencion'. Si un dato no esta, pon null.\n\nConversacion:\n" . $conversation;
+
+        $payload = [
+            'model' => 'llama-3.1-8b-instant',
+            'messages' => [
+                ['role' => 'system', 'content' => 'Responde SOLAMENTE con un objeto JSON valido. Sin texto markdown adicional.'],
+                ['role' => 'user', 'content' => $prompt]
+            ],
+            'temperature' => 0.1
+        ];
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $res_data = json_decode($response, true);
+        $content = $res_data['choices'][0]['message']['content'] ?? '';
+        
+        $content = str_replace(['```json', '```'], '', $content);
+        $extracted = json_decode(trim($content), true);
+
+        if (is_array($extracted) && (!empty($extracted['email']) || !empty($extracted['telefono']))) {
+            $stmt_insert_lead->execute([
+                $sid,
+                $extracted['nombre'] ?? '',
+                $extracted['email'] ?? '',
+                $extracted['telefono'] ?? '',
+                $extracted['intencion'] ?? ''
+            ]);
+            echo "✅ Lead encontrado e insertado en SQLite: " . ($extracted['email'] ?? $extracted['telefono']) . "\n";
+            $new_leads_count++;
+        } else {
+            echo "  No hay lead claro en esta sesion.\n";
+        }
     }
+
+    echo "\nProceso completado. Se insertaron $new_leads_count leads en leads_extracted.\n";
+
+} catch (Exception $e) {
+    die("Error durante la extracción: " . $e->getMessage() . "\n");
 }
 
-fclose($fp_csv);
-file_put_contents($processed_file, json_encode($processed));
-
-echo "Proceso terminado. Se agregaron $new_leads_count leads nuevos.\n";

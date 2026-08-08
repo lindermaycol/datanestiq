@@ -50,8 +50,9 @@ SELECT
     l.email,
     l.organizacion,
     'lead_crm' as session_type,
-    MAX(ds.created_at) as last_activity,
-    COUNT(ds.id) as signals_count
+    COALESCE(MAX(ds.created_at), l.created_at) as last_activity,
+    (SELECT COUNT(*) FROM interaction_events ie WHERE ie.session_id = l.session_id) as events_count,
+    COALESCE((SELECT query_redacted FROM demand_signals ds4 WHERE ds4.session_id = l.session_id ORDER BY ds4.id ASC LIMIT 1), 'Formulario completado directo') as first_query
 FROM leads l
 LEFT JOIN demand_signals ds ON l.session_id = ds.session_id
 WHERE (:include_demo = 1 OR l.session_id NOT LIKE 'demoseed%')
@@ -67,7 +68,8 @@ SELECT
     ' / R: ' || COALESCE((SELECT role FROM demand_signals ds3 WHERE ds3.session_id = ds.session_id AND ds3.role IS NOT NULL AND ds3.role != '' ORDER BY ds3.id DESC LIMIT 1), 'N/A') as organizacion,
     'anonimo' as session_type,
     MAX(ds.created_at) as last_activity,
-    COUNT(ds.id) as signals_count
+    (SELECT COUNT(*) FROM interaction_events ie WHERE ie.session_id = ds.session_id) as events_count,
+    (SELECT query_redacted FROM demand_signals ds4 WHERE ds4.session_id = ds.session_id ORDER BY ds4.id ASC LIMIT 1) as first_query
 FROM demand_signals ds
 WHERE ds.session_id NOT IN (SELECT session_id FROM leads)
   AND (:include_demo = 1 OR ds.session_id NOT LIKE 'demoseed%')
@@ -80,11 +82,12 @@ LIMIT :limit OFFSET :offset;
 ### Deduplicación de Leads en Conversaciones (`leads_detected`)
 Para evitar duplicidades en la vista de leads extraídos por el LLM en la conversación:
 - Se parsea el CSV `leads_datanestiq.csv`.
-- Se filtra fila por fila descartando aquellas cuya `SessionID` ya exista en la tabla `leads` del CRM.
+- Se filtra fila por fila descartando aquellas cuya `SessionID` ya exista en la tabla `leads` del CRM, O cuyo `Email` ya esté registrado en la tabla `leads` (evita repetir registros si un usuario anónimo completa un formulario en una sesión posterior con el mismo email).
 - Se presentan los leads restantes sin aplicar redacción PII (solo visible tras `auth.php`).
 ```sql
--- Lógica lógica de deduplicación contra CRM
-SELECT session_id FROM leads WHERE session_id IN (:session_ids_from_csv)
+-- Consultas para dedup contra CRM
+SELECT session_id, email FROM leads 
+WHERE session_id IN (:session_ids_from_csv) OR email IN (:emails_from_csv)
 ```
 
 ---

@@ -568,7 +568,15 @@ try {
                 // TD-020-02: Limpieza de retención activa de 180 días
                 $db->exec("DELETE FROM demand_signals WHERE created_at < datetime('now', '-180 days')");
 
-                $total = (int)$db->query("SELECT COUNT(*) FROM demand_signals")->fetchColumn();
+                // §2 Demo exclusion: mismo patrón :inc que journey_sessions/alerts_ops/usage_ops
+                $include_demo_ds = (int)($_GET['include_demo'] ?? 0);
+
+                // (a) Guard §2: contar solo reales por defecto
+                $stmt_count = $db->prepare("SELECT COUNT(*) FROM demand_signals WHERE (:inc_c = 1 OR session_id NOT LIKE 'demoseed%')");
+                $stmt_count->bindValue(':inc_c', $include_demo_ds, PDO::PARAM_INT);
+                $stmt_count->execute();
+                $total = (int)$stmt_count->fetchColumn();
+
                 if ($total < 20) {
                     echo json_encode([
                         'insufficient_data' => true,
@@ -577,8 +585,8 @@ try {
                     exit;
                 }
 
-                // Bucket 1 (Demanda no atendida): Agrupado con limitación a los 5 ejemplos más recientes (Precisión 4) (Fix A)
-                $stmt = $db->query("SELECT 
+                // (b) Bucket 1 (Demanda no atendida): filtro demo en query principal y subconsulta de ejemplos
+                $stmt = $db->prepare("SELECT 
                     matched_service, 
                     COUNT(*) as total_requests,
                     (
@@ -586,28 +594,45 @@ try {
                         FROM (
                             SELECT query_redacted 
                             FROM demand_signals ds2 
-                            WHERE ds2.matched_service = ds.matched_service AND ds2.offered = 0 AND ds2.resolved_route NOT IN ('faq','cita','guiado')
+                            WHERE ds2.matched_service = ds.matched_service 
+                              AND ds2.offered = 0 
+                              AND ds2.resolved_route NOT IN ('faq','cita','guiado')
+                              AND (:inc_sub = 1 OR ds2.session_id NOT LIKE 'demoseed%')
                             ORDER BY created_at DESC 
                             LIMIT 5
                         )
                     ) as examples
                     FROM demand_signals ds
-                    WHERE offered = 0 AND resolved_route NOT IN ('faq','cita','guiado')
+                    WHERE offered = 0 
+                      AND resolved_route NOT IN ('faq','cita','guiado')
+                      AND (:inc_main = 1 OR ds.session_id NOT LIKE 'demoseed%')
                     GROUP BY matched_service
                     ORDER BY total_requests DESC");
+                $stmt->bindValue(':inc_sub',  $include_demo_ds, PDO::PARAM_INT);
+                $stmt->bindValue(':inc_main', $include_demo_ds, PDO::PARAM_INT);
+                $stmt->execute();
                 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 echo json_encode([
                     'insufficient_data' => false,
                     'total' => $total,
-                    'demand' => $data
+                    'demand' => $data,
+                    'include_demo' => (bool)$include_demo_ds
                 ]);
             }
             break;
 
         case 'leakage':
             if ($method === 'GET') {
-                $total = (int)$db->query("SELECT COUNT(DISTINCT session_id) FROM demand_signals WHERE offered = 1")->fetchColumn();
+                // §2 Demo exclusion: mismo patrón :inc que demand_signals
+                $include_demo_lk = (int)($_GET['include_demo'] ?? 0);
+
+                // (c) Guard §2: contar solo reales por defecto
+                $stmt_lk_count = $db->prepare("SELECT COUNT(DISTINCT session_id) FROM demand_signals WHERE offered = 1 AND (:inc_lk = 1 OR session_id NOT LIKE 'demoseed%')");
+                $stmt_lk_count->bindValue(':inc_lk', $include_demo_lk, PDO::PARAM_INT);
+                $stmt_lk_count->execute();
+                $total = (int)$stmt_lk_count->fetchColumn();
+
                 if ($total < 10) {
                     echo json_encode([
                         'insufficient_data' => true,
@@ -617,7 +642,7 @@ try {
                 }
 
                 // Bucket 2 (Fugas de conversión): Atribución aproximada (§2) alineada con offered = 1 (Precisión 5)
-                $stmt = $db->query("SELECT 
+                $stmt_lk = $db->prepare("SELECT 
                     ds.matched_service,
                     COUNT(DISTINCT ds.session_id) as total_interested_sessions,
                     COUNT(DISTINCT l.id) as converted_leads,
@@ -626,14 +651,18 @@ try {
                     FROM demand_signals ds
                     LEFT JOIN leads l ON ds.session_id = l.session_id
                     WHERE ds.offered = 1
+                      AND (:inc_lk2 = 1 OR ds.session_id NOT LIKE 'demoseed%')
                     GROUP BY ds.matched_service
                     ORDER BY leakage_percentage DESC");
-                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $stmt_lk->bindValue(':inc_lk2', $include_demo_lk, PDO::PARAM_INT);
+                $stmt_lk->execute();
+                $data = $stmt_lk->fetchAll(PDO::FETCH_ASSOC);
 
                 echo json_encode([
                     'insufficient_data' => false,
                     'total' => $total,
-                    'leakage' => $data
+                    'leakage' => $data,
+                    'include_demo' => (bool)$include_demo_lk
                 ]);
             }
             break;
@@ -686,6 +715,362 @@ try {
                 echo json_encode([
                     'session_id' => $session_id,
                     'journey' => $journey
+                ]);
+            }
+            break;
+
+        case 'journey_sessions':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+                $limit = min(100, max(1, (int)($_GET['limit'] ?? 50)));
+                $offset = max(0, (int)($_GET['offset'] ?? 0));
+
+                $sql = "
+                    SELECT 
+                        l.session_id,
+                        l.email,
+                        l.organizacion,
+                        COALESCE((SELECT sector FROM demand_signals ds5 WHERE ds5.session_id = l.session_id AND ds5.sector IS NOT NULL AND ds5.sector != '' ORDER BY ds5.id DESC LIMIT 1), '') as sector,
+                        COALESCE((SELECT role FROM demand_signals ds6 WHERE ds6.session_id = l.session_id AND ds6.role IS NOT NULL AND ds6.role != '' ORDER BY ds6.id DESC LIMIT 1), '') as role,
+                        'lead_crm' as session_type,
+                        COALESCE(MAX(ds.created_at), l.created_at) as last_activity,
+                        (SELECT COUNT(*) FROM interaction_events ie WHERE ie.session_id = l.session_id) as events_count,
+                        COALESCE((SELECT query_redacted FROM demand_signals ds4 WHERE ds4.session_id = l.session_id ORDER BY ds4.id ASC LIMIT 1), 'Formulario completado directo') as first_query
+                    FROM leads l
+                    LEFT JOIN demand_signals ds ON l.session_id = ds.session_id
+                    WHERE (:inc1 = 1 OR l.session_id NOT LIKE 'demoseed%')
+                    GROUP BY l.session_id
+
+                    UNION ALL
+
+                    SELECT 
+                        ds.session_id,
+                        'Anónimo' as email,
+                        'S: ' || COALESCE((SELECT sector FROM demand_signals ds2 WHERE ds2.session_id = ds.session_id AND ds2.sector IS NOT NULL AND ds2.sector != '' ORDER BY ds2.id DESC LIMIT 1), 'N/A') || 
+                        ' / R: ' || COALESCE((SELECT role FROM demand_signals ds3 WHERE ds3.session_id = ds.session_id AND ds3.role IS NOT NULL AND ds3.role != '' ORDER BY ds3.id DESC LIMIT 1), 'N/A') as organizacion,
+                        COALESCE((SELECT sector FROM demand_signals ds2b WHERE ds2b.session_id = ds.session_id AND ds2b.sector IS NOT NULL AND ds2b.sector != '' ORDER BY ds2b.id DESC LIMIT 1), '') as sector,
+                        COALESCE((SELECT role FROM demand_signals ds3b WHERE ds3b.session_id = ds.session_id AND ds3b.role IS NOT NULL AND ds3b.role != '' ORDER BY ds3b.id DESC LIMIT 1), '') as role,
+                        'anonimo' as session_type,
+                        MAX(ds.created_at) as last_activity,
+                        (SELECT COUNT(*) FROM interaction_events ie WHERE ie.session_id = ds.session_id) as events_count,
+                        (SELECT query_redacted FROM demand_signals ds4 WHERE ds4.session_id = ds.session_id ORDER BY ds4.id ASC LIMIT 1) as first_query
+                    FROM demand_signals ds
+                    WHERE ds.session_id NOT IN (SELECT session_id FROM leads)
+                      AND (:inc2 = 1 OR ds.session_id NOT LIKE 'demoseed%')
+                    GROUP BY ds.session_id
+
+                    ORDER BY last_activity DESC
+                    LIMIT :limit OFFSET :offset
+                ";
+
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':inc1', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':inc2', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $stmt->execute();
+                $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'sessions' => $sessions
+                ]);
+            }
+            break;
+
+        case 'leads_detected':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+                
+                // Spec 022 File-Free: Consultar la tabla SQLite leads_extracted deduplicando contra la tabla leads
+                $stmt = $db->prepare("
+                    SELECT le.id, le.session_id, le.nombre, le.email, le.telefono, le.intencion, le.canal_origen, le.created_at
+                    FROM leads_extracted le
+                    LEFT JOIN leads l ON (le.session_id = l.session_id OR (le.email != '' AND le.email = l.email))
+                    WHERE l.id IS NULL
+                      AND (:inc = 1 OR le.session_id NOT LIKE 'demoseed%')
+                    ORDER BY le.created_at DESC
+                ");
+                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->execute();
+                $leads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'leads' => $leads
+                ]);
+            }
+            break;
+
+        case 'conversations':
+            if ($method === 'GET') {
+                $session_id = trim($_GET['session_id'] ?? '');
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+
+                if (!empty($session_id)) {
+                    // Detalle de conversación específica
+                    $stmt = $db->prepare("SELECT role, content_redacted as content, backend_used, created_at FROM conversations WHERE session_id = ? ORDER BY id ASC");
+                    $stmt->execute([$session_id]);
+                    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    echo json_encode([
+                        'session_id' => $session_id,
+                        'messages' => $messages
+                    ]);
+                } else {
+                    // Listado paginado de sesiones de conversación
+                    $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+                    $offset = max(0, (int)($_GET['offset'] ?? 0));
+
+                    $count_stmt = $db->prepare("SELECT COUNT(DISTINCT session_id) FROM conversations WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')");
+                    $count_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                    $count_stmt->execute();
+                    $total = (int)$count_stmt->fetchColumn();
+
+                    $sql = "
+                        SELECT 
+                            c.session_id,
+                            MAX(c.created_at) as last_activity,
+                            COUNT(c.id) as message_count,
+                            c.backend_used,
+                            (SELECT content_redacted FROM conversations c2 WHERE c2.session_id = c.session_id ORDER BY c2.id DESC LIMIT 1) as preview
+                        FROM conversations c
+                        WHERE (:inc = 1 OR c.session_id NOT LIKE 'demoseed%')
+                        GROUP BY c.session_id
+                        ORDER BY last_activity DESC
+                        LIMIT :limit OFFSET :offset
+                    ";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    echo json_encode([
+                        'total' => $total,
+                        'conversations' => $conversations
+                    ]);
+                }
+            }
+            break;
+
+        case 'usage_daily':
+            if ($method === 'GET') {
+                $today = date('Y-m-d');
+                $stmt = $db->prepare("SELECT * FROM usage_daily WHERE usage_date = ?");
+                $stmt->execute([$today]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$row) {
+                    $row = [
+                        'usage_date' => $today,
+                        'total_tokens' => 0,
+                        'prompt_tokens' => 0,
+                        'completion_tokens' => 0,
+                        'request_count' => 0,
+                        'daily_cap' => (int)(getenv('DAILY_TOKEN_CAP') ?: 500000),
+                        'percentage_used' => 0.0,
+                        'status' => 'NORMAL'
+                    ];
+                } else {
+                    $cap = (int)($row['daily_cap'] ?: 500000);
+                    $total_tok = (int)$row['total_tokens'];
+                    $row['percentage_used'] = round(($total_tok / max(1, $cap)) * 100, 2);
+                    $row['status'] = $row['percentage_used'] >= 100 ? 'EXCEEDED' : ($row['percentage_used'] >= 80 ? 'WARNING' : 'NORMAL');
+                }
+
+                echo json_encode($row);
+            }
+            break;
+
+        case 'ai_efficiency':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+
+                // Conteo total de eventos de enrutamiento
+                $count_stmt = $db->prepare("SELECT COUNT(*) FROM interaction_events WHERE event_type = 'intent_routing' AND (:inc = 1 OR session_id NOT LIKE 'demoseed%')");
+                $count_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $count_stmt->execute();
+                $total_queries = (int)$count_stmt->fetchColumn();
+
+                // Guardarraíl §2: Muestra mínima < 20
+                if ($total_queries < 20) {
+                    echo json_encode([
+                        'insufficient_data' => true,
+                        'total_queries' => $total_queries
+                    ]);
+                    exit;
+                }
+
+                // Agregación por ruta manejando valores nulos como 'llm'
+                $sql = "
+                    SELECT 
+                        COALESCE(NULLIF(json_extract(event_value, '$.route'), ''), 'llm') as route,
+                        COUNT(*) as count
+                    FROM interaction_events
+                    WHERE event_type = 'intent_routing'
+                      AND (:inc = 1 OR session_id NOT LIKE 'demoseed%')
+                    GROUP BY route
+                ";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $routes = ['faq' => 0, 'cita' => 0, 'guiado' => 0, 'llm' => 0];
+                foreach ($rows as $r) {
+                    $route_name = strtolower($r['route']);
+                    if (isset($routes[$route_name])) {
+                        $routes[$route_name] += (int)$r['count'];
+                    } else {
+                        $routes['llm'] += (int)$r['count'];
+                    }
+                }
+
+                $zero_llm_count = $routes['faq'] + $routes['cita'] + $routes['guiado'];
+                $zero_llm_percentage = round(($zero_llm_count / max(1, $total_queries)) * 100, 2);
+
+                // Ahorro Estimado $ [EST] basado en tokens reales de chat_metrics
+                $avg_tokens = (float)($db->query("SELECT AVG(total_tokens) FROM chat_metrics WHERE success = 1 AND total_tokens > 0")->fetchColumn() ?: 1200);
+                $ref_rate_per_1m = 0.30; // $0.30 USD / 1M tokens tarifa de mercado de referencia
+                $estimated_savings_usd = round(($zero_llm_count * $avg_tokens / 1000000) * $ref_rate_per_1m, 4);
+
+                echo json_encode([
+                    'insufficient_data' => false,
+                    'total_queries' => $total_queries,
+                    'zero_llm_count' => $zero_llm_count,
+                    'llm_count' => $routes['llm'],
+                    'zero_llm_percentage' => $zero_llm_percentage,
+                    'routes_breakdown' => $routes,
+                    'estimated_savings_usd' => $estimated_savings_usd,
+                    'badge' => '[EST]',
+                    'note' => 'Ahorro estimado basado en promedio de tokens reales y tarifa de referencia ($0.30/1M). Proveedores actuales operan en free-tier.'
+                ]);
+            }
+            break;
+
+        case 'agenda':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+
+                // Consulta de la Agenda de Citas sobre el esquema real de la Spec 015
+                $sql = "
+                    SELECT 
+                        a.id as appointment_id,
+                        a.lead_id,
+                        a.session_id,
+                        l.nombre,
+                        l.email,
+                        l.telefono,
+                        l.organizacion,
+                        l.sector,
+                        l.rol,
+                        a.type as service_type,
+                        a.requested_date,
+                        a.duration_minutes,
+                        a.status,
+                        a.created_at
+                    FROM appointments a
+                    JOIN leads l ON a.lead_id = l.id
+                    WHERE a.status IN ('solicitada', 'confirmada')
+                      AND (:inc = 1 OR a.session_id NOT LIKE 'demoseed%')
+                    ORDER BY a.requested_date ASC
+                ";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->execute();
+                $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'total' => count($appointments),
+                    'appointments' => $appointments
+                ]);
+            }
+            break;
+
+        case 'alerts_ops':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+                $limit = min(100, max(1, (int)($_GET['limit'] ?? 50)));
+                $offset = max(0, (int)($_GET['offset'] ?? 0));
+
+                $count_sql = "SELECT COUNT(*) FROM alerts WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')";
+                $count_stmt = $db->prepare($count_sql);
+                $count_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $count_stmt->execute();
+                $total = (int)$count_stmt->fetchColumn();
+
+                $sql = "SELECT * FROM alerts 
+                        WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%') 
+                        ORDER BY created_at DESC 
+                        LIMIT :limit OFFSET :offset";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $stmt->execute();
+                $alerts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'total' => $total,
+                    'alerts' => $alerts
+                ]);
+            }
+            break;
+
+        case 'usage_ops':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+
+                // Métricas agregadas
+                $sql = "SELECT 
+                            COUNT(*) as total_requests,
+                            SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as success_requests,
+                            SUM(tokens_est) as total_tokens,
+                            SUM(prompt_tokens) as total_prompt_tokens,
+                            SUM(completion_tokens) as total_completion_tokens,
+                            AVG(latency_ms) as avg_latency
+                        FROM chat_metrics
+                        WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->execute();
+                $summary = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Tendencia diaria
+                $trend_sql = "SELECT 
+                                 date(created_at) as date_str,
+                                 COUNT(*) as requests,
+                                 SUM(tokens_est) as tokens,
+                                 SUM(prompt_tokens) as prompt_tokens,
+                                 SUM(completion_tokens) as completion_tokens,
+                                 AVG(latency_ms) as avg_latency
+                              FROM chat_metrics
+                              WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')
+                              GROUP BY date_str
+                              ORDER BY date_str DESC
+                              LIMIT 30";
+                $trend_stmt = $db->prepare($trend_sql);
+                $trend_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $trend_stmt->execute();
+                $trend = $trend_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'summary' => $summary,
+                    'trend' => $trend
+                ]);
+            }
+            break;
+
+        case 'learn_insights':
+            if ($method === 'GET') {
+                $insights_file = __DIR__ . '/../../planes/PR-DRAFT-PROMPT-OPTIMIZATION-SPEC016.md';
+                $content = '';
+                if (file_exists($insights_file)) {
+                    $content = file_get_contents($insights_file);
+                } else {
+                    $content = "# Sin Reporte Disponibles\nNo se ha generado ningún borrador de optimización de prompt en la carpeta `planes`. Asegura que corra `scripts/learn_prompt_optimizer.mjs` para poblar este reporte.";
+                }
+                echo json_encode([
+                    'content' => $content
                 ]);
             }
             break;

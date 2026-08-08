@@ -81,6 +81,9 @@ function isAuthenticated() {
 }
 
 function requireAuth() {
+    if (php_sapi_name() === 'cli') {
+        return; // Permitir ejecución local/CLI
+    }
     if (!isAuthenticated()) {
         header('Location: login.php');
         exit;

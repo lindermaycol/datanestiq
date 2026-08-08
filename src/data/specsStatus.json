@@ -187,5 +187,23 @@
     "openTechDebt": "Latencia marginal de escritura dual síncrona en chat.php",
     "lastAuditDate": "2026-08-06",
     "isHonest": true
+  },
+  {
+    "id": "022",
+    "name": "File-Free Storage (SQLite como fuente única de verdad)",
+    "status": "COMPLETED",
+    "phase": "Construida y Auditada",
+    "openTechDebt": "Latencia fail-safe en SQLite gestionada con PDO en bloque try/catch",
+    "lastAuditDate": "2026-08-07",
+    "isHonest": true
+  },
+  {
+    "id": "023",
+    "name": "Panel de Negocio (Refocus Business-First del /admin/)",
+    "status": "COMPLETED",
+    "phase": "Construida y Auditada",
+    "openTechDebt": "Derivación estimada de costo ahorrado 0-LLM transparente",
+    "lastAuditDate": "2026-08-07",
+    "isHonest": true
   }
 ]

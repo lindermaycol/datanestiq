@@ -79,6 +79,21 @@ if (file_exists($db_path)) {
 
         $db->beginTransaction();
 
+        // Derivación en caliente de sector/rol desde demand_signals si faltan (Spec 023 Parte 4)
+        if ((!$sector || !$rol) && $session_id !== 'unknown') {
+            try {
+                $stmt_ds_persona = $db->prepare("SELECT sector, role FROM demand_signals WHERE session_id = ? AND (sector != '' OR role != '') ORDER BY id DESC LIMIT 1");
+                $stmt_ds_persona->execute([$session_id]);
+                $ds_row = $stmt_ds_persona->fetch(PDO::FETCH_ASSOC);
+                if ($ds_row) {
+                    if (!$sector && !empty($ds_row['sector'])) $sector = $ds_row['sector'];
+                    if (!$rol && !empty($ds_row['role'])) $rol = $ds_row['role'];
+                }
+            } catch (\Throwable $e_ds) {
+                // fail-safe
+            }
+        }
+
         // Upsert lead (INSERT OR UPDATE por session_id)
         $existing = $db->prepare("SELECT id FROM leads WHERE session_id = ?");
         $existing->execute([$session_id]);
@@ -109,30 +124,7 @@ if (file_exists($db_path)) {
     } catch (PDOException $e) {
         if (isset($db) && $db->inTransaction()) $db->rollBack();
         error_log('save_wizard SQLite error: ' . $e->getMessage());
-        // Continúa al CSV como fallback
     }
-}
-
-// --- 2. CSV fallback (heredado — se retirará cuando SQLite esté validado en prod) ---
-$csv_file = __DIR__ . '/../../secure_leads/leads_wizard.csv';
-$is_new = !file_exists($csv_file);
-$fp = fopen($csv_file, 'a');
-if ($fp) {
-    if ($is_new) {
-        fputcsv($fp, ['Timestamp', 'SessionID', 'Email', 'Nombre', 'Telefono', 'Organizacion', 'Reto', 'Stack', 'Score']);
-    }
-    fputcsv($fp, [
-        date('c'),
-        $session_id,
-        $email,
-        $nombre,
-        $telefono,
-        $organizacion,
-        $reto,
-        $stack,
-        $score
-    ]);
-    fclose($fp);
 }
 
 echo json_encode(['status' => 'success', 'sqlite' => $sqlite_ok]);
