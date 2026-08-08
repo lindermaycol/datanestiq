@@ -2,8 +2,8 @@
 
 **Tarea de DISEÑO, NO implementación.** Escribe los artefactos de la **Spec 022** (`specs/022-file-free/`): 5 bloques +
 `data-model.md` + `plan.md` + `tech_debt.md`. **Entrégalos para auditoría de Claude ANTES de construir.** Cero runtime.
-**Depende de la Spec 021** (que introduce las vistas de Ops/leads/learn y el dual-write) — primero cierra los 3 arreglos
-pendientes de la 021, luego esto.
+**Depende de la Spec 021** (ya cerrada y verificada en vivo: vistas de Ops/leads/learn, dual-write, exclusión demo §2).
+Puede arrancar cuando quieras; coordina con la 023 (panel de negocio) para no chocar en `admin/api.php`/`index.php`.
 
 ## WHY
 La 021 llevó varias salidas al panel pero con **dual-write** (sigue escribiendo `.jsonl`/`.csv` de respaldo), y **dos
@@ -55,6 +55,10 @@ quiere que **ninguna funcionalidad de monitoreo viva en archivos** — SQLite co
   tras `auth.php`** (contacto comercial, como `leads_detected`). Cero endpoints públicos (curl-verificar 404).
 - **Sin pérdida de datos en el cutover:** backup + `COUNT(*)` pre/post; import/archivo del histórico documentado;
   migración idempotente con `/usr/bin/php8.2-cli`; deploy **dry-run → `--confirm`**.
+- **⚠️ Deploy del backend (lección 021):** el **PHP se sirve desde `dist/`** → **recompila `npm run build` ANTES** de
+  `deploy_ionos.py --confirm` (esta spec toca mucho `chat.php`/`extraer_leads.php`/`save_wizard.php`/`api.php`; sin
+  recompilar se re-sube la versión vieja). **Limpia opcache** si IONOS tiene `validate_timestamps=0`, y **verifica contra
+  el endpoint/archivo real en prod**, no solo local (un marcador en la respuesta ayuda a confirmar que el deploy tomó).
 - **Retención 180d** en `conversations`/`chat_raw`/`usage_daily` (alineado con 018/020).
 - **No romper la tubería de extracción:** `extraer_leads.php` debe seguir funcionando leyendo de `chat_raw` tabla.
 - **Fail-safe:** los INSERT en `chat.php` van en try/catch — si SQLite falla, no rompe la respuesta al usuario. (Al

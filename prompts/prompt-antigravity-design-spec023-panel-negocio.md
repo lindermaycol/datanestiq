@@ -51,8 +51,24 @@ Sacar del panel de **negocio** lo que es interno de desarrollo:
 - **Acciones en el detalle del lead** bien visibles: cambiar estado, agregar nota, marcar ganado/perdido, confirmar cita
   (reusa `update_lead`/`update_appointment`). Verifica que estén expuestas en la UI, no solo en la API.
 
+### Parte 6 (🟡) — Visualizaciones/gráficos donde el dato lo amerita (hoy el panel es casi todo tablas)
+El panel es muy **tabular**; algunos datos "cuentan la historia" mejor como gráfico. Agrega gráficos **solo** donde
+aporten, **ligeros** (CSS/SVG inline, como el desglose de tokens actual — **sin Chart.js ni librerías pesadas**), y con
+el **mismo guard §2** (muestra < N → "datos insuficientes", **nunca** un gráfico engañoso de 1-2 barras).
+- **Embudo de conversión** (nuevo→contactado→cita→ganado): pasar de la lista de texto a **barras de embudo horizontales**
+  con el drop-off por etapa (en "Analítica de Conversión").
+- **Ruteo 0-LLM vs LLM** (Parte 1): **dona o barra apilada** por ruta (`faq`/`cita`/`guiado`/`llm`) — la eficiencia de la IA de un vistazo.
+- **Tendencia diaria** (peticiones / errores-failovers / latencia / costo): **línea o barras en el tiempo** (reemplaza la
+  tabla de una fila de "Ops"); aparece solo cuando hay ≥ N días con datos.
+- **Demanda no atendida y Fugas por servicio** (Buckets 1/2): **barras horizontales** (top por frecuencia / % de fuga)
+  para priorizar — respetando la exclusión demo por defecto (021).
+- **Dejar como tabla** (NO forzar gráfico): listas de leads, agenda de citas, timeline del journey, log de alertas, leads
+  detectados — son registros; y las KPI sueltas siguen como tarjetas.
+
 ## CONSTRAINTS (declararlas)
-- **§2:** estimaciones marcadas `[EST]`; guards de muestra mínima ("datos insuficientes") en cada agregado nuevo; nada fabricado.
+- **§2:** estimaciones marcadas `[EST]`; guards de muestra mínima ("datos insuficientes") en cada agregado nuevo y en
+  **cada gráfico** (sin visuales engañosos con muestra chica); nada fabricado.
+- **Gráficos ligeros:** CSS/SVG inline sin librerías pesadas; consistentes con el estilo Vanilla del panel.
 - **Privacidad/Seguridad:** todo tras `auth.php`; sin endpoints públicos (curl-verificar 404); PII redactada donde aplique
   (la agenda/lead muestran contacto solo autenticado, como el CRM).
 - **Reuso, no reinventar:** usa `interaction_events` (intent_routing), `chat_metrics`/tokens, `appointments`, columnas
@@ -80,5 +96,7 @@ Sacar del panel de **negocio** lo que es interno de desarrollo:
 ---
 **Nota:** Claude (Opus 4.8) auditará: el panel 0-LLM con `$ [EST]` honesto y guard §2 (Parte 1), que "Ops" quede **de
 negocio** sin la tabla de specs/deuda/ESLint (Parte 2, la clave del "no es backend"), la agenda con acciones reales
-(Parte 3), sector/rol capturado + backfill sin pérdida (Parte 4), y la deduplicación (Parte 5) — todo tras `auth.php`,
-sin fuga, reusando datos/endpoints existentes. Primero cierra el fix §2 de los buckets (021); luego esto.
+(Parte 3), sector/rol capturado + backfill sin pérdida (Parte 4), la deduplicación (Parte 5), y los **gráficos ligeros
+con guard §2** (Parte 6: embudo, dona 0-LLM, tendencias, barras de demanda/fuga — sin librerías pesadas, sin visuales
+engañosos con muestra chica) — todo tras `auth.php`, sin fuga, reusando datos/endpoints existentes. Primero cierra la
+021; luego esto.
