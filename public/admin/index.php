@@ -6,6 +6,11 @@
 require_once __DIR__ . '/auth.php';
 requireAuth();
 
+// Cabeceras Anti-Caché para panel admin
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 $csrf = generateCsrfToken();
 ?>
 <!DOCTYPE html>
@@ -179,6 +184,8 @@ $csrf = generateCsrfToken();
                         <tbody id="detected-leads-body"></tbody>
                     </table>
                 </div>
+            </div>
+
             <!-- Sub-View: Agenda Global de Citas (Spec 015 / Spec 023 Parte 3) -->
             <div id="leads-content-agenda" style="display:none;">
                 <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.8);line-height:1.4;">
@@ -409,6 +416,25 @@ $csrf = generateCsrfToken();
                 </div>
 
             </div>
+
+            <!-- Estado del Sistema & Gobernanza -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-top:1.5rem;margin-bottom:1.5rem;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">🖥️ Estado del Sistema & Gobernanza</h3>
+                <div id="ops-system-info"></div>
+            </div>
+
+            <!-- Portafolio de Specs (SSOT Antidrift) -->
+            <div style="background:#12121a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <h3 style="font-size:1rem;color:#fff;margin-bottom:1rem;">📜 Gobernanza de Especificaciones (SSOT Antidrift)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Estado</th><th>Fase</th><th>Deuda Técnica Abierta</th><th>Última Auditoría</th></tr>
+                        </thead>
+                        <tbody id="ops-specs-body"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- View: Engagement & Comportamiento (Spec 018) -->
@@ -508,7 +534,6 @@ $csrf = generateCsrfToken();
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- View: Demanda & Journey -->
     <div id="view-demand" style="display:none; padding:1.5rem;">
@@ -647,6 +672,11 @@ $csrf = generateCsrfToken();
         const data = await res.json();
         if (data.csrf_token) currentCsrf = data.csrf_token;
         return data;
+    }
+
+    function getIncludeDemoFlag() {
+        const t = document.getElementById('journey-demo-toggle');
+        return (t && t.checked) ? 1 : 0;
     }
 
     async function loadStats() {
@@ -888,31 +918,38 @@ $csrf = generateCsrfToken();
     }
 
     async function loadAgenda() {
-        const data = await api('agenda', { include_demo: getIncludeDemoFlag() });
         const tbody = document.getElementById('agenda-body');
-        if (!data.appointments || data.appointments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#888;">No hay citas o diagnósticos agendados.</td></tr>';
-            return;
-        }
+        if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#22d3ee;">⌛ Cargando agenda de citas...</td></tr>';
+        try {
+            const data = await api('agenda', { include_demo: getIncludeDemoFlag() });
+            if (!tbody) return;
+            if (!data.appointments || data.appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#888;">No hay citas o diagnósticos agendados.</td></tr>';
+                return;
+            }
 
-        tbody.innerHTML = data.appointments.map(a => `
-            <tr>
-                <td style="font-size:0.8rem;color:#22d3ee;font-weight:600;">${esc(a.requested_date)}</td>
-                <td>
-                    <div style="font-weight:600;color:#fff;">${esc(a.nombre || 'Cliente Cita')}</div>
-                    <div style="font-size:0.75rem;color:#888;">${esc(a.email)} ${a.telefono ? '• ' + esc(a.telefono) : ''}</div>
-                </td>
-                <td>${esc(a.organizacion || 'Individual')}</td>
-                <td style="font-size:0.75rem;color:#aaa;">${esc(a.sector || 'general')} • ${esc(a.rol || 'lider')}</td>
-                <td><span style="background:rgba(139,92,246,0.15);color:#a78bfa;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;">${esc(a.service_type)}</span></td>
-                <td>${a.duration_minutes || 30} min</td>
-                <td><span class="status-badge status-${a.status}">${esc(a.status)}</span></td>
-                <td>
-                    ${a.status === 'solicitada' ? `<button class="btn-detail" style="background:#22c55e;color:#000;font-weight:700;margin-right:0.3rem;" onclick="updateAppointmentStatus(${a.appointment_id}, 'confirmada')">Confirmar</button>` : ''}
-                    ${a.status !== 'cancelada' ? `<button class="btn-detail" style="background:rgba(239,68,68,0.2);color:#ef4444;" onclick="updateAppointmentStatus(${a.appointment_id}, 'cancelada')">Cancelar</button>` : ''}
-                </td>
-            </tr>
-        `).join('');
+            tbody.innerHTML = data.appointments.map(a => `
+                <tr>
+                    <td style="font-size:0.8rem;color:#22d3ee;font-weight:600;">${esc(a.requested_date || '')}</td>
+                    <td>
+                        <div style="font-weight:600;color:#fff;">${esc(a.nombre || 'Cliente Cita')}</div>
+                        <div style="font-size:0.75rem;color:#888;">${esc(a.email || '')} ${a.telefono ? '• ' + esc(a.telefono) : ''}</div>
+                    </td>
+                    <td>${esc(a.organizacion || 'Individual')}</td>
+                    <td style="font-size:0.75rem;color:#aaa;">${esc(a.sector || 'general')} • ${esc(a.rol || 'lider')}</td>
+                    <td><span style="background:rgba(139,92,246,0.15);color:#a78bfa;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;">${esc(a.service_type || 'diagnostico')}</span></td>
+                    <td>${a.duration_minutes || 30} min</td>
+                    <td><span class="status-badge status-${a.status || 'solicitada'}">${esc(a.status || 'solicitada')}</span></td>
+                    <td>
+                        ${a.status === 'solicitada' ? `<button class="btn-detail" style="background:#22c55e;color:#000;font-weight:700;margin-right:0.3rem;" onclick="updateAppointmentStatus(${a.appointment_id}, 'confirmada')">Confirmar</button>` : ''}
+                        ${a.status !== 'cancelada' ? `<button class="btn-detail" style="background:rgba(239,68,68,0.2);color:#ef4444;" onclick="updateAppointmentStatus(${a.appointment_id}, 'cancelada')">Cancelar</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error('Error al cargar la agenda de citas:', err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#ef4444;">⚠️ Error al obtener la agenda de citas.</td></tr>';
+        }
     }
 
     async function updateAppointmentStatus(appointmentId, newStatus) {
@@ -980,72 +1017,80 @@ $csrf = generateCsrfToken();
         // KPIs
         const sla = telemetry.sla_global || {};
         const sys = telemetry.system_info || {};
-        document.getElementById('ops-kpi-grid').innerHTML = `
+        setHTML('ops-kpi-grid', `
             <div class="stat-card"><div class="value">${sla.sla_success_rate_pct || 100}%</div><div class="label">SLA Éxito Global (30d)</div></div>
             <div class="stat-card"><div class="value">${sla.avg_latency_ms || 0} ms</div><div class="label">Latencia Promedio Global</div></div>
             <div class="stat-card"><div class="value">${sla.total_requests || 0}</div><div class="label">Invocaciones Totales (30d)</div></div>
             <div class="stat-card"><div class="value" style="color:#22c55e;">${sys.status || 'HEALTHY'}</div><div class="label">Estado Subdominio (63 págs)</div></div>
-        `;
+        `);
 
         // Telemetría de Proveedores LLM
         const providersBody = document.getElementById('ops-providers-body');
-        if (telemetry.providers && telemetry.providers.length > 0) {
-            providersBody.innerHTML = telemetry.providers.map(p => {
-                const p50Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p50_latency_ms} ms`;
-                const p95Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p95_latency_ms} ms`;
-                return `<tr>
-                    <td><strong style="color:#22d3ee;">${esc(p.backend_used)}</strong></td>
-                    <td>${p.total_calls}</td>
-                    <td>${p.success_pct}%</td>
-                    <td>${p.avg_latency_ms} ms</td>
-                    <td>${p50Text}</td>
-                    <td>${p95Text}</td>
-                </tr>`;
-            }).join('');
-        } else {
-            providersBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Sin datos de peticiones en los últimos 30 días</td></tr>';
+        if (providersBody) {
+            if (telemetry.providers && telemetry.providers.length > 0) {
+                providersBody.innerHTML = telemetry.providers.map(p => {
+                    const p50Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p50_latency_ms} ms`;
+                    const p95Text = p.insufficient_data ? '<span style="color:#f59e0b;font-size:0.75rem;">Muestra escasa (&lt;10)</span>' : `${p.p95_latency_ms} ms`;
+                    return `<tr>
+                        <td><strong style="color:#22d3ee;">${esc(p.backend_used)}</strong></td>
+                        <td>${p.total_calls}</td>
+                        <td>${p.success_pct}%</td>
+                        <td>${p.avg_latency_ms} ms</td>
+                        <td>${p50Text}</td>
+                        <td>${p95Text}</td>
+                    </tr>`;
+                }).join('');
+            } else {
+                providersBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Sin datos de peticiones en los últimos 30 días</td></tr>';
+            }
         }
 
         // Estado del Sistema
-        document.getElementById('ops-system-info').innerHTML = `
+        setHTML('ops-system-info', `
             <div style="font-size:0.85rem;color:#ccc;"><strong>Último Build Estático:</strong> <span style="color:#22d3ee;">${esc(sys.last_build)}</span></div>
             <div style="font-size:0.85rem;color:#ccc;"><strong>Páginas Estáticas Compiladas:</strong> ${sys.static_pages} páginas HTML5</div>
             <div style="font-size:0.85rem;color:#ccc;"><strong>Especificaciones Verificadas (SSOT):</strong> ${sys.total_specs} specs</div>
             <div style="font-size:0.85rem;color:#ccc;"><strong>Subdominio Producción IONOS:</strong> <code>https://${esc(sys.subdomain)}/</code> (200 OK)</div>
             <div style="font-size:0.85rem;color:#22c55e;margin-top:0.5rem;font-weight:600;">✓ Protección .htaccess activa | IP Dynamic Auth Password-Only</div>
-        `;
+        `);
 
         // Portafolio de Specs (SSOT)
         const specsBody = document.getElementById('ops-specs-body');
-        if (specsData.specs && specsData.specs.length > 0) {
-            specsBody.innerHTML = specsData.specs.map(s => {
-                let badgeColor = '#22c55e';
-                if (s.status === 'DESIGNED' || s.status === 'IN_PROGRESS') badgeColor = '#f59e0b';
-                if (s.status === 'SUPERSEDED' || s.status === 'ARCHIVED') badgeColor = '#ef4444';
-                return `<tr>
-                    <td><strong>${esc(s.id)}</strong></td>
-                    <td style="color:#fff;">${esc(s.name)}</td>
-                    <td><span style="background:${badgeColor}22;color:${badgeColor};border:1px solid ${badgeColor};padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">${esc(s.status)}</span></td>
-                    <td style="font-size:0.8rem;color:#aaa;">${esc(s.phase)}</td>
-                    <td style="font-size:0.8rem;color:#888;">${esc(s.openTechDebt || 'Ninguna')}</td>
-                    <td style="font-size:0.75rem;color:#666;">${esc(s.lastAuditDate)}</td>
-                </tr>`;
-            }).join('');
-        } else {
-            specsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">No se pudo cargar el archivo SSOT specsStatus.json</td></tr>';
+        if (specsBody) {
+            let specsData = { specs: [] };
+            try { specsData = await api('ops_specs_status'); } catch (e) { specsData = { specs: [] }; }
+            if (specsData.specs && specsData.specs.length > 0) {
+                specsBody.innerHTML = specsData.specs.map(s => {
+                    let badgeColor = '#22c55e';
+                    if (s.status === 'DESIGNED' || s.status === 'IN_PROGRESS') badgeColor = '#f59e0b';
+                    if (s.status === 'SUPERSEDED' || s.status === 'ARCHIVED') badgeColor = '#ef4444';
+                    return `<tr>
+                        <td><strong>${esc(s.id)}</strong></td>
+                        <td style="color:#fff;">${esc(s.name)}</td>
+                        <td><span style="background:${badgeColor}22;color:${badgeColor};border:1px solid ${badgeColor};padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;">${esc(s.status)}</span></td>
+                        <td style="font-size:0.8rem;color:#aaa;">${esc(s.phase)}</td>
+                        <td style="font-size:0.8rem;color:#888;">${esc(s.openTechDebt || 'Ninguna')}</td>
+                        <td style="font-size:0.75rem;color:#666;">${esc(s.lastAuditDate)}</td>
+                    </tr>`;
+                }).join('');
+            } else {
+                specsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">No se pudo cargar el archivo SSOT specsStatus.json</td></tr>';
+            }
         }
 
         // Tendencia Diaria 7d
         const trendBody = document.getElementById('ops-trend-body');
-        if (telemetry.daily_trend && telemetry.daily_trend.length > 0) {
-            trendBody.innerHTML = telemetry.daily_trend.map(t => `<tr>
-                <td>${esc(t.date_day)}</td>
-                <td>${t.daily_calls}</td>
-                <td>${t.avg_latency_ms} ms</td>
-                <td style="color:${t.errors_count > 0 ? '#ef4444' : '#22c55e'};">${t.errors_count}</td>
-            </tr>`).join('');
-        } else {
-            trendBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">Sin registros de actividad en los últimos 7 días</td></tr>';
+        if (trendBody) {
+            if (telemetry.daily_trend && telemetry.daily_trend.length > 0) {
+                trendBody.innerHTML = telemetry.daily_trend.map(t => `<tr>
+                    <td>${esc(t.date_day)}</td>
+                    <td>${t.daily_calls}</td>
+                    <td>${t.avg_latency_ms} ms</td>
+                    <td style="color:${t.errors_count > 0 ? '#ef4444' : '#22c55e'};">${t.errors_count}</td>
+                </tr>`).join('');
+            } else {
+                trendBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">Sin registros de actividad en los últimos 7 días</td></tr>';
+            }
         }
 
         // Spec 021: Load SQLite alerts and token usage breakdown
@@ -1306,6 +1351,7 @@ $csrf = generateCsrfToken();
     }
 
     function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function setHTML(id, html) { const el = document.getElementById(id); if (el) { el.innerHTML = html; return true; } return false; }
 
     async function openDetail(id) {
         const data = await api('lead_detail', { id });
@@ -1614,38 +1660,6 @@ $csrf = generateCsrfToken();
 
         } catch (err) {
             timeline.innerHTML = `<div style="color:#f87171;font-size:0.8rem;">Error al cargar el journey: ${esc(err.message)}</div>`;
-        }
-    }
-
-    // Spec 021: Sub-Navegación de Leads Detectados
-    function switchLeadsSubTab(subtab) {
-        const crmTab = document.getElementById('leads-subtab-crm');
-        const detTab = document.getElementById('leads-subtab-detected');
-        const crmContent = document.getElementById('leads-content-crm');
-        const detContent = document.getElementById('leads-content-detected');
-
-        if (subtab === 'detected') {
-            crmTab.style.background = 'rgba(255,255,255,0.05)';
-            crmTab.style.color = '#fff';
-            crmTab.style.fontWeight = 'normal';
-            detTab.style.background = '#22d3ee';
-            detTab.style.color = '#000';
-            detTab.style.fontWeight = '700';
-
-            crmContent.style.display = 'none';
-            detContent.style.display = 'block';
-            loadDetectedLeads();
-        } else {
-            crmTab.style.background = '#22d3ee';
-            crmTab.style.color = '#000';
-            crmTab.style.fontWeight = '700';
-            detTab.style.background = 'rgba(255,255,255,0.05)';
-            detTab.style.color = '#fff';
-            detTab.style.fontWeight = 'normal';
-
-            crmContent.style.display = 'block';
-            detContent.style.display = 'none';
-            loadLeads(currentPage);
         }
     }
 
