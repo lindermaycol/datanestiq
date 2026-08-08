@@ -2,7 +2,12 @@
 
 **Tarea de DISEÑO, NO implementación.** Escribe los artefactos de la **Spec 023** (`specs/023-panel-negocio/`): 5
 bloques + `data-model.md` + `plan.md` + `tech_debt.md`. **Entrégalos para auditoría de Claude ANTES de construir.** Cero
-runtime. **Depende** de cerrar el fix §2 de los buckets (021) primero; coordina con la 022 (file-free) para no chocar.
+runtime. La **021 ya está cerrada y verificada en vivo**. **Coordinación con la 022 (file-free):** diseña **primero la
+022 y luego la 023 en la misma sesión**, con **una sola actualización consistente** de `ESTADO-SPECS.md` /
+`specsStatus.json` / `Fases.md` que incluya **ambas filas** (022 y 023), para no romper el build-gate antidrift.
+Mantén carpetas/artefactos **separados** (`specs/022-file-free/` y `specs/023-panel-negocio/`). La 023 **consume** datos
+que la 022 unifica (`usage_daily`/`conversations`/`leads_extracted`), así que el **BUILD será secuencial: 022 → 023**
+(ambas tocan `admin/api.php`/`index.php`). No arranques runtime hasta la auditoría de Claude de ambos diseños.
 
 ## WHY
 Reauditoría en vivo del panel (Claude, pestaña por pestaña) con la lente **"el panel es de NEGOCIO, no backend"**.
