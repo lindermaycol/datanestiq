@@ -1,0 +1,421 @@
+[
+  {
+    "id": "ai-data-science",
+    "name": "Inteligencia Artificial & Data Science",
+    "slug": "ai-data-science",
+    "maturityStage": "Predictivo / Prescriptivo",
+    "standards": [
+      "CRISP-DM",
+      "MLOps"
+    ],
+    "targetRoles": [
+      "CDO",
+      "CTO",
+      "Director de Innovación"
+    ],
+    "skills": [
+      "Modelado Predictivo",
+      "Arquitectura Cognitiva"
+    ],
+    "seo": {
+      "title": "Consultoría IA y Data Science B2B | Datanestiq",
+      "description": "Desplegamos arquitecturas cognitivas y predictivas que transforman sus pasivos de datos en activos financieros cuantificables."
+    },
+    "hero": {
+      "headline": "Transforme Terabytes en Ventaja Asimétrica",
+      "subheadline": "Desplegamos sistemas cognitivos y arquitecturas GenAI privadas que elevan el margen de su corporación de manera drástica y medible."
+    },
+    "contrast": {
+      "problem": "El directorio toma decisiones a ciegas, basándose en la intuición y en reportes forenses sobre eventos que ya sucedieron.",
+      "solution": "Predicción de mercado y previsión de demanda en tiempo real. Algoritmos que le dicen a su equipo comercial exactamente dónde ganar hoy."
+    },
+    "features": [
+      "Machine Learning y LLMOps",
+      "Arquitecturas RAG Corporativas",
+      "Sistemas Multi-Agente B2B"
+    ],
+    "keywords": [
+      "machine learning",
+      "LLM",
+      "predicción",
+      "RAG",
+      "IA",
+      "inteligencia artificial",
+      "modelos",
+      "deep learning",
+      "agentes",
+      "LLMOps",
+      "predicción de demanda",
+      "reducción de costos operativos"
+    ],
+    "copilotPrompts": [
+      "Evaluar viabilidad y riesgo de implementar LLMs privados para análisis de contratos B2B.",
+      "Simular impacto financiero de un agente autónomo en reducción de costos de soporte."
+    ],
+    "techStack": [
+      "Python",
+      "LangChain",
+      "LlamaIndex",
+      "PyTorch",
+      "AWS Bedrock / Azure OpenAI"
+    ],
+    "proofPoints": [
+      {
+        "client": "Ministerio de Finanzas",
+        "result": "[EST] 40% mejora en detección de anomalías fiscales"
+      },
+      {
+        "client": "Banco Nacional",
+        "result": "[EST] Reducción de 20 días a 4 horas en cierres contables"
+      }
+    ],
+    "competitivePositioning": "A diferencia de Oracle o IBM que imponen licencias cautivas y lock-in de nube, Datanestiq despliega arquitecturas agnósticas (open-source LLMs y MLOps) garantizando soberanía total del dato y menores costos recurrentes."
+  },
+  {
+    "id": "business-intelligence",
+    "name": "Análisis de Datos, BI & Dashboards",
+    "slug": "business-intelligence",
+    "maturityStage": "Descriptivo / Diagnóstico",
+    "standards": [
+      "DAMA-DMBOK: Data Warehousing & Business Intelligence"
+    ],
+    "targetRoles": [
+      "CEO",
+      "CFO",
+      "Director Comercial"
+    ],
+    "skills": [
+      "Visualización de Datos",
+      "Minería de Procesos"
+    ],
+    "seo": {
+      "title": "Business Intelligence y Dashboards Ejecutivos | Datanestiq",
+      "description": "Visibilidad ejecutiva sin precedentes. Dashboards de alta densidad y minería de procesos para directorios exigentes."
+    },
+    "hero": {
+      "headline": "Decisiones Críticas Respaldadas por Certeza",
+      "subheadline": "Diseñamos centros de comando analíticos (Dashboards) de alto impacto visual que exponen el rendimiento financiero y operativo en milisegundos."
+    },
+    "contrast": {
+      "problem": "Ejecutivos dependientes de hojas de cálculo estáticas que tardan semanas en consolidarse, llegando demasiado tarde para corregir el rumbo.",
+      "solution": "Inteligencia de negocios en tiempo real: KPIs conectados directamente a las fuentes de verdad corporativas, sin intermediarios."
+    },
+    "features": [
+      "Dashboards Ejecutivos de Alta Densidad (Power BI, Tableau, Looker)",
+      "Minería de Procesos (Process Mining)",
+      "Monitoreo en Tiempo Real de KPIs/OKRs Estratégicos"
+    ],
+    "keywords": [
+      "dashboards",
+      "BI",
+      "power bi",
+      "tableau",
+      "reportes",
+      "KPIs",
+      "analítica",
+      "process mining",
+      "inteligencia de negocios",
+      "visualización",
+      "decisiones en tiempo real",
+      "visibilidad ejecutiva"
+    ],
+    "copilotPrompts": [
+      "Proyectar rendimiento de KPIs operativos del Q3 ante reducción de plantilla del 10%.",
+      "Generar reporte de Process Mining para auditar fugas de capital en adquisiciones corporativas."
+    ],
+    "techStack": [
+      "Power BI",
+      "Tableau",
+      "Looker",
+      "dbt"
+    ],
+    "proofPoints": [
+      {
+        "client": "Cadena de Retail Top 5",
+        "result": "[EST] 30% ahorro en horas-hombre para reportes"
+      },
+      {
+        "client": "Empresa Logística Internacional",
+        "result": "[EST] Visibilidad 100% en tiempo real de márgenes operativos"
+      }
+    ],
+    "competitivePositioning": "Implementamos Dashboards Self-Service con integración nativa a Lakehouses, liberando a las empresas de licenciamientos cautivos y pesados de BI tradicional (SAP, Oracle)."
+  },
+  {
+    "id": "data-engineering",
+    "name": "Ingeniería & Arquitectura de Datos",
+    "slug": "data-engineering",
+    "maturityStage": "Fundacional / Descriptivo",
+    "standards": [
+      "DAMA-DMBOK: Data Architecture",
+      "Data Integration & Interoperability",
+      "Data Modeling"
+    ],
+    "targetRoles": [
+      "CTO",
+      "CDO",
+      "Arquitecto de Datos"
+    ],
+    "skills": [
+      "Orquestación de Datos",
+      "Arquitectura Cloud"
+    ],
+    "seo": {
+      "title": "Ingeniería de Datos y Modern Data Stack | Datanestiq",
+      "description": "Arquitecturas de alta disponibilidad, pipelines ETL/ELT y Data Lakes diseñados para unificar su conocimiento corporativo."
+    },
+    "hero": {
+      "headline": "El Cimiento de su Dominio Digital",
+      "subheadline": "Ingeniería de datos implacable: erradicamos silos y orquestamos pipelines distribuidos de alta disponibilidad para un gobierno de datos absoluto."
+    },
+    "contrast": {
+      "problem": "Silos de datos fragmentados en sistemas Legacy, alta latencia en la generación de valor y un costo de infraestructura desbordado.",
+      "solution": "Un único tejido de verdad: Data Lakes hiper-escalables y pipelines sin fricción que democratizan la información a toda la organización."
+    },
+    "features": [
+      "Migración Cloud y Modern Data Stack",
+      "Pipelines ETL/ELT Escalables",
+      "Data Observability & Governance"
+    ],
+    "keywords": [
+      "pipeline",
+      "ETL",
+      "lakehouse",
+      "data lake",
+      "data warehouse",
+      "gobierno de datos",
+      "migración cloud",
+      "arquitectura medallion",
+      "observabilidad",
+      "data products",
+      "ELT",
+      "integración de datos"
+    ],
+    "copilotPrompts": [
+      "Diagnosticar cuellos de botella y latencia en nuestro pipeline de datos actual on-premise.",
+      "Diseñar roadmap de migración hacia Arquitectura Medallion (Bronze/Silver/Gold) en cloud."
+    ],
+    "techStack": [
+      "Snowflake",
+      "Databricks",
+      "Apache Spark",
+      "Kafka",
+      "Iceberg"
+    ],
+    "proofPoints": [
+      {
+        "client": "Banco Regional",
+        "result": "[EST] 10x velocidad en pipelines de datos nocturnos"
+      }
+    ],
+    "competitivePositioning": "Construimos Arquitecturas Lakehouse con open-formats (Apache Iceberg, Delta) que previenen el vendor lock-in a diferencia de ecosistemas cerrados y costosos de legacy data warehouses."
+  },
+  {
+    "id": "estrategia-datos-ia",
+    "name": "Consultoría Estratégica en Datos & IA",
+    "slug": "estrategia-datos-ia",
+    "maturityStage": "Estratégico (Governance)",
+    "standards": [
+      "DAMA-DMBOK: Data Governance",
+      "Data Quality",
+      "Data Security & Privacy"
+    ],
+    "targetRoles": [
+      "CEO",
+      "Directorio",
+      "CDO"
+    ],
+    "skills": [
+      "Gobernanza de Datos",
+      "Gestión de Riesgos Tecnológicos"
+    ],
+    "seo": {
+      "title": "Consultoría Estratégica en IA y Datos para C-Level | Datanestiq",
+      "description": "Auditorías de madurez, roadmaps de ROI acelerado y gobernanza para liderar la adopción corporativa de Inteligencia Artificial."
+    },
+    "hero": {
+      "headline": "El Roadmap Seguro Hacia el ROI Asimétrico",
+      "subheadline": "Guiamos a su Directorio a través de la disrupción tecnológica. Diseñamos la estrategia para adoptar IA mitigando riesgos financieros y regulatorios."
+    },
+    "contrast": {
+      "problem": "Inversiones millonarias en proyectos de IA desconectados, carentes de gobierno de datos y sin un caso de negocio claro (Proof of Concept purgatory).",
+      "solution": "Auditoría de madurez rigurosa y un roadmap estratégico priorizado que garantiza que cada dólar invertido tenga una trazabilidad directa hacia el P&L."
+    },
+    "features": [
+      "Auditoría Integral de Madurez de Datos e IA",
+      "Roadmaps Estratégicos y Priorización de Casos de Uso de Alto ROI",
+      "CTO as a Service y Asesoramiento Arquitectónico Experto"
+    ],
+    "keywords": [
+      "consultoría",
+      "CTO",
+      "estrategia",
+      "auditoría",
+      "roadmap",
+      "madurez de datos",
+      "gobierno de IA",
+      "riesgos",
+      "ROI",
+      "cumplimiento normativo",
+      "gobierno de datos"
+    ],
+    "copilotPrompts": [
+      "Priorizar matriz de casos de uso de IA generativa con mayor viabilidad y ROI acelerado.",
+      "Estructurar marco de gobernanza y gestión de riesgos éticos para modelos algorítmicos (AI Governance)."
+    ],
+    "techStack": [
+      "Frameworks DAMA-DMBOK",
+      "Metodologías Ágiles",
+      "Data Mesh",
+      "Databricks / Snowflake (Lakehouse Architecture)",
+      "Catálogo de Datos (Data Catalog / Metadata Catalog)",
+      "Gobierno de Metadatos y Data Stewardship",
+      "dbt / Airflow / Prefect",
+      "Calidad de Datos e Interoperabilidad",
+      "Terraform (Infraestructura como Código)"
+    ],
+    "proofPoints": [
+      {
+        "client": "Gobierno Regional",
+        "result": "[EST] 100% de cumplimiento en normativas de transparencia en menos de un año"
+      }
+    ],
+    "competitivePositioning": "Alineación de iniciativas de datos con objetivos de negocio mediante un marco de gobernanza sólido, garantizando la trazabilidad, calidad, un catálogo de datos centralizado y la democratización segura de la información en toda la organización."
+  },
+  {
+    "id": "hiperautomatizacion",
+    "name": "Hiperautomatización Inteligente",
+    "slug": "hiperautomatizacion",
+    "maturityStage": "Prescriptivo (Automatización)",
+    "standards": [
+      "BPM",
+      "IPA"
+    ],
+    "targetRoles": [
+      "COO",
+      "CFO",
+      "Gerente de Operaciones"
+    ],
+    "skills": [
+      "Automatización de Procesos",
+      "Eficiencia Operativa"
+    ],
+    "seo": {
+      "title": "Hiperautomatización RPA + IA para Empresas | Datanestiq",
+      "description": "Orquestamos RPA, IDP y ecosistemas API para ejecutar procesos críticos sin fricción, incrementando su ROI operativo."
+    },
+    "hero": {
+      "headline": "Erradique la Fricción Operativa a Escala",
+      "subheadline": "Sustituya las ineficiencias de su back-office por flujos de trabajo autónomos. Orquestamos RPA e IA cognitiva para ejecutar con precisión milimétrica."
+    },
+    "contrast": {
+      "problem": "Cientos de horas-hombre desperdiciadas en procesos manuales que frenan el crecimiento y generan pasivos ocultos por errores humanos.",
+      "solution": "Fuerza laboral digital 24/7. Agentes cognitivos y RPA que ejecutan, validan y cierran procesos core sin margen de error."
+    },
+    "features": [
+      "Hiperautomatización de Procesos Core (RPA + Cognitive AI)",
+      "Procesamiento Inteligente de Documentos (IDP / OCR Avanzado)",
+      "Orquestación Serverless e Integración de Ecosistemas API"
+    ],
+    "keywords": [
+      "RPA",
+      "automatización",
+      "bots",
+      "procesos",
+      "OCR",
+      "IDP",
+      "serverless",
+      "flujos de trabajo",
+      "hiperautomatización",
+      "reducción de costos",
+      "cero errores manuales"
+    ],
+    "copilotPrompts": [
+      "Calcular ROI a 12 meses de hiperautomatizar la conciliación bancaria y revisión de facturas (IDP).",
+      "Identificar procesos back-office de alta fricción idóneos para automatización cognitiva y RPA."
+    ],
+    "techStack": [
+      "UiPath",
+      "Automation Anywhere",
+      "Python RPA",
+      "Document AI",
+      "Cloud / Híbrido / On-Premise"
+    ],
+    "proofPoints": [
+      {
+        "client": "Aseguradora Multinacional",
+        "result": "[EST] 70% de tareas repetitivas en back-office automatizadas"
+      }
+    ],
+    "competitivePositioning": "No implementamos scripts frágiles de RPA que se rompen con cada actualización; usamos Inteligencia Artificial (IDP y LLMs) para crear automatización cognitiva que maneja excepciones. Soportamos arquitecturas Cloud, Híbrido y despliegues 100% On-Premise."
+  },
+  {
+    "id": "sistemas-digitales",
+    "name": "Desarrollo de Sistemas Digitales Premium",
+    "slug": "sistemas-digitales",
+    "maturityStage": "Fundacional (Plataformas)",
+    "standards": [
+      "TOGAF",
+      "Arquitecturas Headless/Microservicios"
+    ],
+    "targetRoles": [
+      "CTO",
+      "CIO",
+      "Director de Producto"
+    ],
+    "skills": [
+      "Desarrollo Full-Stack",
+      "Arquitectura de Software"
+    ],
+    "seo": {
+      "title": "Desarrollo de Software y Plataformas AI-First | Datanestiq",
+      "description": "Plataformas B2B y sistemas core de misión crítica, concebidos desde su génesis con capacidades cognitivas integradas."
+    },
+    "hero": {
+      "headline": "Plataformas Corporativas Diseñadas para Dominar",
+      "subheadline": "Sistemas digitales AI-First de clase mundial. Construimos plataformas empresariales escalables con interfaces ultra-optimizadas para el usuario ejecutivo."
+    },
+    "contrast": {
+      "problem": "Dependencia en software legado o genérico que obliga a su corporación a adaptar sus procesos a las limitaciones de la herramienta.",
+      "solution": "Arquitecturas a medida, headless y modulares. Sistemas que se moldean perfectamente a la velocidad y complejidad de su modelo de negocio."
+    },
+    "features": [
+      "Desarrollo de Sistemas a Medida y Plataformas Corporativas AI-First",
+      "Aplicaciones Web y Portales B2B de Alta Conversión",
+      "Arquitecturas Headless, Microservicios y Sistemas Modulares"
+    ],
+    "keywords": [
+      "desarrollo web",
+      "sistemas",
+      "apps",
+      "headless",
+      "microservicios",
+      "plataformas corporativas",
+      "AI-first",
+      "portales B2B",
+      "frontend",
+      "sistemas core",
+      "escalabilidad B2B"
+    ],
+    "copilotPrompts": [
+      "Evaluar transición técnica de portal Legacy monolítico hacia microservicios Headless.",
+      "Definir roadmap para inyectar capacidades AI-first nativas en nuestra app web B2B actual."
+    ],
+    "techStack": [
+      "React / Vue.js / Astro (Micro-frontends)",
+      "Node.js / Python / Go",
+      "Despliegue Multi-Cloud, Híbrido y On-Premise",
+      "Nube Privada Segura (VPC) y Soberanía de Datos",
+      "PostgreSQL / MongoDB / Redis",
+      "Docker / Kubernetes",
+      "Patrones de Integración con Legacy / ERP / Core"
+    ],
+    "proofPoints": [
+      {
+        "client": "Startup Fintech",
+        "result": "[EST] 50% de mejora en el Time-To-Market de su aplicación core"
+      }
+    ],
+    "competitivePositioning": "Enfoque en arquitectura escalable, integraciones seguras con sistemas legacy sin disrupción, garantías de uptime de grado empresarial (SLA 99.9%) y control predictivo del TCO."
+  }
+]

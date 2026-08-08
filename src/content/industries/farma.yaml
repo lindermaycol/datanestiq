@@ -1,0 +1,13 @@
+id: industry-farma
+title: Farmacéutica y Life Sciences
+ciiu: '21'
+keywords:
+  - farmacéutica
+  - farma
+  - life sciences
+  - laboratorios
+  - medicamentos
+  - investigación clínica
+relatedPillars:
+  - data-engineering
+  - ai-data-science

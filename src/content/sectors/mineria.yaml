@@ -1,0 +1,80 @@
+id: sector-mineria
+title: Minería
+description: >-
+  Mantenimiento predictivo de maquinaria pesada, optimización de extracción y
+  seguridad laboral predictiva.
+icon: ph-mountains
+ciiu: '07'
+keywords:
+  - minería
+  - extracción
+  - maquinaria
+  - IoT
+  - mantenimiento predictivo
+  - seguridad
+  - OEE
+  - cero downtime
+  - gemelos digitales
+  - analítica de sensores
+seo:
+  title: IA e IoT Analytics para el Sector Minero | Datanestiq
+  description: >-
+    Despliegue de mantenimiento predictivo (IoT) y analítica de seguridad para
+    maximizar la rentabilidad de las operaciones mineras.
+hero:
+  headline: Máxima Rentabilidad Operativa y Cero Downtime
+  subheadline: >-
+    Analítica de sensores IoT e IA para predecir fallas catastróficas, optimizar
+    el rendimiento de activos pesados y resguardar vidas.
+contrast:
+  problem: >-
+    Mantenimiento correctivo costoso, fallas inesperadas de maquinaria crítica e
+    incidentes de seguridad laboral no anticipados.
+  solution: >-
+    Mantenimiento predictivo algorítmico que detecta anomalías antes de la falla
+    y visión computacional para asegurar el perímetro operativo.
+problems:
+  - code: mantenimiento
+    label: Downtime inesperado de maquinaria
+    solution: >-
+      Desplegamos modelos de mantenimiento predictivo IoT que anticipan fallas
+      en maquinaria pesada, reduciendo drásticamente el downtime.
+  - code: seguridad
+    label: Riesgos de seguridad y accidentes
+    solution: >-
+      Sistemas de visión computacional y analítica de sensores en tiempo real
+      para alertar sobre condiciones de riesgo y proteger la integridad del
+      personal operativo.
+slug: mineria
+subSectors:
+  - Extracción
+  - Procesamiento de Minerales
+kpis:
+  - metric: "Reducción de incidentes de seguridad laboral"
+    expectedRoi: "[EST] -30% a -40% mediante visión computacional"
+  - metric: "Aumento de disponibilidad de maquinaria (OEE)"
+    expectedRoi: "[EST] +10% a +15%"
+  - metric: "Reducción de paradas no programadas (Downtime)"
+    expectedRoi: "[EST] -20% a -25%"
+  - metric: "Payback de proyectos IoT predictivos"
+    expectedRoi: "[EST] 6 a 9 meses en activos críticos"
+regulations:
+  - Normas Mineras Nacionales
+  - Estándares ESG
+  - Regulaciones Ambientales
+relevantPersonas:
+  - coo
+  - cfo
+  - ceo
+roleEquivalents:
+  cio: "Gerente / Jefe de TI y Sistemas"
+  cto: "Gerente de Automatización e Ingeniería Mina"
+  cdo: "Jefe de Analítica y Sistemas de Información"
+  coo: "Gerente de Operaciones Mineras"
+  ciso: "Jefe de Seguridad de la Información y Control"
+contentAngles:
+  - id: gemelos-digitales-mineria
+    title: Gemelos Digitales en la Minería
+    brief: >-
+      Artículo técnico-estratégico sobre cómo los Digital Twins y la simulación
+      optimizan la extracción y elevan la seguridad en minas a tajo abierto.

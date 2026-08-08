@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/ui/Navbar.astro';
+import Footer from '../components/ui/Footer.astro';
+import IllustrativeRoiCase from '../components/ui/IllustrativeRoiCase.astro';
+import sectorsCorpus from '../data/sectorsCorpus.json';
+
+// Taxonomía = Única Fuente de Verdad (SSOT)
+// Extraer todos los roiCases de la taxonomía con su sector correspondiente
+const allRoiCases = sectorsCorpus.flatMap((sector: any) => 
+  (sector.roiCases || []).map((rc: any) => ({
+    ...rc,
+    sectorTitle: sector.title,
+    sectorSlug: sector.slug
+  }))
+);
+---
+
+<BaseLayout title="Casos de Éxito y ROI | Datanestiq" description="Escenarios ilustrativos de aplicación de Ingeniería de Datos e IA en el sector corporativo B2B.">
+  <Navbar />
+  
+  <main class="pt-32 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="text-center mb-16" data-animate="fade-up">
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
+        Impacto Cuantificable y<br/>
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
+          Escalabilidad Pura
+        </span>
+      </h1>
+      <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-300">
+        Descubra escenarios ilustrativos y arquitecturas de referencia sobre cómo nuestras soluciones de Datos e IA resuelven cuellos de botella empresariales y generan ventaja competitiva.
+      </p>
+      <div class="mt-6 inline-block bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-gray-300 max-w-3xl">
+        <i class="ph ph-info mr-2 text-brandCyan"></i>Escenarios <strong>ilustrativos</strong> del tipo de resultado que nuestras arquitecturas pueden habilitar. <strong>No representan clientes ni proyectos reales</strong>; las cifras son estimaciones de potencial <span class="text-brandCyan font-semibold">[EST]</span>, no resultados medidos.
+      </div>
+    </section>
+
+    {allRoiCases.length > 0 ? (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {allRoiCases.map((rc: any) => (
+          <IllustrativeRoiCase 
+            title={rc.title}
+            description={rc.description}
+            context={rc.context}
+            metrics={rc.metrics}
+            sectorTitle={rc.sectorTitle}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="text-center text-gray-400 py-12">No hay escenarios disponibles en este momento.</p>
+    )}
+    
+    <section class="mt-24 text-center" data-animate="fade-up">
+      <h2 class="text-3xl font-bold mb-6">Diseñemos juntos su próxima arquitectura de valor</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg">
+        Inicie un diagnóstico gratuito con nuestros especialistas para identificar las fugas de valor en su ecosistema de datos actual.
+      </p>
+      <button class="btn-primary text-lg" onclick="document.dispatchEvent(new CustomEvent('open-chatbot'))">Agendar Diagnóstico Gratuito</button>
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>

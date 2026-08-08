@@ -1,0 +1,206 @@
+---
+// Faq.astro
+---
+<section class="py-24 bg-surface" id="faq">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16" data-animate="fade-up" style="opacity: 0">
+      <h2 class="text-3xl md:text-5xl font-bold mb-4">Preguntas Frecuentes</h2>
+      <p class="text-gray-400 text-lg">Resolviendo las interrogantes comunes en implementaciones Enterprise.</p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- FAQ 1 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-1"
+          id="faq-btn-1"
+        >
+          <span class="text-lg font-semibold text-white">¿Cuál es el tiempo promedio de ROI en proyectos de IA?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-1" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-1"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            Diseñamos los proyectos para alcanzar un ROI positivo típicamente entre los 3 y 6 meses iniciales de despliegue, impulsado principalmente por la reducción drástica de tiempos operativos mediante RPA y la optimización de procesos basada en modelos predictivos.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-2"
+          id="faq-btn-2"
+        >
+          <span class="text-lg font-semibold text-white">¿Qué medidas de seguridad de datos implementan?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-2" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-2"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            Operamos bajo estricto cumplimiento normativo (GDPR, HIPAA, SOC 2). Toda arquitectura de datos se diseña con cifrado de extremo a extremo (E2EE), controles de acceso granulares (RBAC) y auditorías automatizadas para garantizar que su propiedad intelectual permanezca inviolable.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-3"
+          id="faq-btn-3"
+        >
+          <span class="text-lg font-semibold text-white">¿Podemos integrar estas soluciones con sistemas Legacy (antiguos)?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-3" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-3"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            Absolutamente. Nuestra área de Data Engineering se especializa en crear pipelines y middlewares tolerantes a fallos que extraen y modernizan datos desde sistemas monolíticos hacia arquitecturas Cloud modernas, sin interrumpir la operatividad actual de la empresa.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-4"
+          id="faq-btn-4"
+        >
+          <span class="text-lg font-semibold text-white">¿Cómo estructuran la inversión y los costos del proyecto?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-4" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-4"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            Trabajamos exclusivamente con modelos de precio fijo basados en el alcance del roadmap estratégico. No cobramos por horas, sino por el valor y el ROI proyectado. Una vez finalizada la auditoría inicial, entregamos un presupuesto transparente y cerrado.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-5"
+          id="faq-btn-5"
+        >
+          <span class="text-lg font-semibold text-white">¿Cuánto tiempo toma el onboarding y despliegue inicial?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-5" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-5"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            La fase de descubrimiento y auditoría de madurez (onboarding) dura entre 2 y 4 semanas. A partir de ahí, priorizamos los casos de uso con mayor impacto, ejecutando despliegues incrementales (MVPs) en ciclos de 6 a 8 semanas para asegurar tracción rápida.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="glass-card overflow-hidden" data-animate="fade-up" style="opacity: 0">
+        <button 
+          class="faq-button w-full text-left px-6 py-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-brand"
+          aria-expanded="false"
+          aria-controls="faq-content-6"
+          id="faq-btn-6"
+        >
+          <span class="text-lg font-semibold text-white">¿Qué sucede si el sistema no alcanza el ROI proyectado?</span>
+          <svg class="w-6 h-6 transform transition-transform duration-300 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div 
+          id="faq-content-6" 
+          class="faq-content hidden px-6 pb-4"
+          aria-labelledby="faq-btn-6"
+          role="region"
+        >
+          <p class="text-gray-400 mt-2">
+            Nuestra metodología mitiga ese riesgo estructurando el proyecto en entregables medibles. Si un modelo no alcanza la precisión acordada en su fase piloto, ajustamos la arquitectura o pivotamos el enfoque sin costo adicional hasta garantizar que la inversión se justifique.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-16 text-center" data-animate="fade-up" style="opacity: 0">
+      <p class="text-xl text-gray-300 mb-6">¿Su desafío corporativo no está listado aquí? Nuestros arquitectos están listos para auditar su caso.</p>
+      <button class="btn-primary" onclick="document.dispatchEvent(new CustomEvent('open-chatbot'))">Iniciar Diagnóstico Gratuito</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Script minimalista para el comportamiento del acordeón FAQ
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.faq-button');
+    
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        const contentId = button.getAttribute('aria-controls');
+        const content = document.getElementById(contentId);
+        const icon = button.querySelector('svg');
+        
+        // Cerrar todos los demás
+        buttons.forEach(otherBtn => {
+          if (otherBtn !== button) {
+            otherBtn.setAttribute('aria-expanded', 'false');
+            const otherContent = document.getElementById(otherBtn.getAttribute('aria-controls'));
+            const otherIcon = otherBtn.querySelector('svg');
+            if (otherContent) otherContent.classList.add('hidden');
+            if (otherIcon) otherIcon.classList.remove('rotate-180');
+          }
+        });
+
+        // Alternar el clickeado
+        if (isExpanded) {
+          button.setAttribute('aria-expanded', 'false');
+          content?.classList.add('hidden');
+          icon?.classList.remove('rotate-180');
+        } else {
+          button.setAttribute('aria-expanded', 'true');
+          content?.classList.remove('hidden');
+          icon?.classList.add('rotate-180');
+        }
+      });
+    });
+  });
+</script>

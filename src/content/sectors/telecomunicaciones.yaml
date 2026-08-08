@@ -1,0 +1,73 @@
+id: sector-telecomunicaciones
+title: Telecomunicaciones
+description: >-
+  Análisis de redes, predicción de churn de suscriptores y optimización de
+  infraestructura 5G.
+icon: ph-broadcast
+ciiu: '61'
+keywords:
+  - telecomunicaciones
+  - telco
+  - redes
+  - 5G
+  - churn
+  - suscriptores
+  - infraestructura
+  - fibra
+  - fuga de clientes
+  - optimización de red
+  - NPS
+seo:
+  title: Data Engineering e IA para Telecomunicaciones | Datanestiq
+  description: >-
+    Analítica predictiva de redes y modelos de contención de Churn de
+    suscriptores para operadoras de telecomunicaciones de alto volumen.
+hero:
+  headline: Retención de Usuarios y Redes Inteligentes
+  subheadline: >-
+    Monetice la inmensa densidad de datos de sus suscriptores. Optimizamos
+    infraestructura y blindamos su base de clientes con machine learning.
+contrast:
+  problem: >-
+    Incapacidad técnica para procesar telemetría masiva en tiempo real,
+    derivando en congestión de red y fuga (Churn) de usuarios descontentos.
+  solution: >-
+    Pipelines de ingesta de datos hiper-escalables que modelan la probabilidad
+    de abandono por cliente y previenen degradaciones de servicio.
+problems:
+  - code: churn
+    label: Alta tasa de fuga de suscriptores (Churn)
+    solution: >-
+      Predecimos la fuga de clientes con alta precisión mediante algoritmos de
+      Machine Learning, permitiendo campañas de retención proactivas y
+      ultra-dirigidas.
+  - code: redes
+    label: Congestión e ineficiencia de red
+    solution: >-
+      Implementamos analítica geoespacial y predictiva de datos masivos para
+      optimizar el despliegue de infraestructura de fibra y anticipar picos de
+      congestión.
+slug: telecomunicaciones
+subSectors:
+  - ISPs
+  - Operadores Móviles
+  - Fibra Óptica
+kpis:
+  - metric: Reducción de Churn
+    expectedRoi: '[EST] -25%'
+  - metric: Optimización de red y CAPEX
+    expectedRoi: '[EST] 15% de ahorro'
+regulations:
+  - Ley General de Telecomunicaciones
+  - Protección de Datos
+  - Neutralidad de Red
+relevantPersonas:
+  - ceo
+  - cto
+  - cdo
+contentAngles:
+  - id: prevencion-churn-telecom
+    title: Machine Learning para Prevenir el Churn
+    brief: >-
+      Análisis para directores de telecomunicaciones sobre cómo predecir la fuga
+      de clientes procesando billones de CDRs (Call Detail Records) diarios.

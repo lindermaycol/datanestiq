@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/ui/Navbar.astro';
+import Footer from '../components/ui/Footer.astro';
+---
+
+<BaseLayout title="Nosotros | Datanestiq" description="Conoce a la firma de élite en Ingeniería de Datos e Inteligencia Artificial para el mercado corporativo B2B.">
+  <Navbar />
+  
+  <main class="pt-32 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="text-center mb-24" data-animate="fade-up">
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
+        La Precisión como<br/>
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
+          Único Estándar
+        </span>
+      </h1>
+      <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-300">
+        No somos una agencia creativa ni una consultora generalista. Datanestiq nació para resolver una única problemática: la desconexión crítica entre la promesa de la IA y el impacto medible en los estados financieros de las grandes corporaciones.
+      </p>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24">
+      <div class="glass-card" data-animate="fade-right">
+        <h2 class="text-2xl font-bold mb-4 text-white">Nuestra Misión</h2>
+        <p class="text-gray-400 text-lg">
+          Transformar infraestructuras de datos dispersas en motores de decisión hiper-optimizados. Proveemos a los directorios y niveles C-Level las herramientas algorítmicas y predictivas para dominar sus industrias, reduciendo la fricción operativa a casi cero.
+        </p>
+      </div>
+      <div class="glass-card" data-animate="fade-left">
+        <h2 class="text-2xl font-bold mb-4 text-white">Nuestros Principios</h2>
+        <ul class="space-y-4 text-gray-400 text-lg">
+          <li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <span><strong>Gobernanza Absoluta:</strong> La privacidad y seguridad de sus datos corporativos es el cimiento de cualquier despliegue.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <span><strong>ROI Demostrable:</strong> Ejecutamos bajo métricas de impacto comercial, no bajo adopción de tecnología por moda.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <span><strong>Excelencia Arquitectónica:</strong> Diseños escalables, código limpio y rendimiento extremo.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="mb-24" data-animate="fade-up">
+      <div class="glass-card p-10 bg-surface/50 border border-white/5">
+        <h2 class="text-3xl font-bold mb-8 text-center">Rigor Consultivo y Estándares Globales</h2>
+        <p class="text-gray-300 text-lg mb-8 text-center max-w-4xl mx-auto">
+          Nuestra práctica se fundamenta en marcos de trabajo corporativos de clase mundial, asegurando despliegues predecibles y auditables.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div>
+            <h3 class="text-xl font-bold text-brandCyan mb-4">Modelo de Madurez Analítica (Gartner)</h3>
+            <p class="text-gray-400 mb-4">Elevamos su organización a través del <strong>Value Ladder</strong>:</p>
+            <ul class="space-y-3 text-sm text-gray-300">
+              <li><span class="font-bold text-white">Descriptivo:</span> ¿Qué pasó? (Fundaciones y BI Core).</li>
+              <li><span class="font-bold text-white">Diagnóstico:</span> ¿Por qué pasó? (Minería de Procesos).</li>
+              <li><span class="font-bold text-white">Predictivo:</span> ¿Qué pasará? (Machine Learning).</li>
+              <li><span class="font-bold text-white">Prescriptivo:</span> ¿Qué debemos hacer? (Sistemas Autónomos).</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-brandCyan mb-4">Frameworks de la Industria</h3>
+            <ul class="space-y-4 text-sm text-gray-300">
+              <li>
+                <strong class="text-white">DAMA-DMBOK:</strong> Gobierno de datos, arquitectura y seguridad. El estándar de oro para transformar datos en activos empresariales.
+              </li>
+              <li>
+                <strong class="text-white">CRISP-DM:</strong> Metodología comprobada para proyectos de Data Science, garantizando alineación absoluta con el modelo de negocio.
+              </li>
+              <li>
+                <strong class="text-white">TOGAF:</strong> Arquitecturas de sistemas escalables y resilientes, preparadas para soportar cargas de misión crítica B2B.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="text-center" data-animate="fade-up">
+      <h2 class="text-3xl font-bold mb-6">El Equipo</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg">
+        Reunimos a un equipo de arquitectos de datos, ingenieros de IA y estrategas de negocio B2B, unidos por la obsesión de construir sistemas corporativos impecables y de alto rendimiento.
+      </p>
+      <button class="btn-primary text-lg" onclick="document.dispatchEvent(new CustomEvent('open-chatbot'))">Hablemos de su infraestructura</button>
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>

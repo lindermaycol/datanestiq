@@ -1,0 +1,74 @@
+id: sistemas-digitales
+name: Desarrollo de Sistemas Digitales Premium
+slug: sistemas-digitales
+maturityStage: Fundacional (Plataformas)
+standards:
+  - TOGAF
+  - Arquitecturas Headless/Microservicios
+targetRoles:
+  - CTO
+  - CIO
+  - Director de Producto
+skills:
+  - Desarrollo Full-Stack
+  - Arquitectura de Software
+seo:
+  title: Desarrollo de Software y Plataformas AI-First | Datanestiq
+  description: >-
+    Plataformas B2B y sistemas core de misión crítica, concebidos desde su
+    génesis con capacidades cognitivas integradas.
+hero:
+  headline: Plataformas Corporativas Diseñadas para Dominar
+  subheadline: >-
+    Sistemas digitales AI-First de clase mundial. Construimos plataformas
+    empresariales escalables con interfaces ultra-optimizadas para el usuario
+    ejecutivo.
+contrast:
+  problem: >-
+    Dependencia en software legado o genérico que obliga a su corporación a
+    adaptar sus procesos a las limitaciones de la herramienta.
+  solution: >-
+    Arquitecturas a medida, headless y modulares. Sistemas que se moldean
+    perfectamente a la velocidad y complejidad de su modelo de negocio.
+features:
+  - Desarrollo de Sistemas a Medida y Plataformas Corporativas AI-First
+  - Aplicaciones Web y Portales B2B de Alta Conversión
+  - Arquitecturas Headless, Microservicios y Sistemas Modulares
+keywords:
+  - desarrollo web
+  - sistemas
+  - apps
+  - headless
+  - microservicios
+  - plataformas corporativas
+  - AI-first
+  - portales B2B
+  - frontend
+  - sistemas core
+  - escalabilidad B2B
+copilotPrompts:
+  - >-
+    Evaluar transición técnica de portal Legacy monolítico hacia microservicios
+    Headless.
+  - >-
+    Definir roadmap para inyectar capacidades AI-first nativas en nuestra app
+    web B2B actual.
+techStack:
+  - "React / Vue.js / Astro (Micro-frontends)"
+  - "Node.js / Python / Go"
+  - "Despliegue Multi-Cloud, Híbrido y On-Premise"
+  - "Nube Privada Segura (VPC) y Soberanía de Datos"
+  - "PostgreSQL / MongoDB / Redis"
+  - "Docker / Kubernetes"
+  - "Patrones de Integración con Legacy / ERP / Core"
+proofPoints:
+  - client: Startup Fintech
+    result: '[EST] 50% de mejora en el Time-To-Market de su aplicación core'
+competitivePositioning: "Enfoque en arquitectura escalable, integraciones seguras con sistemas legacy sin disrupción, garantías de uptime de grado empresarial (SLA 99.9%) y control predictivo del TCO."
+contentAngles:
+  - id: deuda-tecnica-cto
+    title: El Costo Oculto de la Deuda Técnica
+    brief: >-
+      Análisis para el CTO evaluando financieramente el peso del legacy code y
+      cómo una reestructuración a arquitecturas modernas
+      (microservicios/Jamstack) libera presupuesto para innovación.

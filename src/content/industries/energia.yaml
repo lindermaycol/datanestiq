@@ -1,0 +1,15 @@
+id: industry-energia
+title: Energía y Utilities
+ciiu: '35'
+keywords:
+  - energía
+  - utilities
+  - electricidad
+  - agua
+  - smart grid
+  - eficiencia energética
+  - plantas de energía
+relatedPillars:
+  - ai-data-science
+  - business-intelligence
+  - data-engineering

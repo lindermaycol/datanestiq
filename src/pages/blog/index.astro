@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import { slugifyTag } from '../../lib/tagUtils';
+
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Blog Corporativo | Datanestiq" description="Artículos, análisis y perspectivas sobre Inteligencia Artificial y Datos para líderes corporativos.">
+  <Navbar />
+  
+  <main class="pt-32 pb-20 max-w-7xl mx-auto px-4 relative z-10">
+    <!-- Breadcrumb visual real -->
+    <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-400">
+      <a href="/" class="hover:text-brandCyan transition-colors">Inicio</a>
+      <span class="text-gray-600">›</span>
+      <span class="text-gray-300 font-medium">Blog</span>
+    </nav>
+
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Perspectivas C-Level</h1>
+      <p class="text-xl text-gray-400 max-w-3xl mx-auto">Análisis estratégico sobre Data Mesh, IA Generativa y automatización para líderes que transforman industrias.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {allPosts.map(post => (
+        <article class="glass-card p-6 flex flex-col hover:-translate-y-1 transition-transform">
+          <time datetime={post.data.pubDate.toISOString()} class="text-brandCyan text-sm mb-2 block font-medium">
+            {new Date(post.data.pubDate).toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </time>
+          <h2 class="text-2xl font-bold text-white mb-3 leading-tight hover:text-brandCyan transition-colors">
+            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+          </h2>
+          <p class="text-gray-400 mb-6 line-clamp-3 text-sm flex-grow">{post.data.description}</p>
+          <div class="flex flex-wrap gap-2 pt-4 border-t border-white/10 mt-auto">
+            {post.data.tags.map(tag => (
+              <a 
+                href={`/blog/tag/${slugifyTag(tag)}`}
+                class="px-2 py-1 bg-white/5 hover:bg-brand/20 hover:text-brandCyan rounded text-xs text-gray-300 transition-colors"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

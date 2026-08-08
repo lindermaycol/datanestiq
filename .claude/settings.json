@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -q 'deploy_ionos\\.py' && printf '%s' '{\"systemMessage\":\"⚠️ Deploy Datanestiq — checklist: (1) npm run build ANTES (el PHP se sirve desde dist/); (2) tras desplegar, verifica el ENDPOINT REAL en prod (200 + marcador) y limpia opcache; (3) click-through del panel con datos.\",\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"Recordatorio de deploy Datanestiq: el backend PHP se sirve desde dist/, así que recompila con npm run build ANTES de deploy_ionos.py; tras desplegar verifica el endpoint real en prod (200 + un marcador en la respuesta) y limpia opcache; luego click-through del panel confirmando que cada pestaña carga datos. Ver skill verificar-en-vivo.\"}}' || true"
+          }
+        ]
+      }
+    ]
+  }
+}

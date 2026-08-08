@@ -1,0 +1,136 @@
+---
+import '../styles/global.css';
+import SEO from '../components/ui/SEO.astro';
+import Chatbot from '../components/islands/Chatbot.jsx';
+
+interface Props {
+  title: string;
+  description?: string;
+  serviceData?: any;
+}
+
+const { title, description = "Datanestiq - AI & Data Consulting", serviceData } = Astro.props;
+const currentUrl = new URL(Astro.url.pathname, Astro.site || "https://datanestiq.com").href;
+
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const breadcrumbList = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://datanestiq.com/"
+    }
+  ]
+};
+
+let currentUrlStr = "https://datanestiq.com";
+pathParts.forEach((part, index) => {
+  currentUrlStr += `/${part}`;
+  breadcrumbList.itemListElement.push({
+    "@type": "ListItem",
+    "position": index + 2,
+    "name": part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '),
+    "item": currentUrlStr
+  });
+});
+---
+
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <SEO 
+      title={`${title} | Datanestiq`}
+      description={description}
+      url={currentUrl}
+      serviceData={serviceData}
+    />
+    
+    <!-- JSON-LD Breadcrumbs -->
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbList)}></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-background text-white antialiased overflow-x-hidden">
+    <!-- Fondo global: malla fina + glow radial de marca (portado del prototipo Fase 0) -->
+    <div class="fixed inset-0 z-[-1] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] opacity-20 pointer-events-none z-[-1]" style="background: radial-gradient(circle, rgba(37,99,235,0.8) 0%, rgba(10,10,11,0) 70%);"></div>
+    <slot />
+    <Chatbot client:idle />
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+          // Mostrar todo instantáneamente, sin animación
+          document.querySelectorAll('[data-animate]').forEach((el) => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          });
+          return;
+        }
+
+        // Simple fade up animation
+        const fadeElements = document.querySelectorAll('[data-animate="fade-up"]');
+        fadeElements.forEach((el) => {
+          gsap.fromTo(el, 
+            { y: 50, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 85%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        });
+
+        // Stagger up animation for lists/grids (e.g. logos)
+        const staggerContainers = document.querySelectorAll('.flex-wrap, .grid');
+        staggerContainers.forEach((container) => {
+          const items = container.querySelectorAll('[data-animate="stagger-up"]');
+          if (items.length > 0) {
+            gsap.fromTo(items,
+              { y: 30, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out',
+                scrollTrigger: {
+                  trigger: container,
+                  start: 'top 85%',
+                  toggleActions: 'play none none none'
+                }
+              }
+            );
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+id: estrategia-datos-ia
+name: Consultoría Estratégica en Datos & IA
+slug: estrategia-datos-ia
+maturityStage: Estratégico (Governance)
+standards:
+  - 'DAMA-DMBOK: Data Governance'
+  - Data Quality
+  - Data Security & Privacy
+targetRoles:
+  - CEO
+  - Directorio
+  - CDO
+skills:
+  - Gobernanza de Datos
+  - Gestión de Riesgos Tecnológicos
+seo:
+  title: Consultoría Estratégica en IA y Datos para C-Level | Datanestiq
+  description: >-
+    Auditorías de madurez, roadmaps de ROI acelerado y gobernanza para liderar
+    la adopción corporativa de Inteligencia Artificial.
+hero:
+  headline: El Roadmap Seguro Hacia el ROI Asimétrico
+  subheadline: >-
+    Guiamos a su Directorio a través de la disrupción tecnológica. Diseñamos la
+    estrategia para adoptar IA mitigando riesgos financieros y regulatorios.
+contrast:
+  problem: >-
+    Inversiones millonarias en proyectos de IA desconectados, carentes de
+    gobierno de datos y sin un caso de negocio claro (Proof of Concept
+    purgatory).
+  solution: >-
+    Auditoría de madurez rigurosa y un roadmap estratégico priorizado que
+    garantiza que cada dólar invertido tenga una trazabilidad directa hacia el
+    P&L.
+features:
+  - Auditoría Integral de Madurez de Datos e IA
+  - Roadmaps Estratégicos y Priorización de Casos de Uso de Alto ROI
+  - CTO as a Service y Asesoramiento Arquitectónico Experto
+keywords:
+  - consultoría
+  - CTO
+  - estrategia
+  - auditoría
+  - roadmap
+  - madurez de datos
+  - gobierno de IA
+  - riesgos
+  - ROI
+  - cumplimiento normativo
+  - gobierno de datos
+copilotPrompts:
+  - >-
+    Priorizar matriz de casos de uso de IA generativa con mayor viabilidad y ROI
+    acelerado.
+  - >-
+    Estructurar marco de gobernanza y gestión de riesgos éticos para modelos
+    algorítmicos (AI Governance).
+techStack:
+  - Frameworks DAMA-DMBOK
+  - Metodologías Ágiles
+  - Data Mesh
+  - "Databricks / Snowflake (Lakehouse Architecture)"
+  - "Catálogo de Datos (Data Catalog / Metadata Catalog)"
+  - "Gobierno de Metadatos y Data Stewardship"
+  - "dbt / Airflow / Prefect"
+  - "Calidad de Datos e Interoperabilidad"
+  - "Terraform (Infraestructura como Código)"
+proofPoints:
+  - client: Gobierno Regional
+    result: >-
+      [EST] 100% de cumplimiento en normativas de transparencia en menos de un
+      año
+competitivePositioning: "Alineación de iniciativas de datos con objetivos de negocio mediante un marco de gobernanza sólido, garantizando la trazabilidad, calidad, un catálogo de datos centralizado y la democratización segura de la información en toda la organización."
+contentAngles:
+  - id: estrategia-datos-ceo
+    title: Los Datos como Activo Financiero
+    brief: >-
+      Mensaje para el CEO: cómo calcular el valor contable de los datos de su
+      empresa y por qué la gobernanza no es un tema técnico, sino de negocio.

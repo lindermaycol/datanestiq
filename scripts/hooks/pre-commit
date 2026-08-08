@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Datanestiq — git pre-commit hook (Constitución §6 y §8)
+# Instalar una vez:  git config core.hooksPath scripts/hooks
+# Objetivo: NUNCA commitear secretos ni PII, y no commitear taxonomía rota.
+set -u
+
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+# --- 1) Rutas/archivos prohibidos por nombre (secretos/PII) ---
+# Nota: .env.example/.sample/.template son PLANTILLAS (placeholders) y SÍ se permiten.
+blocked_paths=$(printf '%s\n' "$staged" \
+  | grep -E '(^|/)\.env($|\.)|(^|/)secure_leads/|\.jsonl$|(^|/)wp-config\.php$|(^|/)\.venv/' \
+  | grep -vE '(^|/)\.env\.(example|sample|template)$' || true)
+if [ -n "$blocked_paths" ]; then
+  echo "🔴 pre-commit: intentas commitear archivos sensibles (prohibido por la Constitución §6):"
+  echo "$blocked_paths" | sed 's/^/    /'
+  fail=1
+fi
+
+# --- 2) Patrones de claves de API dentro del contenido staged ---
+# (escanea solo el diff agregado, no todo el árbol)
+key_hits=$(git diff --cached -U0 --diff-filter=ACM \
+  | grep -E '^\+' \
+  | grep -E 'sk-[A-Za-z0-9]{16,}|gsk_[A-Za-z0-9]{16,}|AIza[A-Za-z0-9_\-]{16,}|(GROQ|DASHSCOPE|GEMINI|OPENAI)_API_KEY\s*=\s*["'\''`]?[A-Za-z0-9_\-]{12,}' \
+  || true)
+if [ -n "$key_hits" ]; then
+  echo "🔴 pre-commit: posible clave de API en el contenido a commitear:"
+  echo "$key_hits" | sed 's/^/    /' | head
+  echo "    -> usa variables de entorno (.env, gitignored), nunca hardcodees claves."
+  fail=1
+fi
+
+# --- 3) Validación de taxonomía si tocaste la fuente ---
+if printf '%s\n' "$staged" | grep -qE 'src/content/(pillars|sectors)/.*\.ya?ml$|src/data/personas\.json$|scripts/build-taxonomy\.mjs$'; then
+  if command -v node >/dev/null 2>&1; then
+    echo "pre-commit: validando taxonomía (build-taxonomy)..."
+    if ! node scripts/build-taxonomy.mjs >/tmp/precommit_tax.log 2>&1; then
+      echo "🔴 pre-commit: build-taxonomy falló (Zod / integridad de aristas). Revisa /tmp/precommit_tax.log"
+      tail -5 /tmp/precommit_tax.log | sed 's/^/    /'
+      fail=1
+    fi
+  fi
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "❌ Commit bloqueado. Corrige lo anterior. (Para un caso legítimo y excepcional: git commit --no-verify — con criterio.)"
+  exit 1
+fi
+
+echo "✅ pre-commit: sin secretos/PII, taxonomía OK."
+exit 0
