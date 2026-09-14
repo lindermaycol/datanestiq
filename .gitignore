@@ -38,6 +38,8 @@ secure_leads/
 .agents/*
 !.agents/skills/
 .agents/skills/**/secrets/
+!.agents/rules/
+!.agents/workflows/
 node_modules
 node_modules
 dist/
