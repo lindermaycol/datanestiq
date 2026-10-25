@@ -533,6 +533,109 @@ $csrf = generateCsrfToken();
                     </div>
                 </div>
             </div>
+
+            <!-- Spec 026: Analítica de Contenido/Blog & Gaps de Contenido -->
+            <div style="background:#12121a;border:1px solid rgba(34,211,238,0.2);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem;color:#fff;margin:0;">📝 Analítica del Blog & Gaps de Contenido (Spec 026)</h3>
+                        <p style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin:0.25rem 0 0 0;">Demanda real de los visitantes en /blog y detección automática de búsquedas con 0 resultados (0-LLM).</p>
+                    </div>
+                    <div style="font-size:0.85rem;color:#22d3ee;background:rgba(34,211,238,0.1);padding:0.35rem 0.75rem;border-radius:6px;border:1px solid rgba(34,211,238,0.2);" id="blog-analytics-summary-badge">
+                        Cargando...
+                    </div>
+                </div>
+
+                <!-- Resumen de tarjetas del Blog -->
+                <div class="stats" id="blog-analytics-summary" style="margin-bottom:1.25rem;"></div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                    <!-- Top Búsquedas Blog -->
+                    <div>
+                        <h4 style="font-size:0.95rem;color:#22d3ee;margin-bottom:0.75rem;">🔍 Top Búsquedas en el Blog</h4>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Término de Búsqueda</th><th>Frecuencia</th><th>Sesiones</th><th>Prom. Resultados</th></tr>
+                                </thead>
+                                <tbody id="blog-top-queries"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Gaps de Contenido (n = 0) -->
+                    <div>
+                        <h4 style="font-size:0.95rem;color:#f59e0b;margin-bottom:0.75rem;">⚠️ Gaps de Contenido (0 Resultados)</h4>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Consulta Sin Match</th><th>Demanda (Clicks)</th><th>Última Búsqueda</th></tr>
+                                </thead>
+                                <tbody id="blog-content-gaps"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tendencia de Búsquedas Diarias (US-026.3) -->
+                <div style="margin-top:1.25rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:1.25rem;">
+                    <h4 style="font-size:0.95rem;color:#22d3ee;margin:0 0 0.75rem 0;">📈 Tendencia Diaria de Búsquedas y Gaps (US-026.3)</h4>
+                    <div id="blog-search-trend"></div>
+                </div>
+            </div>
+
+            <!-- Spec 027: Banco de Experiencias Curadas & Curación 0-LLM -->
+            <div style="background:#12121a;border:1px solid rgba(167,139,250,0.3);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem;color:#fff;margin:0;">🏛️ Banco de Experiencias Curadas (Spec 027 - Reuso 0-LLM)</h3>
+                        <p style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin:0.25rem 0 0 0;">Curación humana obligatoria (§2) de respuestas complejas sintetizadas tras conversiones efectivas.</p>
+                    </div>
+                    <div style="font-size:0.85rem;color:#a78bfa;background:rgba(167,139,250,0.1);padding:0.35rem 0.75rem;border-radius:6px;border:1px solid rgba(167,139,250,0.2);" id="experience-pending-badge">
+                        Cargando...
+                    </div>
+                </div>
+
+                <!-- Candidatos Pendientes de Revisión -->
+                <div style="margin-bottom:1.5rem;">
+                    <h4 style="font-size:0.95rem;color:#f59e0b;margin-bottom:0.75rem;">⏳ Candidatos Pendientes de Revisión (0 Auto-Aprobaciones §2)</h4>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID / Fecha</th>
+                                    <th>Consulta PII-Redactada</th>
+                                    <th>Respuesta Propuesta / Edición</th>
+                                    <th>Origen / Outcome</th>
+                                    <th>Cite URL (Opt)</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="experience-pending-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Experiencias Aprobadas & Reutilizadas -->
+                <div>
+                    <h4 style="font-size:0.95rem;color:#22c55e;margin-bottom:0.75rem;">✅ Experiencias Aprobadas en Corpus 0-LLM</h4>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Consulta Aprobada</th>
+                                    <th>Respuesta Canónica</th>
+                                    <th>Cite URL</th>
+                                    <th>Veces Reutilizada (0-LLM)</th>
+                                    <th>Caducidad (TTL)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="experience-bank-grid"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
     <!-- View: Demanda & Journey -->
@@ -1267,6 +1370,168 @@ $csrf = generateCsrfToken();
             `).join('');
         } else {
             wizardFunnelBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">Sin progresión de embudo de diagnóstico</td></tr>';
+        }
+
+        // Spec 026: Cargar Analítica del Blog & Gaps
+        loadBlogAnalytics();
+
+        // Spec 027: Cargar Banco de Experiencias & Curación
+        loadExperienceBank();
+    }
+
+    async function loadExperienceBank() {
+        const data = await api('experience_pending');
+        if (!data) return;
+
+        setHTML('experience-pending-badge', `⏳ ${data.total_pending} Candidatos Pendientes`);
+
+        // Tabla de candidatos pendientes
+        if (data.candidates && data.candidates.length > 0) {
+            setHTML('experience-pending-table', data.candidates.map(c => `
+                <tr id="exp-row-${c.id}">
+                    <td><strong>#${c.id}</strong><br><span style="font-size:0.75rem;color:#888;">${esc(c.created_at)}</span></td>
+                    <td><em style="color:#22d3ee;">"${esc(c.question_redacted)}"</em></td>
+                    <td>
+                        <textarea id="exp-ans-${c.id}" style="width:100%;min-height:55px;background:#0d0d12;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:0.4rem;font-size:0.8rem;">${esc(c.answer)}</textarea>
+                    </td>
+                    <td>
+                        <span style="background:rgba(167,139,250,0.15);color:#a78bfa;padding:0.15rem 0.4rem;border-radius:4px;font-size:0.75rem;font-weight:600;">${esc(c.source_route || 'llm')}</span><br>
+                        <span style="font-size:0.75rem;color:#f59e0b;">Outcome: ${esc(c.outcome)}</span>
+                    </td>
+                    <td>
+                        <input type="text" id="exp-cite-${c.id}" value="${esc(c.cite_url || '')}" placeholder="/soluciones/..." style="width:110px;background:#0d0d12;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:0.25rem;font-size:0.75rem;">
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:0.35rem;flex-direction:column;">
+                            <button onclick="reviewExperience(${c.id}, 'aprobado')" style="background:#22c55e;color:#fff;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.75rem;">Aprobar</button>
+                            <button onclick="reviewExperience(${c.id}, 'rechazado')" style="background:#ef4444;color:#fff;border:none;padding:0.3rem 0.6rem;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.75rem;">Rechazar</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join(''));
+        } else {
+            setHTML('experience-pending-table', '<tr><td colspan="6" style="text-align:center;color:#22c55e;padding:1rem;">🎉 Sin candidatos pendientes de revisión humana. Todo al día.</td></tr>');
+        }
+
+        // Tabla de experiencias aprobadas en corpus
+        if (data.approved && data.approved.length > 0) {
+            setHTML('experience-bank-grid', data.approved.map(a => `
+                <tr>
+                    <td><strong>#${a.id}</strong></td>
+                    <td><strong style="color:#22d3ee;">"${esc(a.question_redacted)}"</strong></td>
+                    <td><span style="font-size:0.8rem;color:#ddd;">${esc(a.answer)}</span></td>
+                    <td>${a.cite_url ? `<a href="${esc(a.cite_url)}" target="_blank" style="color:#a78bfa;font-size:0.75rem;">${esc(a.cite_url)}</a>` : '<span style="color:#666;">-</span>'}</td>
+                    <td><span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:0.15rem 0.5rem;border-radius:4px;font-weight:600;">${a.usage_count} hits</span></td>
+                    <td><span style="font-size:0.75rem;color:#888;">${esc(a.expires_at || '')}</span></td>
+                </tr>
+            `).join(''));
+        } else {
+            setHTML('experience-bank-grid', '<tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">El banco de experiencias aprobadas está vacío. Aprueba candidatos para habilitar el reuso 0-LLM.</td></tr>');
+        }
+    }
+
+    async function reviewExperience(id, status) {
+        const ansEl = document.getElementById(`exp-ans-${id}`);
+        const citeEl = document.getElementById(`exp-cite-${id}`);
+        const editedAns = ansEl ? ansEl.value.trim() : '';
+        const citeUrl = citeEl ? citeEl.value.trim() : '';
+
+        const res = await api('experience_review', 'POST', {
+            id: id,
+            status: status,
+            answer: editedAns,
+            cite_url: citeUrl,
+            expires_days: 180
+        });
+
+        if (res && res.success) {
+            loadExperienceBank();
+        } else {
+            alert('Error al actualizar el estado de la experiencia.');
+        }
+    }
+
+    async function loadBlogAnalytics() {
+        const data = await api('blog_analytics');
+        if (!data) return;
+
+        if (data.insufficient_data) {
+            setHTML('blog-analytics-summary-badge', `⚠️ Muestra Escasa (${data.total_queries} < 15)`);
+            setHTML('blog-analytics-summary', `
+                <div style="grid-column: 1 / -1; background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;padding:0.85rem 1.25rem;border-radius:8px;font-size:0.85rem;">
+                    ⚠️ <strong>Muestra Insuficiente (Constitución §2):</strong> Se requieren al menos 15 búsquedas registradas en el blog para generar patrones de tendencia y detección de gaps. (Registradas: ${data.total_queries} / 15).
+                </div>
+            `);
+            setHTML('blog-top-queries', '<tr><td colspan="4" style="text-align:center;color:#888;">Se requieren más datos de búsqueda</td></tr>');
+            setHTML('blog-content-gaps', '<tr><td colspan="3" style="text-align:center;color:#888;">Se requieren más datos de búsqueda</td></tr>');
+            setHTML('blog-search-trend', '<div style="color:#888;font-size:0.85rem;padding:0.5rem 0;">Se requieren más datos para graficar la tendencia diaria.</div>');
+            return;
+        }
+
+        setHTML('blog-analytics-summary-badge', `30 Días | ${data.summary.total_searches} Búsquedas`);
+
+        setHTML('blog-analytics-summary', `
+            <div class="stat-card"><div class="value">${data.summary.total_searches}</div><div class="label">Búsquedas Totales (30d)</div></div>
+            <div class="stat-card"><div class="value">${data.summary.unique_sessions}</div><div class="label">Sesiones Únicas</div></div>
+            <div class="stat-card"><div class="value" style="color:#f59e0b;">${data.summary.zero_match_count}</div><div class="label">Consultas Sin Match (Gaps)</div></div>
+            <div class="stat-card"><div class="value" style="color:${data.summary.zero_match_rate > 25 ? '#ef4444' : '#22d3ee'};">${data.summary.zero_match_rate}%</div><div class="label">Zero-Match Rate % (de N=${data.summary.known_n_count})</div></div>
+        `);
+
+        // Top Búsquedas
+        if (data.top_searches && data.top_searches.length > 0) {
+            setHTML('blog-top-queries', data.top_searches.map(q => `
+                <tr>
+                    <td><strong style="color:#22d3ee;">"${esc(q.query)}"</strong></td>
+                    <td>${q.count} búsquedas</td>
+                    <td>${q.unique_sessions} sesiones</td>
+                    <td>${q.avg_results !== null ? q.avg_results + ' arts' : '<span style="color:#888;">Legacy</span>'}</td>
+                </tr>
+            `).join(''));
+        } else {
+            setHTML('blog-top-queries', '<tr><td colspan="4" style="text-align:center;color:#888;">Sin búsquedas registradas</td></tr>');
+        }
+
+        // Gaps de Contenido (n = 0)
+        if (data.content_gaps && data.content_gaps.length > 0) {
+            setHTML('blog-content-gaps', data.content_gaps.map(g => `
+                <tr>
+                    <td><strong style="color:#f59e0b;">"${esc(g.query)}"</strong></td>
+                    <td><span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.15rem 0.5rem;border-radius:4px;font-weight:600;">${g.count} veces</span></td>
+                    <td><span style="color:#aaa;font-size:0.8rem;">${g.last_searched}</span></td>
+                </tr>
+            `).join(''));
+        } else {
+            setHTML('blog-content-gaps', '<tr><td colspan="3" style="text-align:center;color:#22c55e;">🎉 ¡Excelente! No se registran búsquedas sin match en este período.</td></tr>');
+        }
+
+        // Tendencia Diaria (US-026.3)
+        if (data.daily_trend && data.daily_trend.length > 0) {
+            const trendAsc = [...data.daily_trend].reverse();
+            const maxVol = Math.max(1, ...trendAsc.map(t => t.total));
+
+            setHTML('blog-search-trend', `
+                <div style="display:flex;align-items:flex-end;gap:0.5rem;height:120px;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.1);overflow-x:auto;">
+                    ${trendAsc.map(t => {
+                        const totalPct = Math.round((t.total / maxVol) * 100);
+                        const zeroPct = t.total > 0 ? Math.round((t.zero_matches / t.total) * 100) : 0;
+                        return `
+                            <div style="flex:1;min-width:28px;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;" title="${t.date}: ${t.total} búsquedas (${t.zero_matches} sin match)">
+                                <div style="font-size:0.7rem;color:#aaa;margin-bottom:0.25rem;">${t.total}</div>
+                                <div style="width:100%;max-width:24px;height:${Math.max(8, totalPct)}%;background:#22d3ee;border-radius:4px 4px 0 0;position:relative;overflow:hidden;">
+                                    ${t.zero_matches > 0 ? `<div style="position:absolute;bottom:0;width:100%;height:${zeroPct}%;background:#f59e0b;" title="${t.zero_matches} sin match"></div>` : ''}
+                                </div>
+                                <div style="font-size:0.65rem;color:#888;margin-top:0.35rem;white-space:nowrap;">${t.date.substr(5)}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div style="display:flex;gap:1.5rem;margin-top:0.5rem;font-size:0.75rem;color:rgba(255,255,255,0.6);">
+                    <span style="display:flex;align-items:center;gap:0.35rem;"><span style="width:10px;height:10px;background:#22d3ee;border-radius:2px;display:inline-block;"></span> Búsquedas Con Match</span>
+                    <span style="display:flex;align-items:center;gap:0.35rem;"><span style="width:10px;height:10px;background:#f59e0b;border-radius:2px;display:inline-block;"></span> Consultas Sin Match (Gaps)</span>
+                </div>
+            `);
+        } else {
+            setHTML('blog-search-trend', '<div style="color:#888;font-size:0.85rem;padding:0.5rem 0;">Sin tendencia diaria registrada en el periodo.</div>');
         }
     }
 

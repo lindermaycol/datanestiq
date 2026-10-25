@@ -44,6 +44,10 @@ Pipeline en 3 capas (**datos → presentación → conversión**), auditado por 
 | Prototipo + taxonomía | ✅ |
 | Fundación (páginas, hubs, legales) | ✅ auditado |
 | Spec 013 (motor + fases Público/CFO/CEO) | ✅ auditado |
+| Spec 024 (Buscador Semántico Blog) | ✅ auditado |
+| Spec 025 (GraphRAG sobre Taxonomía) | ✅ auditado y LIVE (37 nodos, 124 aristas) |
+| Spec 026 (Analítica Blog Panel) | ✅ auditado y LIVE (gaps & top queries & tendencia) |
+| Spec 027 (Experience Bank) | ✅ auditado y LIVE (gate curación & reuso 0-LLM) |
 | Honestidad de contenido | ✅ sin prueba social fabricada |
 | Backend chatbot/leads (PHP) | ✅ en repo (`chat.php`/`save_wizard.php`) |
 
@@ -63,6 +67,7 @@ Pipeline en 3 capas (**datos → presentación → conversión**), auditado por 
 - **Spec 021 (Panel-First — Journey navegable y unificación de monitoreo):** 🟠 **DISEÑADA.** Journey navegable con ID oculto y paginación, migración de métricas y alertas a SQLite con dual-write fail-safe en chat.php, visor de leads detectados sin redactar.
 - **Spec 022 (File-Free Storage & Persistence Unification):** ✅ **CONSTRUIDA Y AUDITADA.** SQLite como fuente única de verdad operacional. Retiro definitivo de escrituras a `.jsonl`/`.csv`, script `migrate_file_free_history.php` ejecutado (227 conversaciones redactadas, 209 crudas en `chat_raw` y 4 agregados de consumo migrados). Visor de conversaciones redactadas y tarjetas de consumo diario vs cap en `/admin/`.
 - **Spec 023 (Panel de Negocio — Refocus Business-First del /admin/):** ✅ **CONSTRUIDA Y AUDITADA.** Reenfoque estratégico a negocio, panel de eficiencia y costo de la IA 0-LLM con dona SVG y ahorro `$ [EST]` ($0.30/1M tokens ref), agenda global de citas sobre el esquema real de `appointments` (015), captura/backfill de sector y rol en CRM, remoción de vistas dev/specs del panel y gráficos ligeros CSS/SVG con guardarraíl §2.
+- **Spec 024 (Buscador Semántico sobre el Blog — 0-LLM, reuso de Xenova):** ✅ **CONSTRUIDA Y AUDITADA.** Búsqueda semántica 0-LLM en el blog (`/blog`), reuso del worker Xenova multi-corpus (`public/worker.js`) con IDs dinámicos de concurrencia, SSOT del corpus en `prebuild` (`blogCorpus.json`), estado vacío honesto (§2) con umbral calibrado (0.35) e instrumentación de telemetría 018.
 - **Spec 008 (Headless WordPress):** en pausa. Decidir si el sitio se mantiene como Astro estático (recomendado por simplicidad) o se porta a WordPress headless.
 - **Casos de éxito / prueba social real:** reincorporar testimonios y casos **cuando existan clientes verificables** (hoy retirados por honestidad).
 - **README/documentación de entorno:** creados (`README.md`, este `Fases.md`); pendiente opcional un índice de `specs/`/`prompts/`.

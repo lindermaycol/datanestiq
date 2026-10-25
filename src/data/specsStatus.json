@@ -205,5 +205,41 @@
     "openTechDebt": "Derivación estimada de costo ahorrado 0-LLM transparente",
     "lastAuditDate": "2026-08-07",
     "isHonest": true
+  },
+  {
+    "id": "024",
+    "name": "Buscador Semántico sobre el Blog (0-LLM, reuso de Xenova)",
+    "status": "COMPLETED",
+    "phase": "Construida y Auditada",
+    "openTechDebt": "Ajuste dinámico del umbral coseno basado en analítica de búsquedas",
+    "lastAuditDate": "2026-08-08",
+    "isHonest": true
+  },
+  {
+    "id": "025",
+    "name": "GraphRAG sobre la Taxonomía (respuestas multi-salto para comité de compra)",
+    "status": "COMPLETED",
+    "phase": "LIVE y Operativa en Producción IONOS",
+    "openTechDebt": "TD-025.4 (anclaje léxico por slots) y TD-025.5 (amplitud de subgrafo)",
+    "lastAuditDate": "2026-08-09",
+    "isHonest": true
+  },
+  {
+    "id": "026",
+    "name": "Analítica de Contenido/Blog en el Panel (Gaps y Top Búsquedas)",
+    "status": "COMPLETED",
+    "phase": "LIVE y Operativa en Producción IONOS",
+    "openTechDebt": "TD-026.1 (eventos legacy sin n), TD-026.2 (muestra < 15), TD-026.3 (retención 180d)",
+    "lastAuditDate": "2026-08-09",
+    "isHonest": true
+  },
+  {
+    "id": "027",
+    "name": "Experience Bank (Banco de Experiencia Curada 0-LLM)",
+    "status": "COMPLETED",
+    "phase": "LIVE y Operativa en Producción IONOS",
+    "openTechDebt": "TD-027.1 (dependencia curación humana), TD-027.2 (umbral 0.75), TD-027.3 (arranque en frío), TD-027.4 (passthrough en cliente)",
+    "lastAuditDate": "2026-08-10",
+    "isHonest": true
   }
 ]

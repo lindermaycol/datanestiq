@@ -507,14 +507,48 @@ try {
                     LIMIT 8");
                 $chips = $chips_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                // 3. Top búsquedas semánticas
-                $queries_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
-                    FROM interaction_events 
-                    WHERE event_type = 'search_query' 
-                    GROUP BY event_value 
-                    ORDER BY qty DESC 
-                    LIMIT 8");
-                $queries = $queries_stmt->fetchAll(PDO::FETCH_ASSOC);
+                // 3. Top búsquedas semánticas (Parseo seguro JSON vs String + Agregación por query limpia)
+                $raw_queries_stmt = $db->query("SELECT event_value FROM interaction_events WHERE event_type = 'search_query'");
+                $raw_queries = $raw_queries_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $query_counts = [];
+                foreach ($raw_queries as $r) {
+                    $val = $r['event_value'];
+                    $query_text = '';
+                    if (str_starts_with(trim($val), '{')) {
+                        $decoded = json_decode($val, true);
+                        if (is_array($decoded)) {
+                            if (isset($decoded['q'])) {
+                                $query_text = trim((string)$decoded['q']);
+                            } elseif (isset($decoded['query'])) {
+                                $query_text = trim((string)$decoded['query']);
+                            } else {
+                                $query_text = trim($val);
+                            }
+                        } else {
+                            $query_text = trim($val);
+                        }
+                    } else {
+                        $query_text = trim($val);
+                    }
+
+                    if (empty($query_text)) continue;
+
+                    $norm_q = mb_strtolower($query_text, 'UTF-8');
+                    if (!isset($query_counts[$norm_q])) {
+                        $query_counts[$norm_q] = [
+                            'display_query' => $query_text,
+                            'qty' => 0
+                        ];
+                    }
+                    $query_counts[$norm_q]['qty']++;
+                }
+
+                usort($query_counts, fn($a, $b) => $b['qty'] <=> $a['qty']);
+                $queries = array_map(fn($item) => [
+                    'event_value' => $item['display_query'],
+                    'qty' => (int)$item['qty']
+                ], array_slice($query_counts, 0, 8));
 
                 // 4. Top clics en Copilot Demo
                 $copilot_stmt = $db->query("SELECT event_value, COUNT(*) as qty 
@@ -886,8 +920,8 @@ try {
                 $include_demo = (int)($_GET['include_demo'] ?? 0);
 
                 // Conteo total de eventos de enrutamiento
-                $count_stmt = $db->prepare("SELECT COUNT(*) FROM interaction_events WHERE event_type = 'intent_routing' AND (:inc = 1 OR session_id NOT LIKE 'demoseed%')");
-                $count_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $count_stmt = $db->prepare("SELECT COUNT(*) FROM interaction_events WHERE event_type = 'intent_routing' AND (:inc_c = 1 OR session_id NOT LIKE 'demoseed%')");
+                $count_stmt->bindValue(':inc_c', $include_demo, PDO::PARAM_INT);
                 $count_stmt->execute();
                 $total_queries = (int)$count_stmt->fetchColumn();
 
@@ -907,11 +941,11 @@ try {
                         COUNT(*) as count
                     FROM interaction_events
                     WHERE event_type = 'intent_routing'
-                      AND (:inc = 1 OR session_id NOT LIKE 'demoseed%')
+                      AND (:inc_r = 1 OR session_id NOT LIKE 'demoseed%')
                     GROUP BY route
                 ";
                 $stmt = $db->prepare($sql);
-                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':inc_r', $include_demo, PDO::PARAM_INT);
                 $stmt->execute();
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -929,7 +963,7 @@ try {
                 $zero_llm_percentage = round(($zero_llm_count / max(1, $total_queries)) * 100, 2);
 
                 // Ahorro Estimado $ [EST] basado en tokens reales de chat_metrics
-                $avg_tokens = (float)($db->query("SELECT AVG(total_tokens) FROM chat_metrics WHERE success = 1 AND total_tokens > 0")->fetchColumn() ?: 1200);
+                $avg_tokens = (float)($db->query("SELECT AVG(tokens_est) FROM chat_metrics WHERE success = 1 AND tokens_est > 0")->fetchColumn() ?: 1200);
                 $ref_rate_per_1m = 0.30; // $0.30 USD / 1M tokens tarifa de mercado de referencia
                 $estimated_savings_usd = round(($zero_llm_count * $avg_tokens / 1000000) * $ref_rate_per_1m, 4);
 
@@ -992,18 +1026,18 @@ try {
                 $limit = min(100, max(1, (int)($_GET['limit'] ?? 50)));
                 $offset = max(0, (int)($_GET['offset'] ?? 0));
 
-                $count_sql = "SELECT COUNT(*) FROM alerts WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')";
+                $count_sql = "SELECT COUNT(*) FROM alerts WHERE (:inc_a1 = 1 OR session_id NOT LIKE 'demoseed%')";
                 $count_stmt = $db->prepare($count_sql);
-                $count_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $count_stmt->bindValue(':inc_a1', $include_demo, PDO::PARAM_INT);
                 $count_stmt->execute();
                 $total = (int)$count_stmt->fetchColumn();
 
                 $sql = "SELECT * FROM alerts 
-                        WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%') 
+                        WHERE (:inc_a2 = 1 OR session_id NOT LIKE 'demoseed%') 
                         ORDER BY created_at DESC 
                         LIMIT :limit OFFSET :offset";
                 $stmt = $db->prepare($sql);
-                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':inc_a2', $include_demo, PDO::PARAM_INT);
                 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
                 $stmt->execute();
@@ -1029,9 +1063,9 @@ try {
                             SUM(completion_tokens) as total_completion_tokens,
                             AVG(latency_ms) as avg_latency
                         FROM chat_metrics
-                        WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')";
+                        WHERE (:inc_u1 = 1 OR session_id NOT LIKE 'demoseed%')";
                 $stmt = $db->prepare($sql);
-                $stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $stmt->bindValue(':inc_u1', $include_demo, PDO::PARAM_INT);
                 $stmt->execute();
                 $summary = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -1044,18 +1078,194 @@ try {
                                  SUM(completion_tokens) as completion_tokens,
                                  AVG(latency_ms) as avg_latency
                               FROM chat_metrics
-                              WHERE (:inc = 1 OR session_id NOT LIKE 'demoseed%')
+                              WHERE (:inc_u2 = 1 OR session_id NOT LIKE 'demoseed%')
                               GROUP BY date_str
                               ORDER BY date_str DESC
                               LIMIT 30";
                 $trend_stmt = $db->prepare($trend_sql);
-                $trend_stmt->bindValue(':inc', $include_demo, PDO::PARAM_INT);
+                $trend_stmt->bindValue(':inc_u2', $include_demo, PDO::PARAM_INT);
                 $trend_stmt->execute();
                 $trend = $trend_stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 echo json_encode([
                     'summary' => $summary,
                     'trend' => $trend
+                ]);
+            }
+            break;
+
+        case 'blog_analytics':
+            if ($method === 'GET') {
+                $include_demo = (int)($_GET['include_demo'] ?? 0);
+                $days = min(180, max(1, (int)($_GET['days'] ?? 30)));
+
+                // 1. Conteo total de eventos de búsqueda del blog en los últimos N días
+                $count_sql = "
+                    SELECT COUNT(*) 
+                    FROM interaction_events 
+                    WHERE event_type = 'search_query' 
+                      AND event_target = 'blog-search'
+                      AND created_at >= datetime('now', '-' || :days_c || ' days')
+                      AND (:inc_b1 = 1 OR session_id NOT LIKE 'demoseed%')
+                ";
+                $count_stmt = $db->prepare($count_sql);
+                $count_stmt->bindValue(':days_c', $days, PDO::PARAM_INT);
+                $count_stmt->bindValue(':inc_b1', $include_demo, PDO::PARAM_INT);
+                $count_stmt->execute();
+                $total_searches = (int)$count_stmt->fetchColumn();
+
+                // Guardarraíl §2: Muestra mínima < 15 búsquedas
+                if ($total_searches < 15) {
+                    echo json_encode([
+                        'insufficient_data' => true,
+                        'total_queries' => $total_searches,
+                        'min_required' => 15,
+                        'message' => 'Se requieren al menos 15 búsquedas registradas en el blog para generar patrones de tendencia de contenido.'
+                    ]);
+                    exit;
+                }
+
+                // 2. Consulta de eventos crudos para parseo seguro en PHP
+                $sql = "
+                    SELECT session_id, event_value, created_at
+                    FROM interaction_events
+                    WHERE event_type = 'search_query'
+                      AND event_target = 'blog-search'
+                      AND created_at >= datetime('now', '-' || :days_m || ' days')
+                      AND (:inc_b2 = 1 OR session_id NOT LIKE 'demoseed%')
+                    ORDER BY created_at DESC
+                ";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(':days_m', $days, PDO::PARAM_INT);
+                $stmt->bindValue(':inc_b2', $include_demo, PDO::PARAM_INT);
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $query_aggregates = []; // key: normalized_query -> { count, sessions: Set, total_n, known_n_count, last_searched }
+                $gaps_aggregates = [];  // key: normalized_query -> { count, last_searched }
+                $daily_counts = [];     // date_str -> { total, zero_matches }
+                $known_n_total = 0;
+                $zero_match_total = 0;
+                $unique_sessions_set = [];
+
+                foreach ($rows as $r) {
+                    $session_id = $r['session_id'];
+                    $unique_sessions_set[$session_id] = true;
+                    $created_at = $r['created_at'];
+                    $date_str = substr($created_at, 0, 10);
+
+                    if (!isset($daily_counts[$date_str])) {
+                        $daily_counts[$date_str] = ['total' => 0, 'zero_matches' => 0];
+                    }
+                    $daily_counts[$date_str]['total']++;
+
+                    $val = $r['event_value'];
+                    $query_text = '';
+                    $n_results = null;
+
+                    // Parseo seguro (Corrección 2): Detección de JSON vs String Legacy
+                    if (str_starts_with(trim($val), '{')) {
+                        $decoded = json_decode($val, true);
+                        if (is_array($decoded) && isset($decoded['q'])) {
+                            $query_text = trim((string)$decoded['q']);
+                            $n_results = isset($decoded['n']) ? (int)$decoded['n'] : null;
+                        } else {
+                            $query_text = trim($val);
+                        }
+                    } else {
+                        $query_text = trim($val);
+                    }
+
+                    if (empty($query_text)) continue;
+
+                    $norm_q = mb_strtolower($query_text, 'UTF-8');
+
+                    // Acumulador de top búsquedas por query normalizada ($q)
+                    if (!isset($query_aggregates[$norm_q])) {
+                        $query_aggregates[$norm_q] = [
+                            'display_query' => $query_text,
+                            'count' => 0,
+                            'sessions' => [],
+                            'total_n' => 0,
+                            'known_n_count' => 0,
+                            'last_searched' => $created_at
+                        ];
+                    }
+                    $query_aggregates[$norm_q]['count']++;
+                    $query_aggregates[$norm_q]['sessions'][$session_id] = true;
+
+                    if ($n_results !== null) {
+                        $known_n_total++;
+                        $query_aggregates[$norm_q]['total_n'] += $n_results;
+                        $query_aggregates[$norm_q]['known_n_count']++;
+
+                        if ($n_results === 0) {
+                            $zero_match_total++;
+                            $daily_counts[$date_str]['zero_matches']++;
+
+                            if (!isset($gaps_aggregates[$norm_q])) {
+                                $gaps_aggregates[$norm_q] = [
+                                    'query' => $query_text,
+                                    'count' => 0,
+                                    'last_searched' => $created_at
+                                ];
+                            }
+                            $gaps_aggregates[$norm_q]['count']++;
+                        }
+                    }
+                }
+
+                // Formatear Top Búsquedas
+                $top_searches = [];
+                foreach ($query_aggregates as $q => $data) {
+                    $avg_results = $data['known_n_count'] > 0 
+                        ? round($data['total_n'] / $data['known_n_count'], 1) 
+                        : null;
+
+                    $top_searches[] = [
+                        'query' => $data['display_query'],
+                        'count' => $data['count'],
+                        'unique_sessions' => count($data['sessions']),
+                        'avg_results' => $avg_results
+                    ];
+                }
+                usort($top_searches, fn($a, $b) => $b['count'] <=> $a['count']);
+                $top_searches = array_slice($top_searches, 0, 15);
+
+                // Formatear Content Gaps (búsquedas con n = 0)
+                $content_gaps = array_values($gaps_aggregates);
+                usort($content_gaps, fn($a, $b) => $b['count'] <=> $a['count']);
+                $content_gaps = array_slice($content_gaps, 0, 15);
+
+                // Formatear Tendencia Diaria
+                $daily_trend = [];
+                foreach ($daily_counts as $date_key => $counts) {
+                    $daily_trend[] = [
+                        'date' => $date_key,
+                        'total' => $counts['total'],
+                        'zero_matches' => $counts['zero_matches']
+                    ];
+                }
+                usort($daily_trend, fn($a, $b) => strcmp($b['date'], $a['date']));
+
+                // Denominador Honesto para zero_match_rate §2 (Corrección 4)
+                $zero_match_rate = $known_n_total > 0 
+                    ? round(($zero_match_total / $known_n_total) * 100, 2) 
+                    : 0;
+
+                echo json_encode([
+                    'insufficient_data' => false,
+                    'summary' => [
+                        'total_searches' => $total_searches,
+                        'known_n_count' => $known_n_total,
+                        'unique_sessions' => count($unique_sessions_set),
+                        'zero_match_count' => $zero_match_total,
+                        'zero_match_rate' => $zero_match_rate,
+                        'period_days' => $days
+                    ],
+                    'top_searches' => $top_searches,
+                    'content_gaps' => $content_gaps,
+                    'daily_trend' => $daily_trend
                 ]);
             }
             break;
@@ -1072,6 +1282,70 @@ try {
                 echo json_encode([
                     'content' => $content
                 ]);
+            }
+            break;
+
+        case 'experience_pending':
+            if ($method === 'GET') {
+                $stmt = $db->query("SELECT id, question_redacted, answer, cite_url, source_route, outcome, created_at 
+                                    FROM experience_bank 
+                                    WHERE status = 'pendiente' 
+                                    ORDER BY id DESC");
+                $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                $approved_stmt = $db->query("SELECT id, question_redacted, answer, cite_url, usage_count, expires_at, approved_at 
+                                            FROM experience_bank 
+                                            WHERE status = 'aprobado' 
+                                            ORDER BY id DESC LIMIT 15");
+                $approved = $approved_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    'total_pending' => count($candidates),
+                    'candidates' => $candidates,
+                    'approved' => $approved
+                ]);
+            }
+            break;
+
+        case 'experience_review':
+            if ($method === 'POST') {
+                $exp_id = (int)($input['id'] ?? 0);
+                $new_status = trim($input['status'] ?? '');
+                $edited_answer = trim($input['answer'] ?? '');
+                $cite_url = trim($input['cite_url'] ?? '');
+                $expires_days = min(365, max(1, (int)($input['expires_days'] ?? 180)));
+
+                if ($exp_id <= 0 || !in_array($new_status, ['aprobado', 'rechazado'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Parámetros inválidos']);
+                    exit;
+                }
+
+                if ($new_status === 'aprobado') {
+                    $sql = "UPDATE experience_bank 
+                            SET status = 'aprobado', 
+                                answer = CASE WHEN :ans1 != '' THEN :ans2 ELSE answer END,
+                                cite_url = CASE WHEN :cite1 != '' THEN :cite2 ELSE NULL END,
+                                approved_at = datetime('now'),
+                                reviewed_by = 'admin',
+                                expires_at = datetime('now', '+' || :exp_days || ' days')
+                            WHERE id = :target_id";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bindValue(':ans1', $edited_answer, PDO::PARAM_STR);
+                    $stmt->bindValue(':ans2', $edited_answer, PDO::PARAM_STR);
+                    $stmt->bindValue(':cite1', $cite_url, PDO::PARAM_STR);
+                    $stmt->bindValue(':cite2', $cite_url, PDO::PARAM_STR);
+                    $stmt->bindValue(':exp_days', $expires_days, PDO::PARAM_INT);
+                    $stmt->bindValue(':target_id', $exp_id, PDO::PARAM_INT);
+                    $stmt->execute();
+                } else {
+                    $sql = "UPDATE experience_bank SET status = 'rechazado', reviewed_by = 'admin' WHERE id = :reject_id";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bindValue(':reject_id', $exp_id, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
+                echo json_encode(['success' => true, 'id' => $exp_id, 'status' => $new_status]);
             }
             break;
 

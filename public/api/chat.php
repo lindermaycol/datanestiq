@@ -35,16 +35,7 @@ function loadEnv($path) {
 // Try to load .env from root
 loadEnv(__DIR__ . '/../../.env');
 
-$groq_api_key = getenv('GROQ_API_KEY');
-$dashscope_api_key = getenv('DASHSCOPE_API_KEY');
-$gemini_api_key = getenv('GEMINI_API_KEY');
-
-// Verify that we have at least one key to attempt failover
-if (!$groq_api_key && !$dashscope_api_key && !$gemini_api_key) {
-    echo json_encode(['error' => 'No API keys configured']);
-    http_response_code(500);
-    exit;
-}
+require_once __DIR__ . '/lib/llm_core.php';
 
 // Rate Limiting (fail-open)
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -128,7 +119,28 @@ if ($context && is_array($context)) {
     }
 }
 
+// Integración GraphRAG (Spec 025): Subgrafo Grounded
+$subgraph_context = $input['subgraph_context'] ?? null;
+$subgraph_msg = null;
+if ($subgraph_context && is_array($subgraph_context)) {
+    $has_data = $subgraph_context['hasSufficientData'] ?? false;
+    $cited_urls = $subgraph_context['citedUrls'] ?? [];
+    $facts = $subgraph_context['groundedFacts'] ?? [];
+
+    if (!$has_data) {
+        $subgraph_str = "REGLA OBLIGATORIA GRAPHRAG (§2 HONESTIDAD RADICAL): La taxonomía no contiene nodos ni relaciones suficientes para responder la consulta. DEBES responder exactamente: 'No disponemos de información suficiente en la taxonomía para responder a esta combinación de requerimientos. ¿Deseas agendar una evaluación estratégica con nuestros expertos?'";
+    } else {
+        $facts_str = json_encode($facts, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $urls_str = implode(", ", $cited_urls);
+        $subgraph_str = "SUBGRAFO DE CONTEXTO RECUPERADO (GRAPHRAG - HECHOS FUNDAMENTADOS):\n$facts_str\n\nURLs DE ORIGEN A CITAR: $urls_str\n\nREGLAS OBLIGATORIAS GRAPHRAG (§2):\n1. Fundamenta tu respuesta EXCLUSIVAMENTE en los hechos presentes en este subgrafo. NO inventes hechos.\n2. Cita explícitamente las URLs de origen aplicables usando los nombres reales como texto de enlace Markdown (ej. [Ingeniería de Datos](/soluciones/data-engineering) o [Banca y Finanzas](/sectores/finanzas)).\n3. Preserva la etiqueta [EST] en toda cifra o métrica de retorno estimada.";
+    }
+    $subgraph_msg = ['role' => 'system', 'content' => $subgraph_str];
+}
+
 // Inserción en orden inverso (para que SYSTEM_PROMPT quede en índice 0)
+if ($subgraph_msg) {
+    array_unshift($messages, $subgraph_msg);
+}
 if ($context_msg) {
     array_unshift($messages, $context_msg);
 }
@@ -267,6 +279,15 @@ if (is_array($files)) {
 
 // --- ENRUTAMIENTO POR INTENCION (FR-009, FR-013) ---
 $is_demo_run = strpos($sessionId, 'copilot_') === 0 || strpos($sessionId, 'unknown_') === 0;
+$profile = $is_demo_run ? 'chat_demo' : 'chat_rapido';
+
+// Chequeo sin claves (FR-013 / llm-core)
+if (!llm_has_any_key($profile)) {
+    echo json_encode(['error' => 'No API keys configured']);
+    http_response_code(500);
+    exit;
+}
+
 $last_user_msg = '';
 foreach (array_reverse($messages) as $m) {
     if ($m['role'] === 'user') { $last_user_msg = $m['content']; break; }
@@ -275,82 +296,35 @@ foreach (array_reverse($messages) as $m) {
 $word_count = str_word_count($last_user_msg);
 $is_simple = $word_count < 6 && preg_match('/\b(hola|precio|estado|gracias|ayuda|buenas)\b/i', $last_user_msg);
 
-function callOpenAICompatible($url, $api_key, $model, $messages, $max_tokens) {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . $api_key,
-        'Content-Type: application/json'
-    ]);
-    
-    $payload = [
-        'model' => $model,
-        'messages' => $messages,
-        'temperature' => 0.7,
-        'max_tokens' => $max_tokens
-    ];
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    
-    $start = microtime(true);
-    $response = curl_exec($ch);
-    $latency_ms = round((microtime(true) - $start) * 1000);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    return [$httpcode, $response, $latency_ms, $model];
-}
-
-$httpcode = 500;
-$response = '';
-$latency_ms = 0;
-$actual_model = '';
-
-$target_model = $is_demo_run ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
-
-// Failover chain: Groq -> DashScope -> Gemini
-$providers = [
-    [
-        'name' => 'Groq',
-        'url' => 'https://api.groq.com/openai/v1/chat/completions',
-        'key' => $groq_api_key,
-        'model' => $target_model
-    ],
-    [
-        'name' => 'DashScope',
-        'url' => 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
-        'key' => $dashscope_api_key,
-        'model' => 'qwen-plus'
-    ],
-    [
-        'name' => 'Gemini',
-        'url' => 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-        'key' => $gemini_api_key,
-        'model' => 'gemini-2.5-flash'
-    ]
-];
-
-$success = false;
 $request_start_time = microtime(true);
-$successful_backend = 'unknown';
 
-foreach ($providers as $provider) {
-    if (!$provider['key']) continue;
-    
-    list($httpcode, $response, $latency_ms, $actual_model) = callOpenAICompatible($provider['url'], $provider['key'], $provider['model'], $messages, 800);
-    
-    if ($httpcode >= 200 && $httpcode < 300) {
-        $success = true;
-        $successful_backend = strtolower($provider['name']);
-        break; // Success, exit loop
-    } else {
-        // Log the failure silently and continue to next provider
-        $alert_msg = "ALERTA FAILOVER: Fallo en proveedor " . $provider['name'] . " ($httpcode). Sesion $sessionId";
-        $record_alert($sessionId, 'failover', $alert_msg);
-    }
-}
+$llm_result = llm_complete($profile, $messages, [
+    'max_tokens' => 800,
+    'retries'    => 0,
+    'timeout'    => 20
+]);
 
 $total_latency_ms = (int)((microtime(true) - $request_start_time) * 1000);
+
+// Registro de alertas failover
+foreach ($llm_result['failures'] as $f) {
+    $f_name = match(strtolower($f['provider'] ?? '')) {
+        'groq'      => 'Groq',
+        'dashscope' => 'DashScope',
+        'gemini'    => 'Gemini',
+        default     => ucfirst($f['provider'] ?? 'Desconocido'),
+    };
+    $f_code = $f['http'] ?? 0;
+    $alert_msg = "ALERTA FAILOVER: Fallo en proveedor $f_name ($f_code). Sesion $sessionId";
+    $record_alert($sessionId, 'failover', $alert_msg);
+}
+
+$success = $llm_result['ok'];
+$successful_backend = $success ? strtolower($llm_result['provider']) : 'unknown';
+$httpcode = $llm_result['http'];
+$response = $llm_result['body'];
+$latency_ms = $llm_result['latency_ms'];
+$actual_model = $llm_result['model'];
 
 // Helper fail-safe function to insert into chat_metrics without interrupting execution
 $record_chat_metric = function($session_id, $backend, $latency, $is_success, $tokens, $prompt_tokens = 0, $completion_tokens = 0) {

@@ -98,25 +98,11 @@ if (!preg_match('/^[a-zA-Z0-9]{32,}$/', $session_id)) {
     exit;
 }
 
+require_once __DIR__ . '/lib/pii.php';
+
 // 🛡️ SEGURIDAD §6: Redacción PII para texto libre antes de guardar en SQLite
 if (in_array($event_type, ['search_query', 'chatbot_step'])) {
     $event_value = redactPii($event_value);
-}
-
-// Función de saneamiento de PII
-function redactPii($text) {
-    try {
-        // Redactar Emails
-        $text = preg_replace('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[EMAIL_REDACTED]', $text);
-        // Redactar Teléfonos (patrón estándar internacional de 10+ dígitos)
-        $text = preg_replace('/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4,}/', '[PHONE_REDACTED]', $text);
-        // Móvil Perú: 9XX XXX XXX (con o sin +51 y separadores) (Fix B)
-        $text = preg_replace('/(?<!\d)(\+?51[\s.\-]?)?9\d{2}[\s.\-]?\d{3}[\s.\-]?\d{3}(?!\d)/', '[PHONE_REDACTED]', $text);
-        return $text;
-    } catch (Exception $e) {
-        // Guardarraíl fail-closed: Si la redacción falla, borramos el valor
-        return '[REDACTION_ERROR]';
-    }
 }
 
 // Guardar en la base de datos de manera fail-safe

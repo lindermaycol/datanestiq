@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const AVAILABILITY_API = '/api/availability.php';
 const BOOK_API = '/api/book_appointment.php';
 
-export default function AppointmentPicker({ sessionId, email, onBooked }) {
+export default function AppointmentPicker({ sessionId, email, onBooked, lastComplexQuery = '', lastAnswer = '', sourceRoute = 'llm' }) {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -49,7 +49,7 @@ export default function AppointmentPicker({ sessionId, email, onBooked }) {
 
   const handleBook = async () => {
     if (!selectedSlot || !contactEmail) {
-      setError('Selecciona un horario e ingresa tu email.');
+      setError('Por favor selecciona un horario e ingresa tu email.');
       return;
     }
     setBooking(true);

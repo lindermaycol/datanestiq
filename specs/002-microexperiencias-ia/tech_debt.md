@@ -40,3 +40,10 @@
 ### 7. Umbral Poco Selectivo en Buscador Semántico (Precisión y Rendimiento) - [RESUELTO]
 - **Descripción:** El modelo de embeddings original (`all-MiniLM-L6-v2`) estaba optimizado para inglés, lo que degradaba la precisión de búsqueda para queries en español, generando falsos positivos. Además, el modelo descargaba sus pesos de manera síncrona en el primer uso, provocando latencia percibida.
 - **Resolución Aplicada:** Se reemplazó el motor por `paraphrase-multilingual-MiniLM-L12-v2` cuantizado, el cual mejora drásticamente la discriminación semántica en español. Se mitigó el impacto de su mayor peso mediante la implementación de un mecanismo de **Warmup en background** (usando `requestIdleCallback`) que precarga el modelo mientras el usuario navega, logrando una experiencia de búsqueda instantánea.
+
+### 8. Registro Único LLM (llm-core): Código Muerto y Migración Pendiente - [EN PROCESO]
+- **Código Muerto en `public/api/chat.php`:** Las variables `$cheap_llm_url`, `$cheap_llm_key`, `$cheap_llm_model` (líneas 202-204) y el cálculo de complejidad `$is_simple` (línea 297) son vestigios del ruteo por costo histórico de la Spec 002. Con la adopción de `public/api/lib/llm_core.php`, el perfil (`chat_rapido` vs `chat_demo`) rige la selección del modelo y la cadena de failover desde el registro central (`providers.json`), por lo que estas variables se mantienen inertes sin efecto operativo.
+- **Herramientas Pendientes de Migración a `llm-core`:** Quedan pendientes de migrar al registro centralizado los siguientes componentes del repositorio:
+  1. `scripts/docs-generator.mjs`
+  2. `scripts/openwiki-llm.yaml`
+  3. `scripts/openwiki-camino-b.bat`

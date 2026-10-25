@@ -5,6 +5,7 @@ wp-includes/
 !wp-config-sample.php
 # App PHP propio (NO core WordPress): API, panel CRM interno y scripts. No contienen secretos (leen de .env).
 !public/api/*.php
+!public/api/lib/*.php
 !public/admin/*.php
 !scripts/*.php
 # wp-config.php ignorado (contiene credenciales de BD; openwiki respeta .gitignore y ya no lo escanea)
@@ -65,3 +66,7 @@ id_rsa*
 __pycache__/
 *.pyc
 .codegraph/
+
+# Plan Orca F0 (2026-10-25)
+graphify-out/
+public/api/lib/providers.php

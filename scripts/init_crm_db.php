@@ -141,6 +141,25 @@ try {
         created_at DATETIME DEFAULT (datetime('now'))
     )");
 
+    // --- Tabla: experience_bank (Spec 027 - Banco de Experiencia Curada 0-LLM) ---
+    $db->exec("CREATE TABLE IF NOT EXISTS experience_bank (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        question_redacted TEXT NOT NULL,
+        answer TEXT NOT NULL,
+        cite_url VARCHAR(200) DEFAULT NULL,
+        source_route VARCHAR(20) DEFAULT 'llm',
+        outcome VARCHAR(20) NOT NULL,
+        status VARCHAR(15) DEFAULT 'pendiente',
+        usage_count INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT (datetime('now')),
+        approved_at DATETIME DEFAULT NULL,
+        reviewed_by VARCHAR(50) DEFAULT NULL,
+        expires_at DATETIME DEFAULT (datetime('now', '+180 days'))
+    )");
+
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_exp_bank_status ON experience_bank(status)");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_exp_bank_expires ON experience_bank(expires_at)");
+
     // Migración idempotente para Spec 020 Fixes (A/C)
     $ds_columns = $db->query("PRAGMA table_info(demand_signals)")->fetchAll(PDO::FETCH_COLUMN, 1);
     if (!in_array('resolved_route', $ds_columns)) {

@@ -1,0 +1,2084 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-08-11T03:18:22.224Z",
+  "stats": {
+    "totalNodes": 37,
+    "totalEdges": 124,
+    "nodesByType": {
+      "pillar": 6,
+      "sector": 10,
+      "persona": 7,
+      "industry": 14
+    }
+  },
+  "nodes": {
+    "pillar-ai-data-science": {
+      "id": "pillar-ai-data-science",
+      "type": "pillar",
+      "label": "Inteligencia Artificial & Data Science",
+      "url": "/soluciones/ai-data-science",
+      "attributes": {
+        "slug": "ai-data-science",
+        "description": "Desplegamos arquitecturas cognitivas y predictivas que transforman sus pasivos de datos en activos financieros cuantificables.",
+        "features": [
+          "Machine Learning y LLMOps",
+          "Arquitecturas RAG Corporativas",
+          "Sistemas Multi-Agente B2B"
+        ],
+        "techStack": [
+          "Python",
+          "LangChain",
+          "LlamaIndex",
+          "PyTorch",
+          "AWS Bedrock / Azure OpenAI"
+        ],
+        "proofPoints": [
+          {
+            "client": "Ministerio de Finanzas",
+            "result": "[EST] 40% mejora en detección de anomalías fiscales"
+          },
+          {
+            "client": "Banco Nacional",
+            "result": "[EST] Reducción de 20 días a 4 horas en cierres contables"
+          }
+        ],
+        "targetRoles": [
+          "CDO",
+          "CTO",
+          "Director de Innovación"
+        ]
+      }
+    },
+    "pillar-business-intelligence": {
+      "id": "pillar-business-intelligence",
+      "type": "pillar",
+      "label": "Análisis de Datos, BI & Dashboards",
+      "url": "/soluciones/business-intelligence",
+      "attributes": {
+        "slug": "business-intelligence",
+        "description": "Visibilidad ejecutiva sin precedentes. Dashboards de alta densidad y minería de procesos para directorios exigentes.",
+        "features": [
+          "Dashboards Ejecutivos de Alta Densidad (Power BI, Tableau, Looker)",
+          "Minería de Procesos (Process Mining)",
+          "Monitoreo en Tiempo Real de KPIs/OKRs Estratégicos"
+        ],
+        "techStack": [
+          "Power BI",
+          "Tableau",
+          "Looker",
+          "dbt"
+        ],
+        "proofPoints": [
+          {
+            "client": "Cadena de Retail Top 5",
+            "result": "[EST] 30% ahorro en horas-hombre para reportes"
+          },
+          {
+            "client": "Empresa Logística Internacional",
+            "result": "[EST] Visibilidad 100% en tiempo real de márgenes operativos"
+          }
+        ],
+        "targetRoles": [
+          "CEO",
+          "CFO",
+          "Director Comercial"
+        ]
+      }
+    },
+    "pillar-data-engineering": {
+      "id": "pillar-data-engineering",
+      "type": "pillar",
+      "label": "Ingeniería & Arquitectura de Datos",
+      "url": "/soluciones/data-engineering",
+      "attributes": {
+        "slug": "data-engineering",
+        "description": "Arquitecturas de alta disponibilidad, pipelines ETL/ELT y Data Lakes diseñados para unificar su conocimiento corporativo.",
+        "features": [
+          "Migración Cloud y Modern Data Stack",
+          "Pipelines ETL/ELT Escalables",
+          "Data Observability & Governance"
+        ],
+        "techStack": [
+          "Snowflake",
+          "Databricks",
+          "Apache Spark",
+          "Kafka",
+          "Iceberg"
+        ],
+        "proofPoints": [
+          {
+            "client": "Banco Regional",
+            "result": "[EST] 10x velocidad en pipelines de datos nocturnos"
+          }
+        ],
+        "targetRoles": [
+          "CTO",
+          "CDO",
+          "Arquitecto de Datos"
+        ]
+      }
+    },
+    "pillar-estrategia-datos-ia": {
+      "id": "pillar-estrategia-datos-ia",
+      "type": "pillar",
+      "label": "Consultoría Estratégica en Datos & IA",
+      "url": "/soluciones/estrategia-datos-ia",
+      "attributes": {
+        "slug": "estrategia-datos-ia",
+        "description": "Auditorías de madurez, roadmaps de ROI acelerado y gobernanza para liderar la adopción corporativa de Inteligencia Artificial.",
+        "features": [
+          "Auditoría Integral de Madurez de Datos e IA",
+          "Roadmaps Estratégicos y Priorización de Casos de Uso de Alto ROI",
+          "CTO as a Service y Asesoramiento Arquitectónico Experto"
+        ],
+        "techStack": [
+          "Frameworks DAMA-DMBOK",
+          "Metodologías Ágiles",
+          "Data Mesh",
+          "Databricks / Snowflake (Lakehouse Architecture)",
+          "Catálogo de Datos (Data Catalog / Metadata Catalog)",
+          "Gobierno de Metadatos y Data Stewardship",
+          "dbt / Airflow / Prefect",
+          "Calidad de Datos e Interoperabilidad",
+          "Terraform (Infraestructura como Código)"
+        ],
+        "proofPoints": [
+          {
+            "client": "Gobierno Regional",
+            "result": "[EST] 100% de cumplimiento en normativas de transparencia en menos de un año"
+          }
+        ],
+        "targetRoles": [
+          "CEO",
+          "Directorio",
+          "CDO"
+        ]
+      }
+    },
+    "pillar-hiperautomatizacion": {
+      "id": "pillar-hiperautomatizacion",
+      "type": "pillar",
+      "label": "Hiperautomatización Inteligente",
+      "url": "/soluciones/hiperautomatizacion",
+      "attributes": {
+        "slug": "hiperautomatizacion",
+        "description": "Orquestamos RPA, IDP y ecosistemas API para ejecutar procesos críticos sin fricción, incrementando su ROI operativo.",
+        "features": [
+          "Hiperautomatización de Procesos Core (RPA + Cognitive AI)",
+          "Procesamiento Inteligente de Documentos (IDP / OCR Avanzado)",
+          "Orquestación Serverless e Integración de Ecosistemas API"
+        ],
+        "techStack": [
+          "UiPath",
+          "Automation Anywhere",
+          "Python RPA",
+          "Document AI",
+          "Cloud / Híbrido / On-Premise"
+        ],
+        "proofPoints": [
+          {
+            "client": "Aseguradora Multinacional",
+            "result": "[EST] 70% de tareas repetitivas en back-office automatizadas"
+          }
+        ],
+        "targetRoles": [
+          "COO",
+          "CFO",
+          "Gerente de Operaciones"
+        ]
+      }
+    },
+    "pillar-sistemas-digitales": {
+      "id": "pillar-sistemas-digitales",
+      "type": "pillar",
+      "label": "Desarrollo de Sistemas Digitales Premium",
+      "url": "/soluciones/sistemas-digitales",
+      "attributes": {
+        "slug": "sistemas-digitales",
+        "description": "Plataformas B2B y sistemas core de misión crítica, concebidos desde su génesis con capacidades cognitivas integradas.",
+        "features": [
+          "Desarrollo de Sistemas a Medida y Plataformas Corporativas AI-First",
+          "Aplicaciones Web y Portales B2B de Alta Conversión",
+          "Arquitecturas Headless, Microservicios y Sistemas Modulares"
+        ],
+        "techStack": [
+          "React / Vue.js / Astro (Micro-frontends)",
+          "Node.js / Python / Go",
+          "Despliegue Multi-Cloud, Híbrido y On-Premise",
+          "Nube Privada Segura (VPC) y Soberanía de Datos",
+          "PostgreSQL / MongoDB / Redis",
+          "Docker / Kubernetes",
+          "Patrones de Integración con Legacy / ERP / Core"
+        ],
+        "proofPoints": [
+          {
+            "client": "Startup Fintech",
+            "result": "[EST] 50% de mejora en el Time-To-Market de su aplicación core"
+          }
+        ],
+        "targetRoles": [
+          "CTO",
+          "CIO",
+          "Director de Producto"
+        ]
+      }
+    },
+    "sector-educacion": {
+      "id": "sector-educacion",
+      "type": "sector",
+      "label": "Educación",
+      "url": "/sectores/educacion",
+      "attributes": {
+        "slug": "educacion",
+        "description": "Modelos predictivos de retención estudiantil y ecosistemas de datos unificados para instituciones de educación superior.",
+        "problems": [
+          {
+            "code": "desercion",
+            "label": "Altas tasas de abandono (Churn)",
+            "solution": "Desplegamos modelos predictivos que detectan patrones de riesgo de deserción estudiantil con meses de anticipación, permitiendo intervenciones tempranas."
+          },
+          {
+            "code": "personalizacion",
+            "label": "Dificultad para personalizar el aprendizaje",
+            "solution": "Integramos sistemas cognitivos que analizan el rendimiento individual para generar trayectorias de aprendizaje hiper-personalizadas a escala."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de deserción estudiantil",
+            "expectedRoi": "[EST] -20%"
+          },
+          {
+            "metric": "Incremento de matrícula",
+            "expectedRoi": "[EST] +15% de conversión"
+          }
+        ],
+        "roiCases": [],
+        "regulations": [
+          "FERPA",
+          "Ley Universitaria",
+          "Privacidad de Menores"
+        ],
+        "roleEquivalents": {
+          "ceo": "Director o Titular de la institución educativa",
+          "cio": "Jefe / Coordinador de Informática",
+          "cdo": "Responsable de Estadística y Sistemas de Información",
+          "cfo": "Director de Administración y Finanzas"
+        }
+      }
+    },
+    "sector-finanzas": {
+      "id": "sector-finanzas",
+      "type": "sector",
+      "label": "Finanzas y Banca",
+      "url": "/sectores/finanzas",
+      "attributes": {
+        "slug": "finanzas",
+        "description": "Arquitecturas analíticas para mitigación de riesgo, detección de fraude en milisegundos y automatización del ciclo crediticio.",
+        "problems": [
+          {
+            "code": "riesgo",
+            "label": "Prevención de fraude y scoring",
+            "solution": "Desplegamos modelos de scoring y detección de fraude en tiempo real que mejoran la precisión de evaluación crediticia y reducen pérdidas operativas."
+          },
+          {
+            "code": "creditos",
+            "label": "Lentitud en evaluación de créditos",
+            "solution": "Automatizamos el flujo de evaluación de solicitudes de crédito con RPA e IA, pasando de días a horas en la toma de decisión."
+          },
+          {
+            "code": "ebitda_tco",
+            "label": "Impacto en EBITDA y TCO",
+            "solution": "Construimos modelos de negocio cuantificables con retornos ágiles (payback < 12 meses), y arquitecturas modernas que reducen su TCO sin reemplazar su ERP core."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de falsos positivos en fraude",
+            "expectedRoi": "[EST] 30% - 45% de mejora"
+          },
+          {
+            "metric": "Tiempo de evaluación crediticia",
+            "expectedRoi": "[EST] De 3 días a menos de 1 hora"
+          },
+          {
+            "metric": "Reducción de morosidad (NPL)",
+            "expectedRoi": "[EST] 10% - 15% de reducción en cartera vencida"
+          },
+          {
+            "metric": "Precisión de Scoring Predictivo",
+            "expectedRoi": "[EST] +20% en Gini index"
+          },
+          {
+            "metric": "Eficiencia en Onboarding (KYC)",
+            "expectedRoi": "[EST] -60% en tiempo de verificación"
+          }
+        ],
+        "roiCases": [
+          {
+            "title": "Automatización de Scoring Crediticio y Fraude",
+            "description": "Despliegue de un pipeline de Data Engineering para ingesta en tiempo real y modelos predictivos de Machine Learning.",
+            "context": "Institución financiera procesando >5M tx/día con aprobaciones crediticias manuales de hasta 5 días.",
+            "metrics": [
+              {
+                "value": "-85%",
+                "label": "Tiempo de aprobación"
+              },
+              {
+                "value": "-40%",
+                "label": "Tasa de fraude"
+              }
+            ]
+          }
+        ],
+        "regulations": [
+          "Basilea III / IV",
+          "PCI-DSS",
+          "AML-KYC",
+          "SBS (Perú)"
+        ],
+        "roleEquivalents": {}
+      }
+    },
+    "sector-logistica": {
+      "id": "sector-logistica",
+      "type": "sector",
+      "label": "Logística",
+      "url": "/sectores/logistica",
+      "attributes": {
+        "slug": "logistica",
+        "description": "Optimización algorítmica de rutas y visibilidad en tiempo real (Torre de Control) para cadenas de suministro complejas.",
+        "problems": [
+          {
+            "code": "rutas",
+            "label": "Ineficiencia en ruteo y entregas",
+            "solution": "Implementamos algoritmos de machine learning para el ruteo dinámico, reduciendo costos de combustible y tiempos de entrega garantizados."
+          },
+          {
+            "code": "trazabilidad",
+            "label": "Falta de visibilidad operativa",
+            "solution": "Desarrollamos arquitecturas de datos en tiempo real para una visibilidad end-to-end (Torre de Control) de toda la cadena de suministro."
+          },
+          {
+            "code": "ventaja_competitiva",
+            "label": "Sparring y ventaja competitiva",
+            "solution": "Actuamos como su sparring estratégico. Mapeamos cómo la IA puede  convertirse en su ventaja competitiva para proteger su cuota de mercado frente a nativos digitales."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Costos de combustible",
+            "expectedRoi": "[EST] -15%"
+          },
+          {
+            "metric": "Entregas a tiempo (OTIF)",
+            "expectedRoi": "[EST] Mejora a 98%"
+          }
+        ],
+        "roiCases": [],
+        "regulations": [
+          "Regulaciones de Aduanas",
+          "Normativas de Emisiones (ESG)"
+        ],
+        "roleEquivalents": {}
+      }
+    },
+    "sector-manufactura": {
+      "id": "sector-manufactura",
+      "type": "sector",
+      "label": "Manufactura",
+      "url": "/sectores/manufactura",
+      "attributes": {
+        "slug": "manufactura",
+        "description": "Control de calidad automatizado mediante visión computacional y analítica industrial para maximizar el indicador OEE.",
+        "problems": [
+          {
+            "code": "calidad",
+            "label": "Defectos y mermas en producción",
+            "solution": "Automatizamos el control de calidad mediante visión computacional, detectando defectos milimétricos en la línea de producción sin intervención humana."
+          },
+          {
+            "code": "oee",
+            "label": "Baja eficiencia operativa (OEE)",
+            "solution": "Conectamos silos de datos OT/IT para monitorear y maximizar la Eficiencia General de los Equipos (OEE) corporativos mediante analítica en tiempo real."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Mejora del OEE (Eficiencia General)",
+            "expectedRoi": "[EST] +20%"
+          },
+          {
+            "metric": "Costos de mantenimiento no planificado",
+            "expectedRoi": "[EST] -25%"
+          }
+        ],
+        "roiCases": [],
+        "regulations": [
+          "ISO 9001",
+          "OHSAS 18001 / ISO 45001",
+          "Normativas Ambientales"
+        ],
+        "roleEquivalents": {
+          "cio": "Gerente / Jefe de Sistemas",
+          "cto": "Gerente de Operaciones e Ingeniería",
+          "cdo": "Jefe de Analítica y Gestión de Datos",
+          "coo": "Gerente de Planta / Operaciones",
+          "ciso": "Jefe de Ciberseguridad e Infraestructura"
+        }
+      }
+    },
+    "sector-mineria": {
+      "id": "sector-mineria",
+      "type": "sector",
+      "label": "Minería",
+      "url": "/sectores/mineria",
+      "attributes": {
+        "slug": "mineria",
+        "description": "Despliegue de mantenimiento predictivo (IoT) y analítica de seguridad para maximizar la rentabilidad de las operaciones mineras.",
+        "problems": [
+          {
+            "code": "mantenimiento",
+            "label": "Downtime inesperado de maquinaria",
+            "solution": "Desplegamos modelos de mantenimiento predictivo IoT que anticipan fallas en maquinaria pesada, reduciendo drásticamente el downtime."
+          },
+          {
+            "code": "seguridad",
+            "label": "Riesgos de seguridad y accidentes",
+            "solution": "Sistemas de visión computacional y analítica de sensores en tiempo real para alertar sobre condiciones de riesgo y proteger la integridad del personal operativo."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de incidentes de seguridad laboral",
+            "expectedRoi": "[EST] -30% a -40% mediante visión computacional"
+          },
+          {
+            "metric": "Aumento de disponibilidad de maquinaria (OEE)",
+            "expectedRoi": "[EST] +10% a +15%"
+          },
+          {
+            "metric": "Reducción de paradas no programadas (Downtime)",
+            "expectedRoi": "[EST] -20% a -25%"
+          },
+          {
+            "metric": "Payback de proyectos IoT predictivos",
+            "expectedRoi": "[EST] 6 a 9 meses en activos críticos"
+          }
+        ],
+        "roiCases": [],
+        "regulations": [
+          "Normas Mineras Nacionales",
+          "Estándares ESG",
+          "Regulaciones Ambientales"
+        ],
+        "roleEquivalents": {
+          "cio": "Gerente / Jefe de TI y Sistemas",
+          "cto": "Gerente de Automatización e Ingeniería Mina",
+          "cdo": "Jefe de Analítica y Sistemas de Información",
+          "coo": "Gerente de Operaciones Mineras",
+          "ciso": "Jefe de Seguridad de la Información y Control"
+        }
+      }
+    },
+    "sector-publico": {
+      "id": "sector-publico",
+      "type": "sector",
+      "label": "Sector Público",
+      "url": "/sectores/publico",
+      "attributes": {
+        "slug": "publico",
+        "description": "Modernización del Estado mediante arquitecturas de datos seguras, automatización de expedientes y analítica de transparencia institucional.",
+        "problems": [
+          {
+            "code": "expedientes",
+            "label": "Revisión lenta de expedientes",
+            "solution": "Podemos automatizar la revisión y trazabilidad de expedientes con IA (IDP), reduciendo tiempos operativos hasta un 60% y garantizando cumplimiento con estándares OECE."
+          },
+          {
+            "code": "transparencia",
+            "label": "Reportes e indicadores manuales",
+            "solution": "Implementamos dashboards ejecutivos en tiempo real que generan reportes de indicadores de gestión y transparencia de forma automática."
+          },
+          {
+            "code": "auditoria",
+            "label": "Falta de trazabilidad y auditoría",
+            "solution": "Establecemos arquitecturas de datos inmutables y linaje de datos completo, garantizando auditorías transparentes y 100% trazables."
+          },
+          {
+            "code": "calidad_padrones",
+            "label": "Calidad de padrones ciudadanos",
+            "solution": "Implementamos modelos de Machine Learning y MDM para limpiar, unificar y deduplicar padrones a escala nacional, garantizando una fuente única de verdad para las políticas públicas."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Tiempos de atención y revisión de expedientes",
+            "expectedRoi": "[EST] Reducción del 50% al 60%"
+          },
+          {
+            "metric": "Reducción de retrabajo y errores documentales",
+            "expectedRoi": "[EST] -40% en observaciones de auditoría"
+          },
+          {
+            "metric": "Trazabilidad documental y alertas tempranas",
+            "expectedRoi": "[EST] 100% visibilidad de cuellos de botella"
+          },
+          {
+            "metric": "Mitigación de riesgo reputacional",
+            "expectedRoi": "[EST] Detección de anomalías en contrataciones en tiempo real"
+          }
+        ],
+        "roiCases": [
+          {
+            "title": "Automatización e Interoperabilidad de Expedientes",
+            "description": "Procesamiento inteligente de documentos (IDP) y gobernanza de datos para la tramitación transparente de expedientes gubernamentales.",
+            "context": "Entidad pública con procesamiento manual de expedientes ciudadanos bajo exigencias de la Ley de Transparencia y ENI.",
+            "metrics": [
+              {
+                "value": "-60%",
+                "label": "Tiempos de tramitación"
+              },
+              {
+                "value": "100%",
+                "label": "Trazabilidad de expedientes"
+              }
+            ]
+          }
+        ],
+        "regulations": [
+          "Esquema Nacional de Interoperabilidad (ENI)",
+          "Ley de Transparencia",
+          "OECE"
+        ],
+        "roleEquivalents": {
+          "cio": "Jefe / Director de la OTI",
+          "cto": "Responsable de Infraestructura y Sistemas",
+          "cdo": "Director de Datos / Estadística e Informática",
+          "cfo": "Director de Administración y Finanzas",
+          "ceo": "Director General / Titular de la Entidad",
+          "coo": "Secretario General",
+          "ciso": "Oficial de Seguridad de la Información"
+        }
+      }
+    },
+    "sector-retail": {
+      "id": "sector-retail",
+      "type": "sector",
+      "label": "Retail y B2B",
+      "url": "/sectores/retail",
+      "attributes": {
+        "slug": "retail",
+        "description": "Forecasting de demanda, optimización de inventarios y motores de recomendación para maximizar el margen operativo comercial.",
+        "problems": [
+          {
+            "code": "inventarios",
+            "label": "Quiebres de stock e inventarios",
+            "solution": "Implementamos modelos de forecasting con IA que optimizan inventarios, reducen quiebres de stock y aumentan el margen operativo."
+          },
+          {
+            "code": "reportes",
+            "label": "Reportes operativos lentos",
+            "solution": "Centralizamos tus silos de datos en una sola fuente de verdad con dashboards automáticos y alertas en tiempo real para equipos comerciales."
+          },
+          {
+            "code": "ventaja_competitiva",
+            "label": "Sparring y ventaja competitiva",
+            "solution": "Actuamos como su sparring estratégico. Mapeamos cómo la IA puede  convertirse en su ventaja competitiva para proteger su cuota de mercado frente a nativos digitales."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de quiebres de stock",
+            "expectedRoi": "[EST] -30%"
+          },
+          {
+            "metric": "Aumento del ticket promedio",
+            "expectedRoi": "[EST] +12%"
+          }
+        ],
+        "roiCases": [
+          {
+            "title": "Optimización Predictiva de Inventario",
+            "description": "Implementación de una arquitectura de Business Intelligence integrada con modelos de series temporales para anticipar la demanda.",
+            "context": "Retailer de gran escala afectado por roturas de stock en temporadas pico y exceso de inventario obsoleto.",
+            "metrics": [
+              {
+                "value": "+22%",
+                "label": "Rotación de activos"
+              },
+              {
+                "value": "98%",
+                "label": "Precisión en forecast"
+              }
+            ]
+          }
+        ],
+        "regulations": [
+          "Ley del Consumidor",
+          "PCI-DSS",
+          "Leyes de Privacidad (Cookies)"
+        ],
+        "roleEquivalents": {}
+      }
+    },
+    "sector-salud": {
+      "id": "sector-salud",
+      "type": "sector",
+      "label": "Salud",
+      "url": "/sectores/salud",
+      "attributes": {
+        "slug": "salud",
+        "description": "Desplegamos modelos predictivos e interoperabilidad de datos para optimizar recursos hospitalarios y elevar la calidad de atención al paciente.",
+        "problems": [
+          {
+            "code": "listas",
+            "label": "Gestión de listas de espera",
+            "solution": "Desarrollamos modelos predictivos que optimizan la asignación de camas y listas de espera, mejorando tiempos de atención y reduciendo riesgo operativo."
+          },
+          {
+            "code": "clinicas",
+            "label": "Historias clínicas dispersas",
+            "solution": "Centralizamos historias clínicas dispersas en una plataforma unificada con generación automática de reportes clínicos y alertas tempranas."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de readmisiones",
+            "expectedRoi": "[EST] 15% de reducción"
+          },
+          {
+            "metric": "Optimización de camas hospitalarias",
+            "expectedRoi": "[EST] 20% más disponibilidad"
+          }
+        ],
+        "roiCases": [
+          {
+            "title": "Agentes de IA para Análisis Clínico e IDP",
+            "description": "Desarrollo de Sistemas Digitales Premium apoyados por NLP y LLMs privados (GenAI) para extraer, estructurar y anonimizar entidades médicas.",
+            "context": "Red hospitalaria procesando manualmente miles de reportes médicos no estructurados bajo cumplimiento HIPAA.",
+            "metrics": [
+              {
+                "value": "100x",
+                "label": "Velocidad de extracción"
+              },
+              {
+                "value": "100%",
+                "label": "Privacidad (On-Premise)"
+              }
+            ]
+          }
+        ],
+        "regulations": [
+          "HIPAA",
+          "HL7-FHIR",
+          "Ley de Protección de Datos Personales"
+        ],
+        "roleEquivalents": {
+          "ceo": "Director General / Director del Hospital",
+          "cio": "Jefe de la Unidad de Estadística e Informática",
+          "cdo": "Responsable de Gestión de la Información en Salud",
+          "cfo": "Director de Administración y Finanzas",
+          "ciso": "Oficial de Seguridad de la Información"
+        }
+      }
+    },
+    "sector-seguros": {
+      "id": "sector-seguros",
+      "type": "sector",
+      "label": "Seguros",
+      "url": "/sectores/seguros",
+      "attributes": {
+        "slug": "seguros",
+        "description": "Motores de IA para acelerar el triage de siniestros, modelado dinámico de primas y contención algorítmica de reclamos fraudulentos.",
+        "problems": [
+          {
+            "code": "siniestros",
+            "label": "Resolución lenta de siniestros",
+            "solution": "Automatizamos la gestión y triage de siniestros mediante Procesamiento Inteligente de Documentos (IDP) e IA, acelerando el ciclo de liquidación."
+          },
+          {
+            "code": "fraude",
+            "label": "Fuga de capital por reclamos fraudulentos",
+            "solution": "Desarrollamos modelos predictivos en tiempo real que identifican patrones anómalos y reclamos fraudulentos antes de que el capital sea desembolsado."
+          },
+          {
+            "code": "ebitda_tco",
+            "label": "Impacto en EBITDA y TCO",
+            "solution": "Construimos modelos de negocio cuantificables con retornos ágiles (payback < 12 meses), y arquitecturas modernas que reducen su TCO sin reemplazar su ERP core."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Tiempo de resolución de siniestros menores",
+            "expectedRoi": "[EST] De 15 días a menos de 24 horas"
+          },
+          {
+            "metric": "Detección temprana de reclamos fraudulentos",
+            "expectedRoi": "[EST] +30% a 40% de precisión algorítmica"
+          },
+          {
+            "metric": "Reducción de siniestralidad técnica",
+            "expectedRoi": "[EST] -5% a -10% mediante pricing dinámico"
+          },
+          {
+            "metric": "Eficiencia en estimación de reservas",
+            "expectedRoi": "[EST] +25% de precisión actuarial"
+          },
+          {
+            "metric": "Automatización de Triage (Fast-track)",
+            "expectedRoi": "[EST] 40% de siniestros resueltos sin toque humano"
+          }
+        ],
+        "roiCases": [
+          {
+            "title": "Hiperautomatización del Triage de Siniestros Menores",
+            "description": "Evaluación algorítmica (Visión Computacional/NLP) para liquidación rápida y segura de pólizas vehiculares.",
+            "context": "Aseguradora procesando reclamos masivos con embudos manuales que demoraban >15 días.",
+            "metrics": [
+              {
+                "value": "<24h",
+                "label": "Tiempo de liquidación fast-track"
+              },
+              {
+                "value": "+40%",
+                "label": "Siniestros resueltos sin toque humano"
+              }
+            ]
+          }
+        ],
+        "regulations": [
+          "Solvencia II",
+          "Superintendencia de Seguros (SBS)"
+        ],
+        "roleEquivalents": {}
+      }
+    },
+    "sector-telecomunicaciones": {
+      "id": "sector-telecomunicaciones",
+      "type": "sector",
+      "label": "Telecomunicaciones",
+      "url": "/sectores/telecomunicaciones",
+      "attributes": {
+        "slug": "telecomunicaciones",
+        "description": "Analítica predictiva de redes y modelos de contención de Churn de suscriptores para operadoras de telecomunicaciones de alto volumen.",
+        "problems": [
+          {
+            "code": "churn",
+            "label": "Alta tasa de fuga de suscriptores (Churn)",
+            "solution": "Predecimos la fuga de clientes con alta precisión mediante algoritmos de Machine Learning, permitiendo campañas de retención proactivas y ultra-dirigidas."
+          },
+          {
+            "code": "redes",
+            "label": "Congestión e ineficiencia de red",
+            "solution": "Implementamos analítica geoespacial y predictiva de datos masivos para optimizar el despliegue de infraestructura de fibra y anticipar picos de congestión."
+          }
+        ],
+        "kpis": [
+          {
+            "metric": "Reducción de Churn",
+            "expectedRoi": "[EST] -25%"
+          },
+          {
+            "metric": "Optimización de red y CAPEX",
+            "expectedRoi": "[EST] 15% de ahorro"
+          }
+        ],
+        "roiCases": [],
+        "regulations": [
+          "Ley General de Telecomunicaciones",
+          "Protección de Datos",
+          "Neutralidad de Red"
+        ],
+        "roleEquivalents": {}
+      }
+    },
+    "persona-cfo": {
+      "id": "persona-cfo",
+      "type": "persona",
+      "label": "CFO / Director Financiero",
+      "attributes": {
+        "description": "decisiones sin datos confiables. cierres contables lentos",
+        "goals": [
+          "ROI medible",
+          "control de costos",
+          "forecasting",
+          "gestión de riesgo"
+        ],
+        "pains": [
+          "decisiones sin datos confiables",
+          "cierres contables lentos"
+        ],
+        "objections": [
+          "El ROI de proyectos de datos suele ser abstracto o a muy largo plazo",
+          "Reemplazar el ERP cuesta demasiado"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "El ROI de proyectos de datos suele ser abstracto o a muy largo plazo",
+            "response": "Trazamos modelos de Payback concretos con victorias tempranas (Quick Wins) en los primeros 3 a 4 meses de implementación."
+          },
+          {
+            "objection": "Reemplazar el ERP cuesta demasiado",
+            "response": "No reemplazamos su ERP; coexistimos con él integrando arquitecturas modernas y ligeras (Data Lake/Warehouse) que prolongan su vida útil y reducen el TCO."
+          }
+        ],
+        "decisionCriteria": [
+          "Payback Period y TCO",
+          "Previsibilidad presupuestaria",
+          "Impacto directo en el EBITDA"
+        ]
+      }
+    },
+    "persona-cio": {
+      "id": "persona-cio",
+      "type": "persona",
+      "label": "CIO",
+      "attributes": {
+        "description": "sistemas legacy. silos de datos",
+        "goals": [
+          "uptime",
+          "seguridad",
+          "reducción de costos IT",
+          "compliance"
+        ],
+        "pains": [
+          "sistemas legacy",
+          "silos de datos"
+        ],
+        "objections": [
+          "Tenemos un contrato vigente con Microsoft",
+          "Nuestros datos son demasiado sensibles para la nube"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "Tenemos un contrato vigente con Microsoft",
+            "response": "Nuestras arquitecturas son agnósticas, por lo que podemos desplegar soluciones nativas en su entorno Azure aprovechando su infraestructura existente y licencias vigentes."
+          },
+          {
+            "objection": "Nuestros datos son demasiado sensibles para la nube",
+            "response": "Desplegamos en configuraciones On-Premise o en Nubes Privadas Virtuales (VPC), garantizando que los datos nunca salgan de su perímetro corporativo."
+          }
+        ],
+        "decisionCriteria": [
+          "Seguridad certificada",
+          "Integración con legacy",
+          "Total Cost of Ownership (TCO)"
+        ]
+      }
+    },
+    "persona-cdo": {
+      "id": "persona-cdo",
+      "type": "persona",
+      "label": "CDO / Chief Data Officer",
+      "attributes": {
+        "description": "datos fragmentados. baja calidad",
+        "goals": [
+          "valor del dato",
+          "gobernanza",
+          "calidad de datos"
+        ],
+        "pains": [
+          "datos fragmentados",
+          "baja calidad"
+        ],
+        "objections": [
+          "Nuestra calidad de datos actual es muy baja para aplicar IA",
+          "Falta cultura del dato en la empresa"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "Nuestra calidad de datos actual es muy baja para aplicar IA",
+            "response": "Aplicamos ingeniería de datos previa para limpiar, estructurar y unificar sus silos antes de desplegar cualquier modelo predictivo."
+          },
+          {
+            "objection": "Falta cultura del dato en la empresa",
+            "response": "Ofrecemos transferencia de conocimiento y planes de adopción, acompañando a su equipo para asegurar que las herramientas sean utilizadas diariamente."
+          }
+        ],
+        "decisionCriteria": [
+          "Escalabilidad de la gobernanza",
+          "Adopción de usuarios",
+          "Reducción de silos de datos"
+        ]
+      }
+    },
+    "persona-cto": {
+      "id": "persona-cto",
+      "type": "persona",
+      "label": "CTO",
+      "attributes": {
+        "description": "deuda técnica. mantenimiento costoso",
+        "goals": [
+          "escalabilidad",
+          "arquitectura",
+          "innovación"
+        ],
+        "pains": [
+          "deuda técnica",
+          "mantenimiento costoso"
+        ],
+        "objections": [
+          "Tenemos demasiada deuda técnica",
+          "No quiero quedar atrapado en el ecosistema de un solo vendor (Lock-in)"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "Tenemos demasiada deuda técnica",
+            "response": "Aplicamos refactorización iterativa y migración a microservicios en fases, reduciendo su deuda técnica sin interrumpir las operaciones críticas diarias."
+          },
+          {
+            "objection": "No quiero quedar atrapado en el ecosistema de un solo vendor (Lock-in)",
+            "response": "Utilizamos estándares Open Source maduros y tecnologías contenerizadas que garantizan la portabilidad y evitan el Vendor Lock-in."
+          }
+        ],
+        "decisionCriteria": [
+          "Flexibilidad de arquitectura",
+          "Seguridad y Compliance",
+          "Facilidad de integración mediante APIs"
+        ]
+      }
+    },
+    "persona-coo": {
+      "id": "persona-coo",
+      "type": "persona",
+      "label": "COO / Director de Operaciones",
+      "attributes": {
+        "description": "procesos manuales. cuellos de botella",
+        "goals": [
+          "eficiencia operativa",
+          "automatización"
+        ],
+        "pains": [
+          "procesos manuales",
+          "cuellos de botella"
+        ],
+        "objections": [
+          "Mi equipo de operaciones se resistirá a usar un nuevo sistema",
+          "No podemos detener la producción para implementar"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "Mi equipo de operaciones se resistirá a usar un nuevo sistema",
+            "response": "Codiseñamos interfaces intuitivas enfocadas en la usabilidad en planta y brindamos capacitación en el terreno para garantizar adopción fluida."
+          },
+          {
+            "objection": "No podemos detener la producción para implementar",
+            "response": "Ejecutamos despliegues ágiles (Shadow Mode) que corren en paralelo a su operación actual, asegurando transición transparente y cero downtime."
+          }
+        ],
+        "decisionCriteria": [
+          "Aumento de eficiencia (OEE, Tiempos)",
+          "Facilidad de uso en piso de planta o almacén",
+          "Soporte 24/7"
+        ]
+      }
+    },
+    "persona-ciso": {
+      "id": "persona-ciso",
+      "type": "persona",
+      "label": "CISO",
+      "attributes": {
+        "description": "superficie de ataque. fuga de datos",
+        "goals": [
+          "seguridad",
+          "gestión de riesgo",
+          "compliance"
+        ],
+        "pains": [
+          "superficie de ataque",
+          "fuga de datos"
+        ],
+        "objections": [
+          "Los modelos de IA pública exponen nuestros datos confidenciales",
+          "Nuestra superficie de ataque ya es muy amplia"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "Los modelos de IA pública exponen nuestros datos confidenciales",
+            "response": "Implementamos Grandes Modelos de Lenguaje (LLMs) locales y privados, asegurando que su propiedad intelectual nunca alimente modelos externos."
+          },
+          {
+            "objection": "Nuestra superficie de ataque ya es muy amplia",
+            "response": "Reducimos vulnerabilidades centralizando accesos, auditando identidades (IAM) y operando bajo estándares rigurosos de cumplimiento."
+          }
+        ],
+        "decisionCriteria": [
+          "Cumplimiento normativo (ISO 27001, SOC2)",
+          "Encriptación End-to-End",
+          "Despliegues On-Premise/VPC"
+        ]
+      }
+    },
+    "persona-ceo": {
+      "id": "persona-ceo",
+      "type": "persona",
+      "label": "CEO / Director General",
+      "attributes": {
+        "description": "visibilidad limitada del negocio. decisiones reactivas",
+        "goals": [
+          "crecimiento",
+          "ventaja competitiva",
+          "transformación digital"
+        ],
+        "pains": [
+          "visibilidad limitada del negocio",
+          "decisiones reactivas"
+        ],
+        "objections": [
+          "La IA es solo una moda técnica, no entiendo cómo impacta mi estrategia",
+          "Nuestra empresa no es una tecnológica"
+        ],
+        "objectionResponses": [
+          {
+            "objection": "La IA es solo una moda técnica, no entiendo cómo impacta mi estrategia",
+            "response": "Traducimos capacidades técnicas en casos de uso concretos de negocio, impactando directamente su EBITDA a través de mayor retención de clientes u optimización operativa."
+          },
+          {
+            "objection": "Nuestra empresa no es una tecnológica",
+            "response": "Nos asociamos como su brazo de Inteligencia Artificial externalizado, democratizando tecnologías de punta sin necesidad de contratar equipos internos masivos."
+          }
+        ],
+        "decisionCriteria": [
+          "Ventaja competitiva y Cuota de Mercado",
+          "Crecimiento de ingresos",
+          "Transformación digital del modelo de negocio"
+        ]
+      }
+    },
+    "industry-industry-aeroespacial": {
+      "id": "industry-industry-aeroespacial",
+      "type": "industry",
+      "label": "Aeroespacial y Defensa",
+      "attributes": {
+        "ciiu": "30"
+      }
+    },
+    "industry-industry-agricultura": {
+      "id": "industry-industry-agricultura",
+      "type": "industry",
+      "label": "Agricultura y Agroindustria",
+      "attributes": {
+        "ciiu": "01"
+      }
+    },
+    "industry-industry-automotriz": {
+      "id": "industry-industry-automotriz",
+      "type": "industry",
+      "label": "Automotriz",
+      "attributes": {
+        "ciiu": "29"
+      }
+    },
+    "industry-industry-construccion": {
+      "id": "industry-industry-construccion",
+      "type": "industry",
+      "label": "Construcción e Ingeniería",
+      "attributes": {
+        "ciiu": "41"
+      }
+    },
+    "industry-industry-consumo": {
+      "id": "industry-industry-consumo",
+      "type": "industry",
+      "label": "Bienes de Consumo (CPG)",
+      "attributes": {
+        "ciiu": "10"
+      }
+    },
+    "industry-industry-energia": {
+      "id": "industry-industry-energia",
+      "type": "industry",
+      "label": "Energía y Utilities",
+      "attributes": {
+        "ciiu": "35"
+      }
+    },
+    "industry-industry-farma": {
+      "id": "industry-industry-farma",
+      "type": "industry",
+      "label": "Farmacéutica y Life Sciences",
+      "attributes": {
+        "ciiu": "21"
+      }
+    },
+    "industry-industry-inmobiliario": {
+      "id": "industry-industry-inmobiliario",
+      "type": "industry",
+      "label": "Real Estate / Inmobiliario",
+      "attributes": {
+        "ciiu": "68"
+      }
+    },
+    "industry-industry-medios": {
+      "id": "industry-industry-medios",
+      "type": "industry",
+      "label": "Medios y Entretenimiento",
+      "attributes": {
+        "ciiu": "59"
+      }
+    },
+    "industry-industry-ong": {
+      "id": "industry-industry-ong",
+      "type": "industry",
+      "label": "ONG y Tercer Sector",
+      "attributes": {
+        "ciiu": "94"
+      }
+    },
+    "industry-industry-petroleo": {
+      "id": "industry-industry-petroleo",
+      "type": "industry",
+      "label": "Petróleo y Gas",
+      "attributes": {
+        "ciiu": "06"
+      }
+    },
+    "industry-industry-servicios-profesionales": {
+      "id": "industry-industry-servicios-profesionales",
+      "type": "industry",
+      "label": "Servicios Profesionales",
+      "attributes": {
+        "ciiu": "69"
+      }
+    },
+    "industry-industry-transporte": {
+      "id": "industry-industry-transporte",
+      "type": "industry",
+      "label": "Transporte de Pasajeros",
+      "attributes": {
+        "ciiu": "49"
+      }
+    },
+    "industry-industry-turismo": {
+      "id": "industry-industry-turismo",
+      "type": "industry",
+      "label": "Turismo y Hotelería",
+      "attributes": {
+        "ciiu": "55"
+      }
+    }
+  },
+  "edges": [
+    {
+      "source": "persona-cfo",
+      "target": "pillar-business-intelligence",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cfo",
+      "target": "pillar-estrategia-datos-ia",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cfo",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cfo",
+      "target": "pillar-ai-data-science",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cfo",
+      "target": "sector-finanzas",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cfo",
+      "target": "sector-seguros",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cio",
+      "target": "pillar-data-engineering",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cio",
+      "target": "pillar-sistemas-digitales",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cio",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cio",
+      "target": "sector-publico",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "pillar-data-engineering",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "pillar-ai-data-science",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "pillar-estrategia-datos-ia",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "sector-retail",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "sector-telecomunicaciones",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cdo",
+      "target": "sector-publico",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cto",
+      "target": "pillar-sistemas-digitales",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cto",
+      "target": "pillar-ai-data-science",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cto",
+      "target": "sector-manufactura",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cto",
+      "target": "sector-logistica",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-cto",
+      "target": "sector-telecomunicaciones",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "pillar-business-intelligence",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "sector-manufactura",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "sector-salud",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "sector-retail",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-coo",
+      "target": "sector-logistica",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ciso",
+      "target": "pillar-estrategia-datos-ia",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ciso",
+      "target": "pillar-data-engineering",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ciso",
+      "target": "sector-finanzas",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ciso",
+      "target": "sector-publico",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ciso",
+      "target": "sector-salud",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "pillar-estrategia-datos-ia",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "pillar-business-intelligence",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "pillar-ai-data-science",
+      "relation": "pillarsOfInterest",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "sector-retail",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "sector-finanzas",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "sector-educacion",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "persona-ceo",
+      "target": "sector-logistica",
+      "relation": "relevantSectors",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-aeroespacial",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-aeroespacial",
+      "target": "pillar-data-engineering",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-agricultura",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-agricultura",
+      "target": "pillar-data-engineering",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-agricultura",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-automotriz",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-automotriz",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-construccion",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-construccion",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-consumo",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-consumo",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-energia",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-energia",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-energia",
+      "target": "pillar-data-engineering",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-farma",
+      "target": "pillar-data-engineering",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-farma",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-inmobiliario",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-inmobiliario",
+      "target": "pillar-sistemas-digitales",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-medios",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-medios",
+      "target": "pillar-sistemas-digitales",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-ong",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-ong",
+      "target": "pillar-sistemas-digitales",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-petroleo",
+      "target": "pillar-data-engineering",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-petroleo",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-servicios-profesionales",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-servicios-profesionales",
+      "target": "pillar-hiperautomatizacion",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-transporte",
+      "target": "pillar-ai-data-science",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-transporte",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-turismo",
+      "target": "pillar-business-intelligence",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "industry-industry-turismo",
+      "target": "pillar-sistemas-digitales",
+      "relation": "relatedPillars",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-ceo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-cio",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-ceo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director o Titular de la institución educativa"
+      }
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-cio",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe / Coordinador de Informática"
+      }
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-cdo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Responsable de Estadística y Sistemas de Información"
+      }
+    },
+    {
+      "source": "sector-educacion",
+      "target": "persona-cfo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director de Administración y Finanzas"
+      }
+    },
+    {
+      "source": "sector-finanzas",
+      "target": "persona-cfo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-finanzas",
+      "target": "persona-ciso",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-finanzas",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-logistica",
+      "target": "persona-coo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-logistica",
+      "target": "persona-ceo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-logistica",
+      "target": "persona-cto",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-coo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-cto",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-cio",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente / Jefe de Sistemas"
+      }
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-cto",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente de Operaciones e Ingeniería"
+      }
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-cdo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe de Analítica y Gestión de Datos"
+      }
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-coo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente de Planta / Operaciones"
+      }
+    },
+    {
+      "source": "sector-manufactura",
+      "target": "persona-ciso",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe de Ciberseguridad e Infraestructura"
+      }
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-coo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-cfo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-ceo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-cio",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente / Jefe de TI y Sistemas"
+      }
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-cto",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente de Automatización e Ingeniería Mina"
+      }
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-cdo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe de Analítica y Sistemas de Información"
+      }
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-coo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Gerente de Operaciones Mineras"
+      }
+    },
+    {
+      "source": "sector-mineria",
+      "target": "persona-ciso",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe de Seguridad de la Información y Control"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cio",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cto",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cio",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe / Director de la OTI"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cto",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Responsable de Infraestructura y Sistemas"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cdo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director de Datos / Estadística e Informática"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-cfo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director de Administración y Finanzas"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-ceo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director General / Titular de la Entidad"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-coo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Secretario General"
+      }
+    },
+    {
+      "source": "sector-publico",
+      "target": "persona-ciso",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Oficial de Seguridad de la Información"
+      }
+    },
+    {
+      "source": "sector-retail",
+      "target": "persona-coo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-retail",
+      "target": "persona-ceo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-retail",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-coo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-cio",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-ceo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director General / Director del Hospital"
+      }
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-cio",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Jefe de la Unidad de Estadística e Informática"
+      }
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-cdo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Responsable de Gestión de la Información en Salud"
+      }
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-cfo",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Director de Administración y Finanzas"
+      }
+    },
+    {
+      "source": "sector-salud",
+      "target": "persona-ciso",
+      "relation": "roleEquivalent",
+      "weight": 1,
+      "metadata": {
+        "localTitle": "Oficial de Seguridad de la Información"
+      }
+    },
+    {
+      "source": "sector-seguros",
+      "target": "persona-cfo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-seguros",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-seguros",
+      "target": "persona-cio",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-telecomunicaciones",
+      "target": "persona-ceo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-telecomunicaciones",
+      "target": "persona-cto",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    },
+    {
+      "source": "sector-telecomunicaciones",
+      "target": "persona-cdo",
+      "relation": "relevantPersonas",
+      "weight": 1,
+      "metadata": {}
+    }
+  ]
+}

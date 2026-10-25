@@ -21,6 +21,7 @@ import {
 
 import faqData from '../../data/faq.json';
 import taxonomyCorpus from '../../data/taxonomyCorpus.json';
+import { findAnchorNodesFallback, buildSubgraphContext } from '../../lib/graphTraversal';
 
 // Mapeo plano para búsqueda semántica contra catálogo de servicios (Spec 020)
 const TAXONOMY_ENTRIES = taxonomyCorpus.flatMap(service => [
@@ -62,6 +63,46 @@ export default function Chatbot() {
   const [workerReady, setWorkerReady] = useState(false);
   // Estado para respuesta FAQ 0-LLM (escape a LLM incluido)
   const [faqResponse, setFaqResponse] = useState(null); // { answer, originalText }
+
+  // Spec 027 — Experience Bank 0-LLM
+  const experiencesRef = useRef([]);
+  const lastComplexQueryRef = useRef('');
+  const lastAnswerRef = useRef('');
+  const lastSourceRouteRef = useRef('llm');
+
+  const matchExperience = async (queryText) => {
+    const exps = experiencesRef.current;
+    if (!exps || exps.length === 0 || !workerRef.current) return null;
+
+    const expTexts = exps.map(e => e.question);
+    const reqId = `exp-search-${Date.now()}`;
+
+    return new Promise((resolve) => {
+      const timeoutId = setTimeout(() => resolve(null), 1200);
+
+      const handler = (e) => {
+        const { status, id, results } = e.data ?? {};
+        if (id === reqId && (status === 'complete' || status === 'results')) {
+          clearTimeout(timeoutId);
+          if (workerRef.current) workerRef.current.removeEventListener('message', handler);
+          if (results && results.length > 0 && results[0].score >= 0.75) {
+            const bestIndex = results[0].index;
+            const matched = exps[bestIndex];
+            resolve(matched ? { ...matched, score: results[0].score } : null);
+          } else {
+            resolve(null);
+          }
+        }
+      };
+
+      workerRef.current.addEventListener('message', handler);
+      workerRef.current.postMessage({
+        query: queryText,
+        corpusTexts: expTexts,
+        id: reqId
+      });
+    });
+  };
 
   // State Machine (FR-015)
   const [chatState, setChatState] = useState({ step: 'intro', sector: null, role: null, problem: null });
@@ -117,6 +158,9 @@ export default function Chatbot() {
                 sector: chatState.sector || ctxState.sector || '',
                 rol: chatState.role || ctxState.rol || '',
                 journey: journeyRef.current,
+                last_complex_query: lastComplexQueryRef.current,
+                last_answer: lastAnswerRef.current,
+                source_route: lastSourceRouteRef.current
             })
         });
     } catch (e) {
@@ -138,6 +182,26 @@ export default function Chatbot() {
   };
 
   const [showScheduler, setShowScheduler] = useState(false);
+
+  // Cargar corpus público de experiencias aprobadas para 0-LLM (Spec 027)
+  useEffect(() => {
+    fetch('/api/experience_corpus.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.experiences && data.experiences.length > 0) {
+          experiencesRef.current = data.experiences;
+          const expTexts = data.experiences.map(e => e.question);
+          if (workerRef.current) {
+            workerRef.current.postMessage({
+              type: 'index',
+              corpusTexts: expTexts,
+              id: `index-exp-${Date.now()}`
+            });
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Initialize intro message or inherit active context chip upon FIRST opening of chatbot (Refix F-03 / F-11 - 0-LLM)
   // Spec 019 — Inicializar el worker Xenova y el clasificador de intención (una sola vez)
@@ -229,21 +293,54 @@ export default function Chatbot() {
     }
   }, [query]);
 
-  // Spec 019 — Ruta LLM (fallback, igual que antes)
+  // Spec 019 / 025 — Ruta LLM con Contexto Grounded de GraphRAG
   const _callLLM = async (text, newDisplay, newHistory) => {
     try {
+      // Spec 025: GraphRAG Anclaje & Traversal 0-LLM en el Edge (k=2 saltos)
+      const anchors = findAnchorNodesFallback(text, 3);
+      const subgraphContext = buildSubgraphContext(anchors, 2);
+
+      // Telemetría 018 PII-Redactada (Contrato plano search_query + target graphrag)
+      trackEvent('search_query', 'graphrag', JSON.stringify({
+        query: text,
+        anchors: subgraphContext.anchors,
+        subgraph_nodes_count: subgraphContext.visitedNodes.length,
+        subgraph_edges_count: subgraphContext.activeEdges.length,
+        cited_urls: subgraphContext.citedUrls,
+        has_insufficient_data: !subgraphContext.hasSufficientData,
+        hops: 2
+      }));
+
+      // GUARD DETERMINISTA §2 HONESTIDAD RADICAL (0-LLM en el cliente):
+      // Si la consulta no tiene datos o anclas suficientes en la taxonomía (ej. off-topic, recetas, etc.),
+      // CORTAR INMEDIATAMENTE en el cliente sin llamar a chat.php / LLM para evitar alucinaciones.
+      if (!subgraphContext.hasSufficientData) {
+        const honestMsg = 'No disponemos de información suficiente en la taxonomía para responder a esta combinación de requerimientos. ¿Deseas agendar una evaluación estratégica con nuestros expertos?';
+        setDisplayMessages([...newDisplay, { role: 'assistant', content: honestMsg }]);
+        setMessages([...newHistory, { role: 'assistant', content: honestMsg }]);
+        setShowScheduler(true);
+        setIsTyping(false);
+        return; // NUNCA LLAMAR A CHAT.PHP / LLM
+      }
+
       const response = await fetch(CHAT_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           session_id: sessionIdRef.current,
           messages: newHistory,
-          context: { step: chatState.step, sector: chatState.sector, role: chatState.role, problem: chatState.problem }
+          context: { step: chatState.step, sector: chatState.sector, role: chatState.role, problem: chatState.problem },
+          subgraph_context: subgraphContext
         })
       });
-      if (!response.ok) throw new Error('Network error');
       const data = await response.json();
       const aiContent = data.choices[0].message.content;
+
+      // Guardar contexto para passthrough outcome-gated (Spec 027)
+      lastComplexQueryRef.current = text;
+      lastAnswerRef.current = aiContent;
+      lastSourceRouteRef.current = (subgraphContext.visitedNodes && subgraphContext.visitedNodes.length > 0) ? 'graphrag' : 'llm';
+
       setMessages([...newHistory, { role: 'assistant', content: aiContent }]);
       setDisplayMessages([...newDisplay, { role: 'assistant', content: aiContent }]);
     } catch (e) {
@@ -368,6 +465,40 @@ export default function Chatbot() {
           return;
         }
         // match < faq_match_threshold → fallback a LLM (§2: no forzar FAQ errónea)
+
+        // ── Spec 027 — Experience Bank 0-LLM (después de FAQ y antes de LLM) ──
+        const expMatch = await matchExperience(text);
+        if (expMatch) {
+          trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
+            intent,
+            confidence: confidence.toFixed(3),
+            resolved: '0llm',
+            route: 'experience',
+            experienceScore: (expMatch.score ?? 0).toFixed(3)
+          }));
+          logDemandSignal('experience', expMatch.score ?? 0);
+
+          // Registrar incremento de uso en background (Residual R1)
+          fetch('/api/experience_hit.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${expMatch.id}`
+          }).catch(() => {});
+
+          let expMsg = expMatch.answer;
+          if (expMatch.cite_url) {
+            expMsg += `\n\n📌 *Referencia*: [Ver Solución](${expMatch.cite_url})`;
+          }
+
+          setDisplayMessages([...newDisplay, { 
+            role: 'assistant', 
+            content: expMsg, 
+            isExperience: true
+          }]);
+          setMessages([...newHistory, { role: 'assistant', content: expMsg }]);
+          setIsTyping(false);
+          return;
+        }
 
         // sin match → LLM
         trackEvent('intent_routing', 'chatbot-router', JSON.stringify({
@@ -546,6 +677,12 @@ export default function Chatbot() {
                     ? 'bg-white/5 border-white/10 text-gray-200 rounded-tl-sm' 
                     : 'bg-brand/20 border-brand/30 text-white rounded-tr-sm'
             }`}>
+              {m.isExperience && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded bg-brand/10 border border-brand/30 text-brandCyan text-[11px] font-semibold tracking-wide">
+                  <i className="ph ph-seal-check text-xs"></i>
+                  <span>Respuesta de Experiencia Curada Datanestiq</span>
+                </div>
+              )}
               {formatText(m.content)}
             </div>
           </div>
@@ -662,6 +799,9 @@ export default function Chatbot() {
           <AppointmentPicker
             sessionId={sessionIdRef.current}
             email={leadData.email}
+            lastComplexQuery={lastComplexQueryRef.current}
+            lastAnswer={lastAnswerRef.current}
+            sourceRoute={lastSourceRouteRef.current}
             onBooked={() => setShowScheduler(false)}
           />
         )}
@@ -671,6 +811,9 @@ export default function Chatbot() {
           <AppointmentPicker
             sessionId={sessionIdRef.current}
             email={leadData.email}
+            lastComplexQuery={lastComplexQueryRef.current}
+            lastAnswer={lastAnswerRef.current}
+            sourceRoute={lastSourceRouteRef.current}
             onBooked={() => setShowScheduler(false)}
           />
         )}

@@ -5,6 +5,8 @@ import Navbar from '../../components/ui/Navbar.astro';
 import Footer from '../../components/ui/Footer.astro';
 import { slugifyTag } from '../../lib/tagUtils';
 
+import BlogSearch from '../../components/islands/BlogSearch.jsx';
+
 const allPosts = await getCollection('blog', ({ data }) => {
   return data.draft !== true;
 });
@@ -23,9 +25,14 @@ allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
       <span class="text-gray-300 font-medium">Blog</span>
     </nav>
 
-    <div class="text-center mb-16">
+    <div class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Perspectivas C-Level</h1>
-      <p class="text-xl text-gray-400 max-w-3xl mx-auto">Análisis estratégico sobre Data Mesh, IA Generativa y automatización para líderes que transforman industrias.</p>
+      <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-8">Análisis estratégico sobre Data Mesh, IA Generativa y automatización para líderes que transforman industrias.</p>
+      
+      {/* Isla de Búsqueda Semántica 0-LLM sobre el Blog (Spec 024) */}
+      <div class="max-w-4xl mx-auto text-left">
+        <BlogSearch client:visible />
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

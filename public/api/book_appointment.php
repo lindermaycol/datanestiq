@@ -121,6 +121,26 @@ try {
     $appt = $db->prepare("INSERT INTO appointments (lead_id, session_id, requested_date, type, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'solicitada', datetime('now'), datetime('now'))");
     $appt->execute([$lead_id, $session_id, $requested_date, $type]);
 
+    // Ingesta Candidate Passthrough (Spec 027 - Experience Bank)
+    $last_complex_query = isset($data['last_complex_query']) ? trim((string)$data['last_complex_query']) : '';
+    $last_answer = isset($data['last_answer']) ? trim((string)$data['last_answer']) : '';
+    $source_route = isset($data['source_route']) ? trim((string)$data['source_route']) : 'llm';
+
+    if (!empty($last_complex_query) && !empty($last_answer)) {
+        try {
+            require_once __DIR__ . '/lib/pii.php';
+            $q_clean = redactPii($last_complex_query);
+            $exp_ins = $db->prepare("INSERT INTO experience_bank (question_redacted, answer, source_route, outcome, status, created_at) VALUES (:q, :a, :src, 'cita', 'pendiente', datetime('now'))");
+            $exp_ins->execute([
+                ':q' => $q_clean,
+                ':a' => $last_answer,
+                ':src' => substr($source_route, 0, 20)
+            ]);
+        } catch (\Throwable $e_exp) {
+            // fail-safe
+        }
+    }
+
     $db->commit();
 
     echo json_encode([

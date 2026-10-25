@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Dependencias para los hooks de Spec-Kit en Datanestiq",
   "scripts": {
-    "predev": "node scripts/build-taxonomy.mjs",
+    "predev": "node scripts/build-taxonomy.mjs && node scripts/build-blog-corpus.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/build-taxonomy.mjs && node scripts/build-specs-status.mjs",
+    "prebuild": "node scripts/build-taxonomy.mjs && node scripts/build-blog-corpus.mjs && node scripts/build-specs-status.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "npm run lint:strict",
