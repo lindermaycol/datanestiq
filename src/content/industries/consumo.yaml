@@ -1,0 +1,13 @@
+id: industry-consumo
+title: Bienes de Consumo (CPG)
+ciiu: '10'
+keywords:
+  - cpg
+  - bienes de consumo
+  - fmcg
+  - alimentos
+  - bebidas
+  - distribución masiva
+relatedPillars:
+  - ai-data-science
+  - business-intelligence

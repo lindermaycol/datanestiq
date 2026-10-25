@@ -1,0 +1,27 @@
+---
+// Hero.astro
+const { 
+  headline = 'Transformamos Datos en<br/><span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Ventaja Asimétrica</span>',
+  subheadline = 'Consultoría B2B de élite en Ingeniería de Datos, Inteligencia Artificial y Sistemas Digitales para corporaciones que exigen resultados.',
+  cta = 'Inicia tu Transformación'
+} = Astro.props;
+import ContextChips from './ContextChips.jsx';
+import ConsultativeCTA from './ConsultativeCTA.jsx';
+import HeroRoleLine from '../islands/HeroRoleLine.jsx';
+---
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8" data-animate="fade-up" style="opacity: 0" set:html={headline}>
+    </h1>
+    <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-300 mb-10" data-animate="fade-up" style="opacity: 0">
+      {subheadline}
+    </p>
+    <div class="flex justify-center gap-4" data-animate="fade-up" style="opacity: 0">
+      <ConsultativeCTA client:load className="btn-primary text-lg" />
+      <a href="/casos-de-exito" class="glass-card px-8 py-3 font-semibold hover:text-brand transition-colors text-lg flex items-center">Explora Casos de Éxito</a>
+    </div>
+    <ContextChips client:load />
+    <HeroRoleLine client:load />
+  </div>
+</section>
+

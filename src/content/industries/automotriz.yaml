@@ -1,0 +1,13 @@
+id: industry-automotriz
+title: Automotriz
+ciiu: '29'
+keywords:
+  - automotriz
+  - vehículos
+  - ensamblaje
+  - autopartes
+  - concesionarios
+  - movilidad
+relatedPillars:
+  - hiperautomatizacion
+  - business-intelligence

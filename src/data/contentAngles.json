@@ -1,0 +1,184 @@
+[
+  {
+    "id": "soberania-datos-llms",
+    "title": "Soberanía de Datos con LLMs Locales",
+    "brief": "Artículo de 800 palabras para el CTO explicando por qué depender de APIs públicas (Gartner lo advierte) es riesgoso, y cómo Datanestiq implementa modelos on-premise.",
+    "sourceType": "pillar",
+    "sourceId": "ai-data-science"
+  },
+  {
+    "id": "fin-de-reportes-estaticos",
+    "title": "El Fin de los Reportes Estáticos",
+    "brief": "Manifiesto para el CFO: por qué depender de Excel y reportes mensuales destruye el margen, y cómo el BI en tiempo real cambia las reglas.",
+    "sourceType": "pillar",
+    "sourceId": "business-intelligence"
+  },
+  {
+    "id": "data-lake-vs-data-warehouse-cdo",
+    "title": "Lakehouse: Lo mejor de ambos mundos",
+    "brief": "Explicación técnica para el CDO sobre cómo una arquitectura Data Lakehouse resuelve el problema de silos sin los costos inflexibles de un Data Warehouse tradicional.",
+    "sourceType": "pillar",
+    "sourceId": "data-engineering"
+  },
+  {
+    "id": "estrategia-datos-ceo",
+    "title": "Los Datos como Activo Financiero",
+    "brief": "Mensaje para el CEO: cómo calcular el valor contable de los datos de su empresa y por qué la gobernanza no es un tema técnico, sino de negocio.",
+    "sourceType": "pillar",
+    "sourceId": "estrategia-datos-ia"
+  },
+  {
+    "id": "hiperautomatizacion-backoffice-coo",
+    "title": "Hiperautomatización del Back-Office",
+    "brief": "Guía para el COO sobre cómo escalar las operaciones y absorber 10x más volumen de trabajo sin escalar linealmente la planilla, usando RPA cognitivo.",
+    "sourceType": "pillar",
+    "sourceId": "hiperautomatizacion"
+  },
+  {
+    "id": "deuda-tecnica-cto",
+    "title": "El Costo Oculto de la Deuda Técnica",
+    "brief": "Análisis para el CTO evaluando financieramente el peso del legacy code y cómo una reestructuración a arquitecturas modernas (microservicios/Jamstack) libera presupuesto para innovación.",
+    "sourceType": "pillar",
+    "sourceId": "sistemas-digitales"
+  },
+  {
+    "id": "prediccion-desercion-estudiantil",
+    "title": "Evitando la Deserción Estudiantil con Analítica",
+    "brief": "Reporte para el equipo directivo sobre el uso de modelos predictivos que identifican estudiantes en riesgo antes de que abandonen la institución.",
+    "sourceType": "sector",
+    "sourceId": "sector-educacion"
+  },
+  {
+    "id": "fraude-tiempo-real-banca",
+    "title": "Detección de Fraude en Tiempo Real",
+    "brief": "Artículo de 1200 palabras para el CFO sobre cómo la IA predictiva y el streaming de datos reducen las pérdidas por fraude en un 45% cumpliendo con normativas PCI-DSS y AML.",
+    "sourceType": "sector",
+    "sourceId": "sector-finanzas"
+  },
+  {
+    "id": "ruteo-dinamico-ia",
+    "title": "Ruteo Dinámico y Torres de Control AI",
+    "brief": "Artículo explicando cómo una arquitectura de datos en tiempo real y algoritmos de ruteo dinámico ahorran un 15% en costos logísticos.",
+    "sourceType": "sector",
+    "sourceId": "sector-logistica"
+  },
+  {
+    "id": "mantenimiento-predictivo-iot",
+    "title": "Mantenimiento Predictivo con IoT e IA",
+    "brief": "Caso de uso dirigido al Director de Operaciones (COO) sobre cómo procesar datos de sensores IoT en tiempo real previene paradas de planta millonarias.",
+    "sourceType": "sector",
+    "sourceId": "sector-manufactura"
+  },
+  {
+    "id": "gemelos-digitales-mineria",
+    "title": "Gemelos Digitales en la Minería",
+    "brief": "Artículo técnico-estratégico sobre cómo los Digital Twins y la simulación optimizan la extracción y elevan la seguridad en minas a tajo abierto.",
+    "sourceType": "sector",
+    "sourceId": "sector-mineria"
+  },
+  {
+    "id": "analitica-contrataciones-estado",
+    "title": "Analítica Predictiva en Contrataciones",
+    "brief": "Artículo de 1000 palabras dirigido a líderes del sector público sobre cómo usar analítica de datos para detectar anomalías y optimizar presupuestos en contrataciones estatales.",
+    "sourceType": "sector",
+    "sourceId": "sector-publico"
+  },
+  {
+    "id": "ia-segura-estado",
+    "title": "Inteligencia Artificial Segura en el Estado",
+    "brief": "Artículo de 1000 palabras sobre el despliegue de modelos LLM locales (On-Premise) en dependencias gubernamentales asegurando la soberanía del dato.",
+    "sourceType": "sector",
+    "sourceId": "sector-publico"
+  },
+  {
+    "id": "dashboards-ejecutivos-gobierno",
+    "title": "Dashboards Ejecutivos para Gobierno",
+    "brief": "Artículo de 1000 palabras sobre la consolidación de métricas de transparencia y gestión ciudadana en tiempo real usando herramientas modernas de BI.",
+    "sourceType": "sector",
+    "sourceId": "sector-publico"
+  },
+  {
+    "id": "calidad-padrones-ia",
+    "title": "Calidad de Padrones y MDM",
+    "brief": "Artículo de 1000 palabras sobre la aplicación de IA para la depuración, gobernanza y gestión de datos maestros (MDM) en padrones ciudadanos.",
+    "sourceType": "sector",
+    "sourceId": "sector-publico"
+  },
+  {
+    "id": "forecast-demanda-retail",
+    "title": "Predicción de Demanda con Machine Learning",
+    "brief": "Artículo para el COO detallando cómo los algoritmos de predicción de demanda reducen los quiebres de stock y optimizan el capital de trabajo en el retail.",
+    "sourceType": "sector",
+    "sourceId": "sector-retail"
+  },
+  {
+    "id": "interoperabilidad-salud-fhir",
+    "title": "Interoperabilidad Clínica con HL7-FHIR",
+    "brief": "Guía técnica para el CIO sobre cómo unificar historias clínicas dispersas en un Data Lake seguro cumpliendo con normativas HIPAA y protocolos FHIR.",
+    "sourceType": "sector",
+    "sourceId": "sector-salud"
+  },
+  {
+    "id": "procesamiento-siniestros-ia",
+    "title": "Hiperautomatización de Siniestros",
+    "brief": "Guía para líderes de Insurtech detallando el procesamiento inteligente de documentos (IDP) para validar siniestros en tiempo récord.",
+    "sourceType": "sector",
+    "sourceId": "sector-seguros"
+  },
+  {
+    "id": "prevencion-churn-telecom",
+    "title": "Machine Learning para Prevenir el Churn",
+    "brief": "Análisis para directores de telecomunicaciones sobre cómo predecir la fuga de clientes procesando billones de CDRs (Call Detail Records) diarios.",
+    "sourceType": "sector",
+    "sourceId": "sector-telecomunicaciones"
+  },
+  {
+    "id": "roi-data-analytics-cfo",
+    "title": "Medición del ROI en Proyectos de Datos",
+    "brief": "Cómo estructurar el business case financiero para iniciativas de Data Analytics y asegurar el retorno en menos de 12 meses.",
+    "sourceType": "persona",
+    "sourceId": "cfo"
+  },
+  {
+    "id": "cio-modernizacion-estado",
+    "title": "Modernización del Estado para CIOs",
+    "brief": "Guía táctica para el CIO público: cómo integrar bases de datos legacy con IA preservando el compliance y reduciendo el TCO.",
+    "sourceType": "persona",
+    "sourceId": "cio"
+  },
+  {
+    "id": "gobierno-datos-cdo",
+    "title": "Gobernanza de Datos sin Fricción",
+    "brief": "Estrategias para que el CDO implemente políticas de calidad y master data management (MDM) sin convertirse en el cuello de botella del negocio.",
+    "sourceType": "persona",
+    "sourceId": "cdo"
+  },
+  {
+    "id": "modernizacion-arquitectura-cto",
+    "title": "Modernización de Arquitecturas Críticas",
+    "brief": "Ruta para desacoplar monolitos y transicionar a eventos (Kafka) y microservicios sin interrumpir la operación continua.",
+    "sourceType": "persona",
+    "sourceId": "cto"
+  },
+  {
+    "id": "hiperautomatizacion-operaciones-coo",
+    "title": "Escalando Operaciones sin Escalar Costos",
+    "brief": "Cómo el COO puede apalancar la IA para predecir cuellos de botella y automatizar procesos manuales tediosos, elevando la moral y productividad del equipo.",
+    "sourceType": "persona",
+    "sourceId": "coo"
+  },
+  {
+    "id": "seguridad-datos-ciso",
+    "title": "Ciberseguridad en la Era de la GenAI",
+    "brief": "Guía táctica para CISOs sobre cómo proteger la propiedad intelectual al implementar grandes modelos de lenguaje, priorizando despliegues privados.",
+    "sourceType": "persona",
+    "sourceId": "ciso"
+  },
+  {
+    "id": "ia-ventaja-competitiva-ceo",
+    "title": "La IA como Diferenciador Estratégico",
+    "brief": "Por qué delegar la estrategia de IA exclusivamente a IT es un error. Un manifiesto para CEOs sobre liderar la transformación corporativa.",
+    "sourceType": "persona",
+    "sourceId": "ceo"
+  }
+]

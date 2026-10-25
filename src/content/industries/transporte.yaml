@@ -1,0 +1,13 @@
+id: industry-transporte
+title: Transporte de Pasajeros
+ciiu: '49'
+keywords:
+  - transporte
+  - pasajeros
+  - aerolíneas
+  - buses
+  - movilidad urbana
+  - flotas
+relatedPillars:
+  - ai-data-science
+  - business-intelligence

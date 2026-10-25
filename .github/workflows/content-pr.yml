@@ -1,0 +1,57 @@
+name: Content PR Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target de generación (e.g., page, blog)'
+        required: true
+        default: 'page'
+      slug:
+        description: 'Slug del contenido (e.g., about-us)'
+        required: true
+      brief:
+        description: 'Brief detallado del contenido'
+        required: true
+
+jobs:
+  generate-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Generate Content
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          node scripts/docs-generator.mjs --target=${{ github.event.inputs.target }} --slug=${{ github.event.inputs.slug }} --brief="${{ github.event.inputs.brief }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "content: generate ${{ github.event.inputs.slug }} via AI"
+          title: "Generación de Contenido: ${{ github.event.inputs.slug }}"
+          body: |
+            ## Nuevo Contenido Autogenerado
+            Este PR fue generado automáticamente por la Fábrica de Contenido Datanestiq.
+            
+            **Brief provisto:**
+            > ${{ github.event.inputs.brief }}
+            
+            **Revisión requerida:**
+            1. Revisa el contenido de `src/content/`.
+            2. Realiza ajustes manuales si es necesario.
+            3. Cambia `draft: true` a `draft: false` cuando esté listo.
+            4. El despliegue a IONOS deberá realizarse manualmente mediante el pipeline existente.
+            
+          branch: "content/${{ github.event.inputs.target }}-${{ github.event.inputs.slug }}"
+          base: main

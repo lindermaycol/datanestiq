@@ -1,0 +1,76 @@
+id: data-engineering
+name: Ingeniería & Arquitectura de Datos
+slug: data-engineering
+maturityStage: Fundacional / Descriptivo
+standards:
+  - 'DAMA-DMBOK: Data Architecture'
+  - Data Integration & Interoperability
+  - Data Modeling
+targetRoles:
+  - CTO
+  - CDO
+  - Arquitecto de Datos
+skills:
+  - Orquestación de Datos
+  - Arquitectura Cloud
+seo:
+  title: Ingeniería de Datos y Modern Data Stack | Datanestiq
+  description: >-
+    Arquitecturas de alta disponibilidad, pipelines ETL/ELT y Data Lakes
+    diseñados para unificar su conocimiento corporativo.
+hero:
+  headline: El Cimiento de su Dominio Digital
+  subheadline: >-
+    Ingeniería de datos implacable: erradicamos silos y orquestamos pipelines
+    distribuidos de alta disponibilidad para un gobierno de datos absoluto.
+contrast:
+  problem: >-
+    Silos de datos fragmentados en sistemas Legacy, alta latencia en la
+    generación de valor y un costo de infraestructura desbordado.
+  solution: >-
+    Un único tejido de verdad: Data Lakes hiper-escalables y pipelines sin
+    fricción que democratizan la información a toda la organización.
+features:
+  - Migración Cloud y Modern Data Stack
+  - Pipelines ETL/ELT Escalables
+  - Data Observability & Governance
+keywords:
+  - pipeline
+  - ETL
+  - lakehouse
+  - data lake
+  - data warehouse
+  - gobierno de datos
+  - migración cloud
+  - arquitectura medallion
+  - observabilidad
+  - data products
+  - ELT
+  - integración de datos
+copilotPrompts:
+  - >-
+    Diagnosticar cuellos de botella y latencia en nuestro pipeline de datos
+    actual on-premise.
+  - >-
+    Diseñar roadmap de migración hacia Arquitectura Medallion
+    (Bronze/Silver/Gold) en cloud.
+techStack:
+  - Snowflake
+  - Databricks
+  - Apache Spark
+  - Kafka
+  - Iceberg
+proofPoints:
+  - client: Banco Regional
+    result: '[EST] 10x velocidad en pipelines de datos nocturnos'
+competitivePositioning: >-
+  Construimos Arquitecturas Lakehouse con open-formats (Apache Iceberg, Delta)
+  que previenen el vendor lock-in a diferencia de ecosistemas cerrados y
+  costosos de legacy data warehouses.
+contentAngles:
+  - id: data-lake-vs-data-warehouse-cdo
+    title: 'Lakehouse: Lo mejor de ambos mundos'
+    brief: >-
+      Explicación técnica para el CDO sobre cómo una arquitectura Data Lakehouse
+      resuelve el problema de silos sin los costos inflexibles de un Data
+      Warehouse tradicional.

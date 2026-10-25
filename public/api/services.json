@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Inteligencia Artificial & Data Science",
+    "slug": "ai-data-science",
+    "url": "/soluciones/ai-data-science",
+    "descripcion": "Desplegamos arquitecturas cognitivas y predictivas que transforman sus pasivos de datos en activos financieros cuantificables.",
+    "en_que_consiste": "Predicción de mercado y previsión de demanda en tiempo real. Algoritmos que le dicen a su equipo comercial exactamente dónde ganar hoy.",
+    "features": [
+      "Machine Learning y LLMOps",
+      "Arquitecturas RAG Corporativas",
+      "Sistemas Multi-Agente B2B"
+    ]
+  },
+  {
+    "name": "Análisis de Datos, BI & Dashboards",
+    "slug": "business-intelligence",
+    "url": "/soluciones/business-intelligence",
+    "descripcion": "Visibilidad ejecutiva sin precedentes. Dashboards de alta densidad y minería de procesos para directorios exigentes.",
+    "en_que_consiste": "Inteligencia de negocios en tiempo real: KPIs conectados directamente a las fuentes de verdad corporativas, sin intermediarios.",
+    "features": [
+      "Dashboards Ejecutivos de Alta Densidad (Power BI, Tableau, Looker)",
+      "Minería de Procesos (Process Mining)",
+      "Monitoreo en Tiempo Real de KPIs/OKRs Estratégicos"
+    ]
+  },
+  {
+    "name": "Ingeniería & Arquitectura de Datos",
+    "slug": "data-engineering",
+    "url": "/soluciones/data-engineering",
+    "descripcion": "Arquitecturas de alta disponibilidad, pipelines ETL/ELT y Data Lakes diseñados para unificar su conocimiento corporativo.",
+    "en_que_consiste": "Un único tejido de verdad: Data Lakes hiper-escalables y pipelines sin fricción que democratizan la información a toda la organización.",
+    "features": [
+      "Migración Cloud y Modern Data Stack",
+      "Pipelines ETL/ELT Escalables",
+      "Data Observability & Governance"
+    ]
+  },
+  {
+    "name": "Consultoría Estratégica en Datos & IA",
+    "slug": "estrategia-datos-ia",
+    "url": "/soluciones/estrategia-datos-ia",
+    "descripcion": "Auditorías de madurez, roadmaps de ROI acelerado y gobernanza para liderar la adopción corporativa de Inteligencia Artificial.",
+    "en_que_consiste": "Auditoría de madurez rigurosa y un roadmap estratégico priorizado que garantiza que cada dólar invertido tenga una trazabilidad directa hacia el P&L.",
+    "features": [
+      "Auditoría Integral de Madurez de Datos e IA",
+      "Roadmaps Estratégicos y Priorización de Casos de Uso de Alto ROI",
+      "CTO as a Service y Asesoramiento Arquitectónico Experto"
+    ]
+  },
+  {
+    "name": "Hiperautomatización Inteligente",
+    "slug": "hiperautomatizacion",
+    "url": "/soluciones/hiperautomatizacion",
+    "descripcion": "Orquestamos RPA, IDP y ecosistemas API para ejecutar procesos críticos sin fricción, incrementando su ROI operativo.",
+    "en_que_consiste": "Fuerza laboral digital 24/7. Agentes cognitivos y RPA que ejecutan, validan y cierran procesos core sin margen de error.",
+    "features": [
+      "Hiperautomatización de Procesos Core (RPA + Cognitive AI)",
+      "Procesamiento Inteligente de Documentos (IDP / OCR Avanzado)",
+      "Orquestación Serverless e Integración de Ecosistemas API"
+    ]
+  },
+  {
+    "name": "Desarrollo de Sistemas Digitales Premium",
+    "slug": "sistemas-digitales",
+    "url": "/soluciones/sistemas-digitales",
+    "descripcion": "Plataformas B2B y sistemas core de misión crítica, concebidos desde su génesis con capacidades cognitivas integradas.",
+    "en_que_consiste": "Arquitecturas a medida, headless y modulares. Sistemas que se moldean perfectamente a la velocidad y complejidad de su modelo de negocio.",
+    "features": [
+      "Desarrollo de Sistemas a Medida y Plataformas Corporativas AI-First",
+      "Aplicaciones Web y Portales B2B de Alta Conversión",
+      "Arquitecturas Headless, Microservicios y Sistemas Modulares"
+    ]
+  }
+]

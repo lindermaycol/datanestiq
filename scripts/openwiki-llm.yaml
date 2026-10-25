@@ -1,0 +1,39 @@
+# Gateway LiteLLM para openwiki (Spec 009, Camino B).
+#
+# IMPORTANTE — POR QUÉ NO ES ROUND-ROBIN:
+# openwiki es un AGENTE conversacional (loop de tool-calls). Repartir cada turno
+# entre modelos distintos ROMPE la coherencia y provoca bucles ("Checked the file
+# tree" en loop). Por eso usamos UN modelo primario consistente + FAILOVER:
+# openwiki siempre habla con el primario; solo si falla (error/429) LiteLLM conmuta.
+#
+# Primario: Groq gpt-oss-120b (120B, fuerte en tool-use/agente, rápido).
+# Failover: DashScope qwen-max -> Gemini 2.5-flash.
+# El header 'x-litellm-model-id' de cada respuesta dice qué backend atendió.
+
+model_list:
+  # --- PRIMARIO (openwiki llama SIEMPRE a este model_name) ---
+  - model_name: openwiki-model
+    litellm_params:
+      model: groq/openai/gpt-oss-120b
+      api_key: os.environ/GROQ_API_KEY
+    model_info: { id: groq-gpt-oss-120b }
+
+  # --- FAILOVER 1 ---
+  - model_name: openwiki-fallback-a
+    litellm_params:
+      model: openai/qwen-max
+      api_base: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+      api_key: os.environ/DASHSCOPE_API_KEY
+    model_info: { id: dashscope-qwen-max }
+
+  # --- FAILOVER 2 ---
+  - model_name: openwiki-fallback-b
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+    model_info: { id: gemini-2.5-flash }
+
+router_settings:
+  # Si el primario falla, conmuta en orden a los fallbacks (resiliencia sin romper coherencia).
+  fallbacks: [{"openwiki-model": ["openwiki-fallback-a", "openwiki-fallback-b"]}]
+  num_retries: 2

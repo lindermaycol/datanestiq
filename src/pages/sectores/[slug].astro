@@ -1,0 +1,296 @@
+---
+import sectorsCorpus from '../../data/sectorsCorpus.json';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import SolutionHero from '../../components/ui/SolutionHero.astro';
+import SolutionContrast from '../../components/ui/SolutionContrast.astro';
+import IllustrativeRoiCase from '../../components/ui/IllustrativeRoiCase.astro';
+
+import personas from '../../data/personasCorpus.json';
+
+export async function getStaticPaths() {
+  return sectorsCorpus.map((sector) => ({
+    params: { slug: sector.slug },
+    props: { sector },
+  }));
+}
+
+const { sector } = Astro.props;
+
+// Obtener roles relevantes con objeciones
+const relevantPersonas = sector.relevantPersonas 
+  ? personas.roles.filter(r => sector.relevantPersonas.includes(r.id))
+  : [];
+---
+
+<BaseLayout 
+  title={sector.seo?.title || sector.title} 
+  description={sector.seo?.description || sector.description}
+>
+  <Navbar />
+  
+  <main>
+    <SolutionHero 
+      headline={sector.hero?.headline || `Transformación B2B para ${sector.title}`}
+      subheadline={sector.hero?.subheadline || sector.description}
+      serviceId={sector.id}
+    />
+    
+    <SolutionContrast 
+      problem={sector.contrast?.problem || "Infraestructura fragmentada y procesos reactivos que limitan el crecimiento en su sector."}
+      solution={sector.contrast?.solution || "Arquitectura predictiva y unificada diseñada específicamente para superar las fricciones del mercado."}
+    />
+
+    {(sector.slug === 'finanzas' || sector.slug === 'seguros' || relevantPersonas.some(p => p.id === 'cfo')) && (
+      <section class="py-10 bg-brand/10 border-t border-brandCyan/20 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+          <h3 class="text-2xl font-bold text-white mb-4">¿Quieres proyectar el retorno de tu inversión?</h3>
+          <p class="text-gray-300 mb-6">Utiliza nuestra herramienta interactiva para estimar el impacto en EBITDA y reducción de costos operativos.</p>
+          <a href="/business-case" class="inline-block px-8 py-3 bg-brandCyan text-black font-bold rounded-lg hover:bg-cyan-400 transition-colors">
+            Calcula tu Business Case de ROI &rarr;
+          </a>
+        </div>
+      </section>
+    )}
+
+    <section class="py-6 bg-darker border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 text-center md:text-left">
+        {sector.ciiu && (
+          <div class="text-sm">
+            <span class="inline-block bg-brandCyan/20 text-brandCyan px-3 py-1 rounded-full font-medium border border-brandCyan/30">
+              CIIU Rev.4: {sector.ciiu}
+            </span>
+          </div>
+        )}
+      </div>
+    </section>
+
+    {sector.subSectors && sector.subSectors.length > 0 && (
+      <section class="py-4 bg-surface border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p class="text-sm text-gray-400 mb-2">Subsectores Especializados:</p>
+          <div class="flex flex-wrap justify-center gap-2">
+            {sector.subSectors.map(sub => (
+              <span class="bg-white/5 border border-white/10 text-gray-300 px-3 py-1 rounded text-xs">{sub}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.kpis && sector.kpis.length > 0 && (
+      <section class="py-12 bg-darker border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-2xl font-bold mb-8 text-center">KPIs de Impacto</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {sector.kpis.map(kpi => (
+              <div class="glass-card p-4 text-center border-t-2 border-brandCyan">
+                <div class="text-2xl font-bold text-white mb-1">{kpi.baseline} <i class="ph ph-arrow-right text-brandCyan"></i> {kpi.target}</div>
+                <div class="text-sm text-gray-400">
+                  {kpi.metric}
+                  {kpi.expectedRoi && <span class="block mt-1 font-semibold text-brandCyan text-xs">{kpi.expectedRoi}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.regulations && sector.regulations.length > 0 && (
+      <section class="py-6 bg-brand/5 border-t border-brandCyan/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-4">
+          <i class="ph ph-shield-check text-2xl text-brandCyan"></i>
+          <div class="text-sm text-gray-300">
+            <strong class="text-white">Compliance garantizado:</strong> Cumplimos con {sector.regulations.join(', ')}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.roiCases && sector.roiCases.length > 0 && (
+      <section class="py-12 bg-surface/50 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold mb-8 text-center text-white">Escenarios de Impacto Económico Potencial</h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {sector.roiCases.map(rc => (
+              <IllustrativeRoiCase 
+                title={rc.title}
+                description={rc.description}
+                context={rc.context}
+                metrics={rc.metrics}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.problems && sector.problems.length > 0 && (
+      <section class="py-12 bg-surface border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold mb-10 text-center">Retos Operativos y Soluciones en {sector.title}</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {sector.problems.map(prob => (
+              <div class="glass-card p-6 border-l-4 border-l-brandCyan">
+                <h3 class="text-xl font-bold text-white mb-2">{prob.label}</h3>
+                <p class="text-gray-400 mb-4 text-sm">{prob.solution}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.slug === 'publico' && (
+      <section class="py-12 bg-surface border-t border-brandCyan/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="glass-card p-8 border-l-4 border-l-brandCyan bg-brand/5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10 text-brandCyan">
+              <i class="ph ph-shield-check text-8xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold mb-4 text-white">Soberanía de Datos y Seguridad Máxima</h2>
+            <p class="text-gray-300 mb-6 text-lg max-w-3xl">Garantizamos el cumplimiento normativo estatal mediante opciones de despliegue flexibles que mantienen la información sensible bajo el control absoluto de su entidad.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-darker p-4 rounded-lg border border-white/5 flex items-start gap-3">
+                <i class="ph ph-hard-drives text-brandCyan text-2xl"></i>
+                <div>
+                  <h4 class="font-bold text-white mb-1">On-Premise (Local)</h4>
+                  <p class="text-sm text-gray-400">Despliegue de IA (LLMs) y pipelines en sus propios servidores (Air-gapped).</p>
+                </div>
+              </div>
+              <div class="bg-darker p-4 rounded-lg border border-white/5 flex items-start gap-3">
+                <i class="ph ph-cloud-lock text-brandCyan text-2xl"></i>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Nube Privada Segura (VPC)</h4>
+                  <p class="text-sm text-gray-400">Instancias dedicadas en la nube bajo esquemas de seguridad gubernamental.</p>
+                </div>
+              </div>
+              <div class="bg-darker p-4 rounded-lg border border-white/5 flex items-start gap-3">
+                <i class="ph ph-lock-key text-brandCyan text-2xl"></i>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Encriptación E2E</h4>
+                  <p class="text-sm text-gray-400">Datos cifrados en tránsito y reposo, auditables vía block-storage.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.institutionalContinuity && (
+      <section class="py-12 bg-darker border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="glass-card p-8 border-t-4 border-t-brandCyan relative overflow-hidden">
+            <h2 class="text-3xl font-bold mb-4 text-white"><i class="ph ph-bank text-brandCyan mr-2"></i>{sector.institutionalContinuity.title}</h2>
+            <p class="text-gray-300 mb-8 text-lg max-w-4xl">{sector.institutionalContinuity.description}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sector.institutionalContinuity.features.map(feature => (
+                <div class="flex items-start gap-3 bg-black/30 p-4 rounded-lg border border-white/5">
+                  <i class="ph ph-check-circle text-brandCyan mt-1 text-xl"></i>
+                  <p class="text-gray-300 font-medium">{feature}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.relevantPersonas?.includes('cfo') && (
+      <section class="py-12 bg-brand/5 border-t border-brandCyan/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="glass-card p-8 text-center relative overflow-hidden">
+            <i class="ph ph-plugs-connected text-6xl text-brandCyan mb-4 inline-block"></i>
+            <h2 class="text-3xl font-bold mb-4 text-white">Modernización sin reemplazar su ERP Core</h2>
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+              {personas.roles.find(r => r.id === 'cfo')?.objectionResponses.find(o => o.objection.includes('ERP'))?.response}
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {((sector.deploymentModels && sector.deploymentModels.length > 0) || (sector.engagementModels && sector.engagementModels.length > 0)) && (
+      <section class="py-12 bg-darker border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold mb-10 text-center">Modelos de Despliegue y Trabajo</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {sector.deploymentModels && sector.deploymentModels.length > 0 && (
+              <div>
+                <h3 class="text-xl font-bold mb-4 text-brandCyan"><i class="ph ph-hard-drives"></i> Arquitecturas Soportadas</h3>
+                <ul class="space-y-3">
+                  {sector.deploymentModels.map(model => (
+                    <li class="flex items-start gap-2">
+                      <i class="ph ph-check-circle text-brandCyan mt-1"></i>
+                      <span class="text-gray-300">{model}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {sector.engagementModels && sector.engagementModels.length > 0 && (
+              <div>
+                <h3 class="text-xl font-bold mb-4 text-brandCyan"><i class="ph ph-handshake"></i> Modalidades de Contratación</h3>
+                <ul class="space-y-3">
+                  {sector.engagementModels.map(model => (
+                    <li class="flex items-start gap-2">
+                      <i class="ph ph-check-circle text-brandCyan mt-1"></i>
+                      <span class="text-gray-300">{model}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {relevantPersonas.length > 0 && (
+      <section class="py-12 bg-surface/50 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold mb-8 text-center">Resolvemos tus dudas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {relevantPersonas.flatMap(role => 
+              role.objectionResponses ? role.objectionResponses.map(obr => ({ role: role.title, ...obr })) : []
+            ).map((item) => (
+              <div class="glass-card p-6 border-l-2 border-brandCyan/50">
+                <div class="text-xs font-bold text-brandCyan mb-2 uppercase tracking-wider">{item.role}</div>
+                <h4 class="font-bold text-white mb-2">"{item.objection}"</h4>
+                <p class="text-sm text-gray-400">{item.response}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {sector.relevantPersonas?.includes('ceo') && (
+      <section class="py-12 bg-darker border-t border-brandCyan/10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold mb-8 text-center text-white"><i class="ph ph-strategy text-brandCyan mr-2"></i>Perspectiva Estratégica (CEO)</h2>
+          <div class="space-y-4">
+            <div class="bg-black/30 p-6 rounded-xl border border-white/5">
+              <h4 class="font-bold text-white mb-2">¿Cómo aseguramos que la IA genere ventaja competitiva real y no sea solo un experimento?</h4>
+              <p class="text-gray-400 text-sm">Nuestro framework comienza mapeando sus unidades de negocio clave para identificar cuellos de botella operativos donde la IA pueda generar retornos tangibles inmediatos. Desplegamos soluciones que se integran en su cadena de valor actual impactando directamente en su EBITDA.</p>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl border border-white/5">
+              <h4 class="font-bold text-white mb-2">¿Cómo mitigamos los riesgos de privacidad o inmadurez de nuestros datos?</h4>
+              <p class="text-gray-400 text-sm">Desplegamos en Nube Privada Segura (VPC) u On-Premise, garantizando que su propiedad intelectual nunca alimente modelos públicos. Incluimos fases iniciales de ingeniería y gobernanza para asegurar que la IA aprenda de datos confiables.</p>
+            </div>
+            <div class="bg-black/30 p-6 rounded-xl border border-white/5">
+              <h4 class="font-bold text-white mb-2">¿Cómo evaluaremos el impacto de la iniciativa?</h4>
+              <p class="text-gray-400 text-sm">Construimos un Business Case integral con usted antes del desarrollo, estableciendo métricas de Payback Period, TCO y ROI proyectado, asegurando alineación total con sus objetivos de crecimiento corporativo.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+  
+  <Footer />
+</BaseLayout>

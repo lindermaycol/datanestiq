@@ -1,0 +1,244 @@
+[
+  {
+    "id": "industry-aeroespacial",
+    "title": "Aeroespacial y Defensa",
+    "ciiu": "30",
+    "keywords": [
+      "aeroespacial",
+      "aviación",
+      "defensa",
+      "vuelos",
+      "mantenimiento aeronáutico"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "data-engineering"
+    ]
+  },
+  {
+    "id": "industry-agricultura",
+    "title": "Agricultura y Agroindustria",
+    "ciiu": "01",
+    "keywords": [
+      "agro",
+      "cultivos",
+      "riego",
+      "cadena de frío",
+      "trazabilidad agrícola",
+      "agroindustria",
+      "sensores"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "data-engineering",
+      "hiperautomatizacion"
+    ]
+  },
+  {
+    "id": "industry-automotriz",
+    "title": "Automotriz",
+    "ciiu": "29",
+    "keywords": [
+      "automotriz",
+      "vehículos",
+      "ensamblaje",
+      "autopartes",
+      "concesionarios",
+      "movilidad"
+    ],
+    "relatedPillars": [
+      "hiperautomatizacion",
+      "business-intelligence"
+    ]
+  },
+  {
+    "id": "industry-construccion",
+    "title": "Construcción e Ingeniería",
+    "ciiu": "41",
+    "keywords": [
+      "construcción",
+      "ingeniería",
+      "obras",
+      "proyectos",
+      "BIM",
+      "infraestructura",
+      "maquinaria civil"
+    ],
+    "relatedPillars": [
+      "business-intelligence",
+      "hiperautomatizacion"
+    ]
+  },
+  {
+    "id": "industry-consumo",
+    "title": "Bienes de Consumo (CPG)",
+    "ciiu": "10",
+    "keywords": [
+      "cpg",
+      "bienes de consumo",
+      "fmcg",
+      "alimentos",
+      "bebidas",
+      "distribución masiva"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "business-intelligence"
+    ]
+  },
+  {
+    "id": "industry-energia",
+    "title": "Energía y Utilities",
+    "ciiu": "35",
+    "keywords": [
+      "energía",
+      "utilities",
+      "electricidad",
+      "agua",
+      "smart grid",
+      "eficiencia energética",
+      "plantas de energía"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "business-intelligence",
+      "data-engineering"
+    ]
+  },
+  {
+    "id": "industry-farma",
+    "title": "Farmacéutica y Life Sciences",
+    "ciiu": "21",
+    "keywords": [
+      "farmacéutica",
+      "farma",
+      "life sciences",
+      "laboratorios",
+      "medicamentos",
+      "investigación clínica"
+    ],
+    "relatedPillars": [
+      "data-engineering",
+      "ai-data-science"
+    ]
+  },
+  {
+    "id": "industry-inmobiliario",
+    "title": "Real Estate / Inmobiliario",
+    "ciiu": "68",
+    "keywords": [
+      "real estate",
+      "bienes raíces",
+      "inmobiliaria",
+      "propiedades",
+      "proptech"
+    ],
+    "relatedPillars": [
+      "business-intelligence",
+      "sistemas-digitales"
+    ]
+  },
+  {
+    "id": "industry-medios",
+    "title": "Medios y Entretenimiento",
+    "ciiu": "59",
+    "keywords": [
+      "medios",
+      "entretenimiento",
+      "streaming",
+      "audiencias",
+      "broadcasting",
+      "publicidad"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "sistemas-digitales"
+    ]
+  },
+  {
+    "id": "industry-ong",
+    "title": "ONG y Tercer Sector",
+    "ciiu": "94",
+    "keywords": [
+      "ong",
+      "tercer sector",
+      "fundaciones",
+      "donaciones",
+      "impacto social",
+      "beneficencia"
+    ],
+    "relatedPillars": [
+      "business-intelligence",
+      "sistemas-digitales"
+    ]
+  },
+  {
+    "id": "industry-petroleo",
+    "title": "Petróleo y Gas",
+    "ciiu": "06",
+    "keywords": [
+      "oil & gas",
+      "petróleo",
+      "gas",
+      "refinación",
+      "perforación",
+      "upstream",
+      "downstream"
+    ],
+    "relatedPillars": [
+      "data-engineering",
+      "ai-data-science"
+    ]
+  },
+  {
+    "id": "industry-servicios-profesionales",
+    "title": "Servicios Profesionales",
+    "ciiu": "69",
+    "keywords": [
+      "consultoría",
+      "servicios profesionales",
+      "auditoría",
+      "legal",
+      "b2b services",
+      "horas facturables"
+    ],
+    "relatedPillars": [
+      "business-intelligence",
+      "hiperautomatizacion"
+    ]
+  },
+  {
+    "id": "industry-transporte",
+    "title": "Transporte de Pasajeros",
+    "ciiu": "49",
+    "keywords": [
+      "transporte",
+      "pasajeros",
+      "aerolíneas",
+      "buses",
+      "movilidad urbana",
+      "flotas"
+    ],
+    "relatedPillars": [
+      "ai-data-science",
+      "business-intelligence"
+    ]
+  },
+  {
+    "id": "industry-turismo",
+    "title": "Turismo y Hotelería",
+    "ciiu": "55",
+    "keywords": [
+      "turismo",
+      "hotelería",
+      "hospitality",
+      "viajes",
+      "reservas",
+      "ocupación"
+    ],
+    "relatedPillars": [
+      "business-intelligence",
+      "sistemas-digitales"
+    ]
+  }
+]

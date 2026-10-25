@@ -1,0 +1,28 @@
+# Tareas: Migración a Content Collections y Páginas de Sector
+
+- `[ ]` **Paso 1: Configuración de Colecciones (Zod)**
+  - `[ ]` Instalar `js-yaml` (si es necesario para el script pre-build).
+  - `[ ]` Crear `src/content/config.ts` y definir los esquemas `pillars`, `sectors`, `industries`.
+  - `[ ]` Exportar un archivo de esquemas (ej. `src/lib/schemas.ts`) para reutilizarlos en el script de build.
+- `[ ]` **Paso 2: Extracción a YAML**
+  - `[ ]` Crear directorios `src/content/pillars/`, `src/content/sectors/`, `src/content/industries/`.
+  - `[ ]` Generar archivos `.yaml` individuales mapeando 1 a 1 los datos de los JSON actuales.
+- `[ ]` **Paso 3: Script de Generación y Validación (`build-taxonomy.mjs`)**
+  - `[ ]` Escribir el script que lee las carpetas `src/content/*` y parsea los YAML.
+  - `[ ]` Validar cada archivo con su respectivo esquema Zod.
+  - `[ ]` Leer y validar `src/data/personas.json`.
+  - `[ ]` Ejecutar validación de integridad referencial (`relatedPillars`, `pillarsOfInterest`).
+  - `[ ]` Escribir los artefactos en `src/data/taxonomyCorpus.json`, `src/data/sectorsCorpus.json`, `src/data/extendedIndustries.json`.
+  - `[ ]` Añadir script al `package.json` (`prebuild`, `build:taxonomy`).
+- `[ ]` **Paso 4: Creación de Landing de Sectores**
+  - `[ ]` Crear `src/pages/sectores/[id].astro`.
+  - `[ ]` Consumir la colección para generar las páginas.
+  - `[ ]` Diseñar los bloques de dominio (retos y problemas) y enlazado cruzado a pilares.
+- `[ ]` **Paso 5: Ajustes UI y Enrutamiento**
+  - `[ ]` Enlazar las tarjetas de `SolutionsByRoleAndIndustry.jsx` hacia `/sectores/[id]` cuando corresponda.
+- `[ ]` **Paso 6: Validación E2E**
+  - `[ ]` Correr el build y comparar los JSON generados con los originales.
+  - `[ ]` Verificar el recuento de páginas (+10 páginas de sectores).
+  - `[ ]` Comprobar que el chatbot, wizard y buscador siguen funcionando (cero regresión).
+- `[ ]` **Paso 7: Cierre Documental**
+  - `[ ]` Actualizar `tech_debt.md` y `ESTADO-SPECS.md`.

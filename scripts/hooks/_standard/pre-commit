@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# project-standard — pre-commit. No editar: se regenera con apply_standard.py.
+PY=python
+command -v python >/dev/null 2>&1 || PY=python3
+command -v "$PY" >/dev/null 2>&1 || { echo "[project-standard] python no encontrado: se omite el pre-commit"; exit 0; }
+exec "$PY" "$(dirname "$0")/secrets_gate.py"

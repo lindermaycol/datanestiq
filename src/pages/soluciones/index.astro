@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import corpus from '../../data/taxonomyCorpus.json';
+---
+
+<BaseLayout title="Soluciones de IA y Datos" description="Explora nuestras soluciones corporativas en inteligencia artificial y arquitectura de datos.">
+  <Navbar />
+  
+  <main class="pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Soluciones Datanestiq</h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">Capacidades técnicas de alto rendimiento para transformar operaciones complejas.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {corpus.map(service => (
+          <a href={`/soluciones/${service.slug}`} class="glass-card p-8 group hover:border-brandCyan/50 transition-all">
+            <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-brandCyan transition-colors">{service.name}</h2>
+            <p class="text-gray-400 mb-6 text-sm">{service.seo.description}</p>
+            <div class="flex items-center text-brandCyan font-semibold text-sm">
+              Conoce más <i class="ph ph-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>

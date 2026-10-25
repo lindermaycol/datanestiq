@@ -1,0 +1,75 @@
+id: hiperautomatizacion
+name: Hiperautomatización Inteligente
+slug: hiperautomatizacion
+maturityStage: Prescriptivo (Automatización)
+standards:
+  - BPM
+  - IPA
+targetRoles:
+  - COO
+  - CFO
+  - Gerente de Operaciones
+skills:
+  - Automatización de Procesos
+  - Eficiencia Operativa
+seo:
+  title: Hiperautomatización RPA + IA para Empresas | Datanestiq
+  description: >-
+    Orquestamos RPA, IDP y ecosistemas API para ejecutar procesos críticos sin
+    fricción, incrementando su ROI operativo.
+hero:
+  headline: Erradique la Fricción Operativa a Escala
+  subheadline: >-
+    Sustituya las ineficiencias de su back-office por flujos de trabajo
+    autónomos. Orquestamos RPA e IA cognitiva para ejecutar con precisión
+    milimétrica.
+contrast:
+  problem: >-
+    Cientos de horas-hombre desperdiciadas en procesos manuales que frenan el
+    crecimiento y generan pasivos ocultos por errores humanos.
+  solution: >-
+    Fuerza laboral digital 24/7. Agentes cognitivos y RPA que ejecutan, validan
+    y cierran procesos core sin margen de error.
+features:
+  - Hiperautomatización de Procesos Core (RPA + Cognitive AI)
+  - Procesamiento Inteligente de Documentos (IDP / OCR Avanzado)
+  - Orquestación Serverless e Integración de Ecosistemas API
+keywords:
+  - RPA
+  - automatización
+  - bots
+  - procesos
+  - OCR
+  - IDP
+  - serverless
+  - flujos de trabajo
+  - hiperautomatización
+  - reducción de costos
+  - cero errores manuales
+copilotPrompts:
+  - >-
+    Calcular ROI a 12 meses de hiperautomatizar la conciliación bancaria y
+    revisión de facturas (IDP).
+  - >-
+    Identificar procesos back-office de alta fricción idóneos para
+    automatización cognitiva y RPA.
+techStack:
+  - UiPath
+  - Automation Anywhere
+  - Python RPA
+  - Document AI
+  - Cloud / Híbrido / On-Premise
+proofPoints:
+  - client: Aseguradora Multinacional
+    result: '[EST] 70% de tareas repetitivas en back-office automatizadas'
+competitivePositioning: >-
+  No implementamos scripts frágiles de RPA que se rompen con cada actualización;
+  usamos Inteligencia Artificial (IDP y LLMs) para crear automatización
+  cognitiva que maneja excepciones. Soportamos arquitecturas Cloud, Híbrido y despliegues 100% On-Premise.
+contentAngles:
+  - id: hiperautomatizacion-backoffice-coo
+    title: Hiperautomatización del Back-Office
+    brief: >-
+      Guía para el COO sobre cómo escalar las operaciones y absorber 10x más
+      volumen de trabajo sin escalar linealmente la planilla, usando RPA
+      cognitivo.

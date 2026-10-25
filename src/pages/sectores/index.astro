@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import sectorsCorpus from '../../data/sectorsCorpus.json';
+---
+
+<BaseLayout title="Sectores que Transformamos" description="Descubre cómo adaptamos nuestra tecnología a las necesidades específicas de tu industria.">
+  <Navbar />
+  
+  <main class="pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Industrias y Sectores</h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">Soluciones especializadas para los desafíos operativos y regulatorios de tu sector.</p>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {sectorsCorpus.map(sector => (
+          <a href={`/sectores/${sector.slug}`} class="glass-card p-6 group hover:border-brandCyan/50 transition-all text-center">
+            <div class="w-14 h-14 mx-auto bg-brand/10 rounded-2xl flex items-center justify-center mb-4 text-brandCyan text-2xl group-hover:scale-110 transition-transform">
+              <i class={`ph ${sector.icon || 'ph-buildings'}`}></i>
+            </div>
+            <h2 class="text-lg font-bold text-white mb-2 group-hover:text-brandCyan transition-colors">{sector.title}</h2>
+            <p class="text-gray-400 text-sm line-clamp-3">{sector.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>

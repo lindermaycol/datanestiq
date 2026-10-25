@@ -1,7 +1,8 @@
 # Instrucciones de Migración y Entorno Local (WordPress)
 
-> [!TIP]
-> **Para el agente de la nueva sesión:** Este documento contiene las instrucciones completas y el plan de implementación para descargar y configurar el entorno local del sitio web WordPress (`datanestiq.com`), alojado en un servidor compartido IONOS.
+> [!NOTE]
+> **STATUS: COMPLETADO ✅**
+> La migración del sitio de IONOS al entorno local de XAMPP ya ha sido ejecutada. El core de WordPress, `wp-content`, `wp-config.php` y la base de datos MySQL están 100% configurados y operativos en `C:\xampp\htdocs\datanestiq`. No es necesario volver a ejecutar estos pasos. Este documento se mantiene solo como archivo histórico.
 
 ## Contexto del Proyecto Nuevo
 - **Directorio de Trabajo:** `C:\xampp\htdocs\datanestiq` para alojar los archivos del sitio web WordPress.
@@ -11,7 +12,7 @@
 > [!IMPORTANT]
 > ## User Review Required / Open Questions
 > Para poder ejecutar este plan de manera exitosa, necesito la siguiente información y confirmaciones de tu parte:
-> 1. **Credenciales SSH/SFTP:** Necesito la contraseña o la llave privada para el usuario `a2533622` en el host `access-5017755440.webspace-host.com` para poder conectarme y extraer los archivos y la base de datos de IONOS.
+> 1. **Credenciales SSH/SFTP:** Necesito la contraseña o la llave privada para el usuario `<IONOS_SSH_USER>` en el host `<IONOS_SSH_HOST>` (ver `.env`, claves `IONOS_SSH_USER` / `IONOS_SSH_HOST`) para poder conectarme y extraer los archivos y la base de datos de IONOS.
 > 2. **Estado de XAMPP:** ¿Ya tienes instalado XAMPP (con PHP 8.2) y están corriendo los servicios de Apache y MySQL en tu equipo local?
 > 3. **WP-CLI (Opcional pero recomendado):** Para no romper datos serializados, lo ideal es usar WP-CLI para el reemplazo de URLs. ¿Te parece bien si lo instalo localmente o prefieres usar un script PHP de Search & Replace como "interconnect/it"?
 > 4. **Control de Versiones (Git):** ¿Te gustaría que inicialice un repositorio Git en la carpeta de tu tema (`wp-content/themes/...`) para llevar un control estricto de las mejoras y cambios de código antes de enviarlos a producción?

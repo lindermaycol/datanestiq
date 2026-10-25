@@ -1,0 +1,349 @@
+{
+  "roles": [
+    {
+      "id": "cfo",
+      "title": "CFO / Director Financiero",
+      "goals": [
+        "ROI medible",
+        "control de costos",
+        "forecasting",
+        "gestión de riesgo"
+      ],
+      "pains": [
+        "decisiones sin datos confiables",
+        "cierres contables lentos"
+      ],
+      "pillarsOfInterest": [
+        "business-intelligence",
+        "estrategia-datos-ia",
+        "hiperautomatizacion",
+        "ai-data-science"
+      ],
+      "buyerRole": "economic",
+      "objections": [
+        "El ROI de proyectos de datos suele ser abstracto o a muy largo plazo",
+        "Reemplazar el ERP cuesta demasiado"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "El ROI de proyectos de datos suele ser abstracto o a muy largo plazo",
+          "response": "Trazamos modelos de Payback concretos con victorias tempranas (Quick Wins) en los primeros 3 a 4 meses de implementación."
+        },
+        {
+          "objection": "Reemplazar el ERP cuesta demasiado",
+          "response": "No reemplazamos su ERP; coexistimos con él integrando arquitecturas modernas y ligeras (Data Lake/Warehouse) que prolongan su vida útil y reducen el TCO."
+        }
+      ],
+      "decisionCriteria": [
+        "Payback Period y TCO",
+        "Previsibilidad presupuestaria",
+        "Impacto directo en el EBITDA"
+      ],
+      "triggers": [
+        "Cierres contables que toman semanas",
+        "Desviaciones graves no anticipadas en el P&L"
+      ],
+      "relevantSectors": [
+        "sector-finanzas",
+        "sector-seguros"
+      ]
+    },
+    {
+      "id": "cio",
+      "title": "CIO",
+      "goals": [
+        "uptime",
+        "seguridad",
+        "reducción de costos IT",
+        "compliance"
+      ],
+      "pains": [
+        "sistemas legacy",
+        "silos de datos"
+      ],
+      "pillarsOfInterest": [
+        "data-engineering",
+        "sistemas-digitales",
+        "hiperautomatizacion"
+      ],
+      "buyerRole": "technical",
+      "objections": [
+        "Tenemos un contrato vigente con Microsoft",
+        "Nuestros datos son demasiado sensibles para la nube"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "Tenemos un contrato vigente con Microsoft",
+          "response": "Nuestras arquitecturas son agnósticas, por lo que podemos desplegar soluciones nativas en su entorno Azure aprovechando su infraestructura existente y licencias vigentes."
+        },
+        {
+          "objection": "Nuestros datos son demasiado sensibles para la nube",
+          "response": "Desplegamos en configuraciones On-Premise o en Nubes Privadas Virtuales (VPC), garantizando que los datos nunca salgan de su perímetro corporativo."
+        }
+      ],
+      "decisionCriteria": [
+        "Seguridad certificada",
+        "Integración con legacy",
+        "Total Cost of Ownership (TCO)"
+      ],
+      "triggers": [
+        "Fallo crítico de seguridad",
+        "Fin de vida útil (EOL) de ERP legacy"
+      ],
+      "relevantSectors": [
+        "sector-publico"
+      ]
+    },
+    {
+      "id": "cdo",
+      "title": "CDO / Chief Data Officer",
+      "goals": [
+        "valor del dato",
+        "gobernanza",
+        "calidad de datos"
+      ],
+      "pains": [
+        "datos fragmentados",
+        "baja calidad"
+      ],
+      "pillarsOfInterest": [
+        "data-engineering",
+        "ai-data-science",
+        "estrategia-datos-ia"
+      ],
+      "buyerRole": "technical",
+      "objections": [
+        "Nuestra calidad de datos actual es muy baja para aplicar IA",
+        "Falta cultura del dato en la empresa"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "Nuestra calidad de datos actual es muy baja para aplicar IA",
+          "response": "Aplicamos ingeniería de datos previa para limpiar, estructurar y unificar sus silos antes de desplegar cualquier modelo predictivo."
+        },
+        {
+          "objection": "Falta cultura del dato en la empresa",
+          "response": "Ofrecemos transferencia de conocimiento y planes de adopción, acompañando a su equipo para asegurar que las herramientas sean utilizadas diariamente."
+        }
+      ],
+      "decisionCriteria": [
+        "Escalabilidad de la gobernanza",
+        "Adopción de usuarios",
+        "Reducción de silos de datos"
+      ],
+      "triggers": [
+        "Multas regulatorias por mal manejo de datos",
+        "Múltiples versiones de la verdad en juntas directivas"
+      ],
+      "relevantSectors": [
+        "sector-retail",
+        "sector-telecomunicaciones",
+        "sector-publico"
+      ]
+    },
+    {
+      "id": "cto",
+      "title": "CTO",
+      "goals": [
+        "escalabilidad",
+        "arquitectura",
+        "innovación"
+      ],
+      "pains": [
+        "deuda técnica",
+        "mantenimiento costoso"
+      ],
+      "pillarsOfInterest": [
+        "sistemas-digitales",
+        "ai-data-science"
+      ],
+      "buyerRole": "technical",
+      "objections": [
+        "Tenemos demasiada deuda técnica",
+        "No quiero quedar atrapado en el ecosistema de un solo vendor (Lock-in)"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "Tenemos demasiada deuda técnica",
+          "response": "Aplicamos refactorización iterativa y migración a microservicios en fases, reduciendo su deuda técnica sin interrumpir las operaciones críticas diarias."
+        },
+        {
+          "objection": "No quiero quedar atrapado en el ecosistema de un solo vendor (Lock-in)",
+          "response": "Utilizamos estándares Open Source maduros y tecnologías contenerizadas que garantizan la portabilidad y evitan el Vendor Lock-in."
+        }
+      ],
+      "decisionCriteria": [
+        "Flexibilidad de arquitectura",
+        "Seguridad y Compliance",
+        "Facilidad de integración mediante APIs"
+      ],
+      "triggers": [
+        "Caídas críticas del sistema",
+        "Migración inminente a Cloud"
+      ],
+      "relevantSectors": [
+        "sector-manufactura",
+        "sector-logistica",
+        "sector-telecomunicaciones"
+      ]
+    },
+    {
+      "id": "coo",
+      "title": "COO / Director de Operaciones",
+      "goals": [
+        "eficiencia operativa",
+        "automatización"
+      ],
+      "pains": [
+        "procesos manuales",
+        "cuellos de botella"
+      ],
+      "pillarsOfInterest": [
+        "hiperautomatizacion",
+        "business-intelligence"
+      ],
+      "buyerRole": "user",
+      "objections": [
+        "Mi equipo de operaciones se resistirá a usar un nuevo sistema",
+        "No podemos detener la producción para implementar"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "Mi equipo de operaciones se resistirá a usar un nuevo sistema",
+          "response": "Codiseñamos interfaces intuitivas enfocadas en la usabilidad en planta y brindamos capacitación en el terreno para garantizar adopción fluida."
+        },
+        {
+          "objection": "No podemos detener la producción para implementar",
+          "response": "Ejecutamos despliegues ágiles (Shadow Mode) que corren en paralelo a su operación actual, asegurando transición transparente y cero downtime."
+        }
+      ],
+      "decisionCriteria": [
+        "Aumento de eficiencia (OEE, Tiempos)",
+        "Facilidad de uso en piso de planta o almacén",
+        "Soporte 24/7"
+      ],
+      "triggers": [
+        "Cuellos de botella evidentes",
+        "Aumento de horas extra y errores humanos"
+      ],
+      "relevantSectors": [
+        "sector-manufactura",
+        "sector-salud",
+        "sector-retail",
+        "sector-logistica"
+      ]
+    },
+    {
+      "id": "ciso",
+      "title": "CISO",
+      "goals": [
+        "seguridad",
+        "gestión de riesgo",
+        "compliance"
+      ],
+      "pains": [
+        "superficie de ataque",
+        "fuga de datos"
+      ],
+      "pillarsOfInterest": [
+        "estrategia-datos-ia",
+        "data-engineering"
+      ],
+      "buyerRole": "technical",
+      "objections": [
+        "Los modelos de IA pública exponen nuestros datos confidenciales",
+        "Nuestra superficie de ataque ya es muy amplia"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "Los modelos de IA pública exponen nuestros datos confidenciales",
+          "response": "Implementamos Grandes Modelos de Lenguaje (LLMs) locales y privados, asegurando que su propiedad intelectual nunca alimente modelos externos."
+        },
+        {
+          "objection": "Nuestra superficie de ataque ya es muy amplia",
+          "response": "Reducimos vulnerabilidades centralizando accesos, auditando identidades (IAM) y operando bajo estándares rigurosos de cumplimiento."
+        }
+      ],
+      "decisionCriteria": [
+        "Cumplimiento normativo (ISO 27001, SOC2)",
+        "Encriptación End-to-End",
+        "Despliegues On-Premise/VPC"
+      ],
+      "triggers": [
+        "Auditoría de seguridad fallida",
+        "Brecha de datos reciente en la industria"
+      ],
+      "relevantSectors": [
+        "sector-finanzas",
+        "sector-publico",
+        "sector-salud"
+      ]
+    },
+    {
+      "id": "ceo",
+      "title": "CEO / Director General",
+      "goals": [
+        "crecimiento",
+        "ventaja competitiva",
+        "transformación digital"
+      ],
+      "pains": [
+        "visibilidad limitada del negocio",
+        "decisiones reactivas"
+      ],
+      "pillarsOfInterest": [
+        "estrategia-datos-ia",
+        "business-intelligence",
+        "ai-data-science"
+      ],
+      "buyerRole": "economic",
+      "objections": [
+        "La IA es solo una moda técnica, no entiendo cómo impacta mi estrategia",
+        "Nuestra empresa no es una tecnológica"
+      ],
+      "objectionResponses": [
+        {
+          "objection": "La IA es solo una moda técnica, no entiendo cómo impacta mi estrategia",
+          "response": "Traducimos capacidades técnicas en casos de uso concretos de negocio, impactando directamente su EBITDA a través de mayor retención de clientes u optimización operativa."
+        },
+        {
+          "objection": "Nuestra empresa no es una tecnológica",
+          "response": "Nos asociamos como su brazo de Inteligencia Artificial externalizado, democratizando tecnologías de punta sin necesidad de contratar equipos internos masivos."
+        }
+      ],
+      "decisionCriteria": [
+        "Ventaja competitiva y Cuota de Mercado",
+        "Crecimiento de ingresos",
+        "Transformación digital del modelo de negocio"
+      ],
+      "triggers": [
+        "Presión disruptiva de competidores nativos digitales",
+        "Estancamiento en el crecimiento interanual"
+      ],
+      "relevantSectors": [
+        "sector-retail",
+        "sector-finanzas",
+        "sector-educacion",
+        "sector-logistica"
+      ]
+    }
+  ],
+  "orgTypes": [
+    {
+      "id": "corporacion",
+      "title": "Gran Corporación / Enterprise"
+    },
+    {
+      "id": "gobierno",
+      "title": "Gobierno / Sector Público"
+    },
+    {
+      "id": "mid-market",
+      "title": "Mediana Empresa"
+    },
+    {
+      "id": "scaleup",
+      "title": "Startup en Escalamiento"
+    }
+  ]
+}

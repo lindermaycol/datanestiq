@@ -1,0 +1,74 @@
+id: sector-logistica
+title: Logística
+description: >-
+  Optimización de rutas, predicción de demanda de transporte y visibilidad
+  end-to-end de la cadena de suministro.
+icon: ph-truck
+ciiu: '52'
+keywords:
+  - logística
+  - supply chain
+  - rutas
+  - transporte
+  - almacenaje
+  - cadena de suministro
+  - distribución
+  - optimización de rutas
+  - torre de control
+  - reducción de costos de flete
+seo:
+  title: Data Engineering para Logística y Supply Chain | Datanestiq
+  description: >-
+    Optimización algorítmica de rutas y visibilidad en tiempo real (Torre de
+    Control) para cadenas de suministro complejas.
+hero:
+  headline: Visibilidad End-to-End de su Cadena de Valor
+  subheadline: >-
+    Erradiquemos los puntos ciegos logísticos. Arquitecturas de datos en tiempo
+    real y ruteo predictivo para máxima eficiencia operativa.
+contrast:
+  problem: >-
+    Pérdida de trazabilidad de activos, ineficiencia en el consumo de
+    combustible e incapacidad para reaccionar ante disrupciones de red.
+  solution: >-
+    Torres de Control analíticas con IA y algoritmos de optimización logística
+    que recalibran operaciones dinámicamente frente a cualquier anomalía.
+problems:
+  - code: rutas
+    label: Ineficiencia en ruteo y entregas
+    solution: >-
+      Implementamos algoritmos de machine learning para el ruteo dinámico,
+      reduciendo costos de combustible y tiempos de entrega garantizados.
+  - code: trazabilidad
+    label: Falta de visibilidad operativa
+    solution: >-
+      Desarrollamos arquitecturas de datos en tiempo real para una visibilidad
+      end-to-end (Torre de Control) de toda la cadena de suministro.
+  - code: ventaja_competitiva
+    label: Sparring y ventaja competitiva
+    solution: >-
+      Actuamos como su sparring estratégico. Mapeamos cómo la IA puede 
+      convertirse en su ventaja competitiva para proteger su cuota de mercado frente a nativos digitales.
+slug: logistica
+subSectors:
+  - Última Milla
+  - Transporte Internacional de Carga
+  - Centros de Distribución
+kpis:
+  - metric: Costos de combustible
+    expectedRoi: '[EST] -15%'
+  - metric: Entregas a tiempo (OTIF)
+    expectedRoi: '[EST] Mejora a 98%'
+regulations:
+  - Regulaciones de Aduanas
+  - Normativas de Emisiones (ESG)
+relevantPersonas:
+  - coo
+  - ceo
+  - cto
+contentAngles:
+  - id: ruteo-dinamico-ia
+    title: Ruteo Dinámico y Torres de Control AI
+    brief: >-
+      Artículo explicando cómo una arquitectura de datos en tiempo real y
+      algoritmos de ruteo dinámico ahorran un 15% en costos logísticos.

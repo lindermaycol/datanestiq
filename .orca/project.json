@@ -1,0 +1,8 @@
+{
+  "project": "datanestiq",
+  "vault_folder": "datanestiq",
+  "db_copy": [
+    "secure_leads/crm.sqlite"
+  ],
+  "codegraph_in_worktree": true
+}

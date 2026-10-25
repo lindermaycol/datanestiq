@@ -1,0 +1,77 @@
+id: ai-data-science
+name: Inteligencia Artificial & Data Science
+slug: ai-data-science
+maturityStage: Predictivo / Prescriptivo
+standards:
+  - CRISP-DM
+  - MLOps
+targetRoles:
+  - CDO
+  - CTO
+  - Director de Innovación
+skills:
+  - Modelado Predictivo
+  - Arquitectura Cognitiva
+seo:
+  title: Consultoría IA y Data Science B2B | Datanestiq
+  description: >-
+    Desplegamos arquitecturas cognitivas y predictivas que transforman sus
+    pasivos de datos en activos financieros cuantificables.
+hero:
+  headline: Transforme Terabytes en Ventaja Asimétrica
+  subheadline: >-
+    Desplegamos sistemas cognitivos y arquitecturas GenAI privadas que elevan el
+    margen de su corporación de manera drástica y medible.
+contrast:
+  problem: >-
+    El directorio toma decisiones a ciegas, basándose en la intuición y en
+    reportes forenses sobre eventos que ya sucedieron.
+  solution: >-
+    Predicción de mercado y previsión de demanda en tiempo real. Algoritmos que
+    le dicen a su equipo comercial exactamente dónde ganar hoy.
+features:
+  - Machine Learning y LLMOps
+  - Arquitecturas RAG Corporativas
+  - Sistemas Multi-Agente B2B
+keywords:
+  - machine learning
+  - LLM
+  - predicción
+  - RAG
+  - IA
+  - inteligencia artificial
+  - modelos
+  - deep learning
+  - agentes
+  - LLMOps
+  - predicción de demanda
+  - reducción de costos operativos
+copilotPrompts:
+  - >-
+    Evaluar viabilidad y riesgo de implementar LLMs privados para análisis de
+    contratos B2B.
+  - >-
+    Simular impacto financiero de un agente autónomo en reducción de costos de
+    soporte.
+techStack:
+  - Python
+  - LangChain
+  - LlamaIndex
+  - PyTorch
+  - AWS Bedrock / Azure OpenAI
+proofPoints:
+  - client: Ministerio de Finanzas
+    result: "[EST] 40% mejora en detección de anomalías fiscales"
+  - client: Banco Nacional
+    result: "[EST] Reducción de 20 días a 4 horas en cierres contables"
+competitivePositioning: >-
+  A diferencia de Oracle o IBM que imponen licencias cautivas y lock-in de nube,
+  Datanestiq despliega arquitecturas agnósticas (open-source LLMs y MLOps)
+  garantizando soberanía total del dato y menores costos recurrentes.
+contentAngles:
+  - id: soberania-datos-llms
+    title: Soberanía de Datos con LLMs Locales
+    brief: >-
+      Artículo de 800 palabras para el CTO explicando por qué depender de APIs
+      públicas (Gartner lo advierte) es riesgoso, y cómo Datanestiq implementa
+      modelos on-premise.

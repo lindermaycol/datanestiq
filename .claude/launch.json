@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "php-dist", "runtimeExecutable": "C:/xampp/php/php.exe", "runtimeArgs": ["-S","0.0.0.0:8080","-t","dist"], "port": 8080 },
+    { "name": "astro-preview", "runtimeExecutable": "npx", "runtimeArgs": ["astro","preview","--host","--port","4321"], "port": 4321 }
+  ]
+}

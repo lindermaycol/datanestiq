@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "faqs": [
+    {
+      "id": "precio",
+      "question": "¿Cuánto cuesta?",
+      "variants": ["precio", "¿cuál es el precio?", "tarifas", "presupuesto", "¿cuánto vale un proyecto?", "¿es caro?", "formas de pago", "¿facturan?"],
+      "answer": null,
+      "pendiente_dato_usuario": true
+    },
+    {
+      "id": "horario",
+      "question": "¿Cuál es el horario de atención?",
+      "variants": ["¿cuándo responden?", "¿a qué hora atienden?", "¿trabajan fines de semana?"],
+      "answer": null,
+      "pendiente_dato_usuario": true
+    },
+    {
+      "id": "contacto",
+      "question": "¿Cómo los contacto?",
+      "variants": ["¿tienen teléfono?", "¿correo?", "¿WhatsApp?", "¿dónde están ubicados?", "¿oficina?", "¿trabajan remoto?"],
+      "answer": null,
+      "pendiente_dato_usuario": true
+    },
+    {
+      "id": "tiempos",
+      "question": "¿Cuánto tarda un proyecto?",
+      "variants": ["¿cuánto tiempo tarda un proyecto de IA?", "¿duración del proyecto?", "¿en cuánto tiempo veo resultados?", "¿cuánto demoran?"],
+      "answer": null,
+      "pendiente_dato_usuario": true
+    },
+    {
+      "id": "clientes",
+      "question": "¿A quién atienden?",
+      "variants": ["¿trabajan con pymes?", "¿qué sectores atienden?", "¿trabajan con empresas grandes?", "¿solo trabajan en mi sector?"],
+      "answer": null,
+      "pendiente_dato_usuario": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+---
+interface Props {
+  problem: string;
+  solution: string;
+}
+const { problem, solution } = Astro.props;
+---
+<section class="py-24 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div class="glass-card border-red-500/20">
+        <h3 class="text-red-400 font-bold mb-4 uppercase tracking-widest text-sm">El Problema</h3>
+        <p class="text-gray-300 text-lg">{problem}</p>
+      </div>
+      <div class="glass-card border-brand/20 bg-brand/5">
+        <h3 class="text-brand font-bold mb-4 uppercase tracking-widest text-sm">Nuestra Solución</h3>
+        <p class="text-white text-lg">{solution}</p>
+      </div>
+    </div>
+  </div>
+</section>

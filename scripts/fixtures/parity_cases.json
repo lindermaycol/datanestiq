@@ -1,0 +1,421 @@
+{
+  "_doc": "Casos de conformidad compartidos por TODAS las implementaciones de llm_core (Python, PHP, ...). Cada implementación debe reproducir exactamente 'calls' y el resultado esperado con transporte simulado. Semántica: retries=2 (hasta 3 intentos por clave); se reintentan 0/429/500/502/503/504 con espera; 401/403/429 agotados rotan a la siguiente clave del MISMO proveedor; cualquier otro estado no-2xx (p. ej. 400) o contenido vacío o 5xx/0 agotados pasa al SIGUIENTE proveedor; sin clave se omite; <think>...</think> se elimina. Identificador de llamada = '<proveedor>#<valor de la clave>'. Respuestas: número = estado HTTP sin cuerpo útil; '200:texto' = éxito con ese contenido; 0 = error de red. Cada caso admite 'retries' (por defecto 2). 'sleeps' = esperas (segundos) SOLO ENTRE intentos de una misma clave: min(2^intento, 8); nunca se espera tras el último intento (con retries=0 no hay esperas).",
+  "registry": {
+    "providers": {
+      "p1": {
+        "base_url": "https://p1.test/v1",
+        "key_env": [
+          "P1_KEY",
+          "P1_KEY_2"
+        ]
+      },
+      "p2": {
+        "base_url": "https://p2.test/v1",
+        "key_env": [
+          "P2_KEY"
+        ]
+      }
+    },
+    "profiles": {
+      "t": {
+        "chain": [
+          {
+            "provider": "p1",
+            "model": "m1"
+          },
+          {
+            "provider": "p2",
+            "model": "m2"
+          }
+        ]
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "primario_ok",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          "200:hola"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 0,
+        "text": "hola",
+        "calls": [
+          "p1#k1"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "5xx_reintenta_3_veces_y_pasa_al_siguiente",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          503,
+          503,
+          503
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1",
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "429_y_luego_exito_en_la_misma_clave",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          429,
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1"
+        ],
+        "sleeps": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "401_rota_a_la_segunda_clave_sin_reintentar",
+      "keys": {
+        "P1_KEY": "k1",
+        "P1_KEY_2": "k1b",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          401
+        ],
+        "p1#k1b": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 1,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1b"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "429_agotado_rota_a_la_segunda_clave",
+      "keys": {
+        "P1_KEY": "k1",
+        "P1_KEY_2": "k1b",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          429,
+          429,
+          429
+        ],
+        "p1#k1b": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 1,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1",
+          "p1#k1",
+          "p1#k1b"
+        ],
+        "sleeps": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "400_no_rota_claves_pasa_al_siguiente_proveedor",
+      "keys": {
+        "P1_KEY": "k1",
+        "P1_KEY_2": "k1b",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          400
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "contenido_vacio_cuenta_como_fallo",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          "200:"
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "solo_think_cuenta_como_vacio",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          "200:<think>solo razono</think>"
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "elimina_bloque_think",
+      "keys": {
+        "P1_KEY": "k1"
+      },
+      "responses": {
+        "p1#k1": [
+          "200:<think>razono</think>respuesta"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 0,
+        "text": "respuesta",
+        "calls": [
+          "p1#k1"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "error_de_red_se_reintenta_y_pasa_al_siguiente",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          0,
+          0,
+          0
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1",
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "sin_clave_se_omite",
+      "keys": {
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p2#k2"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "todos_fallan",
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          500,
+          500,
+          500
+        ],
+        "p2#k2": [
+          500,
+          500,
+          500
+        ]
+      },
+      "expect": {
+        "error": "todos_fallaron",
+        "n_failures": 2,
+        "calls": [
+          "p1#k1",
+          "p1#k1",
+          "p1#k1",
+          "p2#k2",
+          "p2#k2",
+          "p2#k2"
+        ],
+        "sleeps": [
+          1,
+          2,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "name": "ninguna_clave",
+      "keys": {},
+      "responses": {},
+      "expect": {
+        "error": "sin_claves",
+        "calls": [],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "retries_0_no_reintenta_y_pasa_al_siguiente",
+      "retries": 0,
+      "keys": {
+        "P1_KEY": "k1",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          503
+        ],
+        "p2#k2": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p2",
+        "key_index": 0,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p2#k2"
+        ],
+        "sleeps": []
+      }
+    },
+    {
+      "name": "retries_0_429_rota_clave_sin_reintentar",
+      "retries": 0,
+      "keys": {
+        "P1_KEY": "k1",
+        "P1_KEY_2": "k1b",
+        "P2_KEY": "k2"
+      },
+      "responses": {
+        "p1#k1": [
+          429
+        ],
+        "p1#k1b": [
+          "200:ok"
+        ]
+      },
+      "expect": {
+        "provider": "p1",
+        "key_index": 1,
+        "text": "ok",
+        "calls": [
+          "p1#k1",
+          "p1#k1b"
+        ],
+        "sleeps": []
+      }
+    }
+  ]
+}

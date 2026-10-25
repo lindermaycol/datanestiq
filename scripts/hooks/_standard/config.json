@@ -1,0 +1,10 @@
+{
+  "project": "datanestiq",
+  "vault_folder": "datanestiq",
+  "protected_branches": [
+    "main",
+    "master",
+    "develop"
+  ],
+  "max_file_mb": 5
+}

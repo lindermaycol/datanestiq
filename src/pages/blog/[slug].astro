@@ -1,0 +1,161 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/ui/Navbar.astro';
+import Footer from '../../components/ui/Footer.astro';
+import { slugifyTag } from '../../lib/tagUtils';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog', ({ data }) => {
+    return data.draft !== true;
+  });
+  return blogEntries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// Formato de fecha legible en es-PE
+const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('es-PE', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric'
+});
+
+// Tiempo estimado de lectura (~200 palabras por minuto)
+const wordCount = entry.body ? entry.body.split(/\s+/).filter(Boolean).length : 0;
+const readingTimeMin = Math.max(1, Math.ceil(wordCount / 200));
+
+// Precisión 2: Buscar artículos relacionados por tags compartidos (excluye el post actual y drafts, máx 3)
+const currentTagSlugs = new Set((entry.data.tags || []).map(t => slugifyTag(t)));
+const allPosts = await getCollection('blog', ({ data }) => data.draft !== true);
+
+const relatedPosts = allPosts
+  .filter(p => p.id !== entry.id)
+  .map(p => {
+    const pTagSlugs = (p.data.tags || []).map(t => slugifyTag(t));
+    const sharedCount = pTagSlugs.filter(t => currentTagSlugs.has(t)).length;
+    return { post: p, sharedCount };
+  })
+  .filter(item => item.sharedCount > 0)
+  .sort((a, b) => b.sharedCount - a.sharedCount || b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf())
+  .slice(0, 3)
+  .map(item => item.post);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": entry.data.title,
+  "description": entry.data.description,
+  "datePublished": entry.data.pubDate.toISOString(),
+  "author": {
+    "@type": "Organization",
+    "name": entry.data.author
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Datanestiq",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://datanestiq.com/logo.png"
+    }
+  }
+};
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <Navbar />
+  
+  <main class="pt-32 pb-20 max-w-4xl mx-auto px-4">
+    <!-- Breadcrumb visual real -->
+    <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-400">
+      <a href="/" class="hover:text-brandCyan transition-colors">Inicio</a>
+      <span class="text-gray-600">›</span>
+      <a href="/blog" class="hover:text-brandCyan transition-colors">Blog</a>
+      <span class="text-gray-600">›</span>
+      <span class="text-gray-300 font-medium truncate max-w-md" title={entry.data.title}>{entry.data.title}</span>
+    </nav>
+
+    <!-- Header del artículo -->
+    <header class="mb-12 border-b border-white/10 pb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">{entry.data.title}</h1>
+      
+      <p class="text-xl text-gray-300 mb-6 leading-relaxed">{entry.data.description}</p>
+      
+      <div class="flex flex-wrap items-center gap-3 text-sm text-gray-400 mb-6">
+        <span class="font-semibold text-gray-300">{entry.data.author}</span>
+        <span class="text-gray-600">•</span>
+        <time datetime={entry.data.pubDate.toISOString()}>{formattedDate}</time>
+        <span class="text-gray-600">•</span>
+        <span class="inline-flex items-center gap-1"><i class="ph ph-clock"></i> {readingTimeMin} min de lectura</span>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        {entry.data.tags.map(tag => (
+          <a 
+            href={`/blog/tag/${slugifyTag(tag)}`}
+            class="px-3 py-1 bg-white/5 border border-white/10 hover:border-brandCyan/50 hover:bg-brand/10 hover:text-brandCyan rounded-full text-xs font-medium text-gray-300 transition-all"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    </header>
+    
+    <!-- Cuerpo del artículo (Fix 3: Formato editorial unboxed, max-w-3xl) -->
+    <article class="prose prose-invert prose-lg max-w-3xl mx-auto prose-headings:scroll-mt-24 prose-headings:font-bold prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-3 prose-h2:mt-12 prose-h3:text-xl prose-h3:mt-8 prose-a:text-brandCyan prose-a:no-underline hover:prose-a:underline prose-blockquote:border-brandCyan prose-blockquote:bg-white/5 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-img:rounded-xl prose-img:border prose-img:border-white/10 prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono">
+      <Content />
+    </article>
+
+    <!-- Botón de navegación al Blog -->
+    <div class="mt-12 max-w-3xl mx-auto flex justify-between items-center border-t border-white/10 pt-8">
+      <a href="/blog" class="inline-flex items-center gap-2 text-brandCyan hover:text-white font-medium transition-colors">
+        <i class="ph ph-arrow-left"></i> Volver al Blog
+      </a>
+    </div>
+
+    <!-- CTA de Diagnóstico Consultivo -->
+    <div class="mt-12 max-w-3xl mx-auto glass-card p-8 text-center">
+      <h3 class="text-2xl font-bold text-white mb-4">¿Listo para escalar tus operaciones de IA y Datos?</h3>
+      <p class="text-gray-400 mb-6">Interactúa con nuestro AI Concierge y descubre la madurez de tu infraestructura corporativa en minutos.</p>
+      <button onclick="document.dispatchEvent(new CustomEvent('open-chatbot'))" class="btn-primary text-base px-8 py-3">
+        Inicia tu Diagnóstico Gratuito
+      </button>
+    </div>
+
+    <!-- Artículos Relacionados -->
+    {relatedPosts.length > 0 && (
+      <section class="mt-16 max-w-3xl mx-auto border-t border-white/10 pt-12">
+        <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+          <i class="ph ph-article text-brandCyan"></i> Artículos Relacionados
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {relatedPosts.map(rel => (
+            <a href={`/blog/${rel.id}`} class="glass-card p-5 block hover:-translate-y-1 transition-transform flex flex-col justify-between">
+              <div>
+                <time datetime={rel.data.pubDate.toISOString()} class="text-brandCyan text-xs mb-2 block font-medium">
+                  {new Date(rel.data.pubDate).toLocaleDateString('es-PE', { day: 'numeric', month: 'short' })}
+                </time>
+                <h4 class="text-base font-bold text-white mb-2 line-clamp-2 leading-snug hover:text-brandCyan transition-colors">
+                  {rel.data.title}
+                </h4>
+              </div>
+              <div class="mt-4 pt-3 border-t border-white/10 flex flex-wrap gap-1">
+                {rel.data.tags.slice(0, 2).map(t => (
+                  <span class="text-[10px] bg-white/5 text-gray-400 px-1.5 py-0.5 rounded">#{t}</span>
+                ))}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <Footer />
+</BaseLayout>

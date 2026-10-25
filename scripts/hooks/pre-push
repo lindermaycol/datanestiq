@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# project-standard:begin (v1.1.0; gestionado por apply_standard.py)
+STANDARD_PRE_PUSH_STDIN=$(cat); export STANDARD_PRE_PUSH_STDIN
+printf '%s\n' "$STANDARD_PRE_PUSH_STDIN" | bash "$(dirname "$0")/_standard/pre-push" "$@" || exit 1
+# project-standard:end
+exit 0

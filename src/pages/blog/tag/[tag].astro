@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Navbar from '../../../components/ui/Navbar.astro';
+import Footer from '../../../components/ui/Footer.astro';
+import { slugifyTag, getTagLabelFromSlug } from '../../../lib/tagUtils';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => data.draft !== true);
+  
+  // Precisión 1: Deduplicar slugs usando un Set único
+  const uniqueTagSlugs = new Set<string>();
+  allPosts.forEach(post => {
+    (post.data.tags || []).forEach(tag => {
+      const slug = slugifyTag(tag);
+      if (slug) uniqueTagSlugs.add(slug);
+    });
+  });
+
+  return Array.from(uniqueTagSlugs).map(slug => ({
+    params: { tag: slug },
+  }));
+}
+
+const { tag: tagSlug } = Astro.params;
+const allPosts = await getCollection('blog', ({ data }) => data.draft !== true);
+
+// Coalesce posts matching this slug (Precisión 1 & 2)
+const filteredPosts = allPosts.filter(post => 
+  (post.data.tags || []).some(t => slugifyTag(t) === tagSlug)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const tagLabel = getTagLabelFromSlug(tagSlug || '', allPosts);
+---
+
+<BaseLayout 
+  title={`Artículos sobre #${tagLabel} | Blog Datanestiq`} 
+  description={`Explora nuestros artículos, análisis y mejores prácticas sobre ${tagLabel} para la transformación digital e Inteligencia Artificial.`}
+>
+  <Navbar />
+  
+  <main class="pt-32 pb-20 max-w-7xl mx-auto px-4 relative z-10">
+    <!-- Breadcrumb visual real -->
+    <nav aria-label="Breadcrumb" class="mb-8 flex items-center gap-2 text-sm text-gray-400">
+      <a href="/" class="hover:text-brandCyan transition-colors">Inicio</a>
+      <span class="text-gray-600">›</span>
+      <a href="/blog" class="hover:text-brandCyan transition-colors">Blog</a>
+      <span class="text-gray-600">›</span>
+      <span class="text-gray-300 font-medium">Tag: #{tagLabel}</span>
+    </nav>
+
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand/10 border border-brandCyan/30 rounded-full text-brandCyan text-xs font-semibold uppercase tracking-wider mb-4">
+        <i class="ph ph-tag"></i> Etiqueta
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Artículos sobre #{tagLabel}</h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        Mostrando {filteredPosts.length} {filteredPosts.length === 1 ? 'artículo' : 'artículos'} con la etiqueta #{tagLabel}.
+      </p>
+    </div>
+
+    {filteredPosts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filteredPosts.map(post => (
+          <article class="glass-card p-6 flex flex-col hover:-translate-y-1 transition-transform">
+            <time datetime={post.data.pubDate.toISOString()} class="text-brandCyan text-sm mb-2 block font-medium">
+              {new Date(post.data.pubDate).toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </time>
+            <h2 class="text-2xl font-bold text-white mb-3 leading-tight hover:text-brandCyan transition-colors">
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+            </h2>
+            <p class="text-gray-400 mb-6 line-clamp-3 text-sm flex-grow">{post.data.description}</p>
+            <div class="flex flex-wrap gap-2 pt-4 border-t border-white/10 mt-auto">
+              {post.data.tags.map(t => (
+                <a 
+                  href={`/blog/tag/${slugifyTag(t)}`} 
+                  class={`px-2 py-1 rounded text-xs transition-colors ${slugifyTag(t) === tagSlug ? 'bg-brandCyan/20 text-brandCyan font-semibold border border-brandCyan/30' : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  #{t}
+                </a>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center text-gray-400 py-16">
+        <p class="text-lg mb-4">No se encontraron artículos con la etiqueta #{tagLabel}.</p>
+        <a href="/blog" class="btn-primary inline-flex items-center gap-2">← Volver al Blog</a>
+      </div>
+    )}
+
+    <div class="mt-16 text-center">
+      <a href="/blog" class="inline-flex items-center gap-2 text-brandCyan hover:text-white font-medium transition-colors">
+        <i class="ph ph-arrow-left"></i> Volver a todos los artículos
+      </a>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
