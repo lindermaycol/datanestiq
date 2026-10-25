@@ -1,0 +1,9 @@
+---
+# project-standard — configuración de Orca para este repo. No editar: se regenera con apply_standard.py.
+# setup: respaldo previo + bases aisladas por worktree + índice CodeGraph (ver .orca/worktree.py)
+scripts:
+  setup: |
+    python .orca/worktree.py setup
+  archive: |
+    python .orca/worktree.py archive
+setupAgentStartupPolicy: wait-for-setup

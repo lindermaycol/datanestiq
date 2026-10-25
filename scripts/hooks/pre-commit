@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# project-standard:begin (v1.0.0; gestionado por apply_standard.py)
+bash "$(dirname "$0")/_standard/pre-commit" || exit 1
+# project-standard:end
 # Datanestiq — git pre-commit hook (Constitución §6 y §8)
 # Instalar una vez:  git config core.hooksPath scripts/hooks
 # Objetivo: NUNCA commitear secretos ni PII, y no commitear taxonomía rota.

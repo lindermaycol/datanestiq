@@ -22,3 +22,15 @@
 - Prompts para AntiGravity → `prompts/prompt-antigravity-*.md`. Commits: rama de trabajo, no `main`; termina con `Co-Authored-By`.
 - Estado de specs: `planes/ESTADO-SPECS.md` ↔ `src/data/specsStatus.json` (build-gate antidrift). Roadmap: `planes/Fases.md`.
 - Deploy/QA operativo: ver `AGENTS.md §4` (reglas de campo).
+
+<!-- project-standard:begin (v1.0.0 — bloque gestionado por apply_standard.py; no editar dentro) -->
+## Estándar común del ecosistema
+
+- **Proyecto:** `datanestiq` · **Memoria:** `C:\Users\Lisbeth\vault\datanestiq\` (decisions + logs) · **SDD:** spec-kit
+- **Orientación barata primero:** `wiki/Root.md` → `decisions.md` (grep, no completo) → últimos logs; para código, CodeGraph (`codegraph_context` / `codegraph_impact`) y Graphify (`graphify query`) antes de leer archivos.
+- **Roles:** AntiGravity planifica/implementa; Claude Code audita y opera Orca. Cada ronda deja `prompts/<NNN>-<slug>.md` (ida, plantilla `prompts/_PLANTILLA-prompt.md`) y `prompts/<NNN>-<slug>.retorno.md` (vuelta, plantilla `prompts/_PLANTILLA-retorno.md`).
+- **Auditoría:** se verifica el estado real (`git show --stat`, consultas, tests), nunca el resumen.
+- **ADR:** toda decisión de arquitectura va a `decisions.md` con la plantilla `vault/templates/adr.md`; la sesión se cierra con `/guardar datanestiq`.
+- **Regla de Oro:** bloqueo o algo no verificable → se documenta y se detiene; nunca se inventan resultados.
+- **Datos:** backup antes de trabajar (`backup_all.py`), base aislada por worktree (`.orca/worktree.py`), esquema por migraciones; nada de `.env` ni bases en git (hooks `_standard`).
+<!-- project-standard:end -->

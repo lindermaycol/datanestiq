@@ -70,3 +70,7 @@ __pycache__/
 # Plan Orca F0 (2026-10-25)
 graphify-out/
 public/api/lib/providers.php
+
+# project-standard
+.env.*
+!.env.example
