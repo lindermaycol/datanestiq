@@ -1,6 +1,6 @@
 # Retorno <NNN> — <título del prompt>
 
-<!-- Plantilla del estándar común (v1.0.0). AntiGravity la llena al terminar, para que Claude Code
+<!-- Plantilla del estándar común (v1.1.0). AntiGravity la llena al terminar, para que Claude Code
 audite SIN releer el código completo. Solo hechos verificables; sin prosa ni volcado de código. -->
 
 **Prompt:** `prompts/<NNN>-<slug>.md` · **Rama/worktree:** `<nombre>` · **Estado:** <hecho | parcial | bloqueado>

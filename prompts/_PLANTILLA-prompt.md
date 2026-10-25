@@ -1,6 +1,6 @@
 # Prompt <NNN> — <título en imperativo>
 
-<!-- Plantilla del estándar común (v1.0.0). Claude Code la llena para AntiGravity. Borra los
+<!-- Plantilla del estándar común (v1.1.0). Claude Code la llena para AntiGravity. Borra los
 comentarios antes de enviarla. Objetivo: que AntiGravity NO tenga que explorar — todo lo que necesita
 leer está citado con archivo:línea. Reúne esos rangos con codegraph_context / codegraph_impact y
 graphify query, no leyendo archivos completos. -->

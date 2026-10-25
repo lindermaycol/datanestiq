@@ -5,7 +5,7 @@ description: Estándar común del ecosistema (datanestiq) — orientación barat
 
 ## Estándar común del ecosistema — datanestiq
 
-> Regla permanente generada por `apply_standard.py` (estándar v1.0.0). No la edites aquí: cambia
+> Regla permanente generada por `apply_standard.py` (estándar v1.1.0). No la edites aquí: cambia
 > `vault/setup/project-standard/` y vuelve a aplicar.
 
 **1. Orientación (en este orden, antes de grep o de leer archivos completos):**
@@ -21,4 +21,6 @@ description: Estándar común del ecosistema (datanestiq) — orientación barat
 **4. Bases de datos:** trabajas sobre la copia aislada de tu worktree (`.orca/worktree.py`). Cambios de esquema = archivo de migración versionado; nunca commitees `.db/.sqlite/.duckdb/.parquet` ni `.env` (el pre-commit los bloquea).
 
 **5. Al terminar — prompt de retorno OBLIGATORIO** para que Claude Code audite sin releer todo:
-crea `prompts/<NNN>-<slug>.retorno.md` copiando `prompts/_PLANTILLA-retorno.md`. Debe listar commits (hash), cambios `archivo:línea-línea` con una línea de intención cada uno, comandos ejecutados con su salida resumida, migraciones/BD tocadas, cada afirmación con el comando que la verifica, bloqueos y preguntas. Sin prosa ni volcado de código.
+crea `prompts/<NNN>-<slug>.retorno.md` copiando `prompts/_PLANTILLA-retorno.md`. Claude Code lo audita y, si algo
+no cuadra, te enviará un prompt de corrección (`NNNb`); la ruta de prompts (paralelo/secuencial) está en
+`prompts/00-indice-orquestacion*.md`: respétala y no edites ese índice. Debe listar commits (hash), cambios `archivo:línea-línea` con una línea de intención cada uno, comandos ejecutados con su salida resumida, migraciones/BD tocadas, cada afirmación con el comando que la verifica, bloqueos y preguntas. Sin prosa ni volcado de código.
